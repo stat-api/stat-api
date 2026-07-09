@@ -1,0 +1,231 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`scores: NBA slate 1`] = `
+{
+  "color": 13111342,
+  "description": 
+"**Lakers** 102–98 **Celtics** · Final
+**Warriors** vs **Nuggets** · Scheduled · 02:00 UTC"
+,
+  "footer": {
+    "text": "data as of 2026-07-08 17:00 UTC · cached 0s ago · stat-api.com",
+  },
+  "title": "🏀 NBA scoreboard — 2026-07-08",
+}
+`;
+
+exports[`scores: MLB slate resolves team abbreviations 1`] = `
+{
+  "color": 269890,
+  "description": "**NYY** 5–3 **BOS** · Final",
+  "footer": {
+    "text": "data as of 2026-07-08 17:00 UTC · cached 0s ago · stat-api.com",
+  },
+  "title": "⚾ MLB scoreboard — 2026-07-08",
+}
+`;
+
+exports[`scores: empty slate → offseason embed 1`] = `
+{
+  "color": 13111342,
+  "description": "Nothing on the schedule for this date — the league is between games or in its offseason. Try another date, or a league that is currently in season.",
+  "footer": {
+    "text": "data as of 2026-07-08 17:00 UTC · cached 0s ago · stat-api.com",
+  },
+  "title": "🏀 NBA — no games 2026-07-08",
+}
+`;
+
+exports[`box: NBA top scorers per team 1`] = `
+{
+  "color": 13111342,
+  "fields": [
+    {
+      "inline": false,
+      "name": "Lakers — 102",
+      "value": 
+"\`\`\`
+L. James         33 pts  8 reb  9 ast
+A. Reaves        21 pts  5 reb  3 ast
+\`\`\`"
+,
+    },
+    {
+      "inline": false,
+      "name": "Celtics — 98",
+      "value": 
+"\`\`\`
+J. Tatum         28 pts  11 reb  6 ast
+\`\`\`"
+,
+    },
+  ],
+  "footer": {
+    "text": "data as of 2026-07-08 17:00 UTC · cached 0s ago · stat-api.com",
+  },
+  "title": "🏀 Lakers 102–98 Celtics · Final",
+}
+`;
+
+exports[`box: MLB batting + pitching lines 1`] = `
+{
+  "color": 269890,
+  "fields": [
+    {
+      "inline": false,
+      "name": "NYY — 5",
+      "value": 
+"\`\`\`
+A. Judge         3-5, 2 RBI
+— pitching —
+G. Cole          6.0 IP, 7 K, 2 ER
+\`\`\`"
+,
+    },
+    {
+      "inline": false,
+      "name": "BOS — 3",
+      "value": 
+"\`\`\`
+R. Devers        2-4, 1 RBI
+\`\`\`"
+,
+    },
+  ],
+  "footer": {
+    "text": "data as of 2026-07-08 17:00 UTC · cached 0s ago · stat-api.com",
+  },
+  "title": "⚾ NYY 5–3 BOS · Final",
+}
+`;
+
+exports[`player: found → season averages 1`] = `
+{
+  "color": 13111342,
+  "description": "Los Angeles Lakers · F · 2025-26 season · 70 GP",
+  "fields": [
+    {
+      "inline": true,
+      "name": "PPG",
+      "value": "25.0",
+    },
+    {
+      "inline": true,
+      "name": "RPG",
+      "value": "8.0",
+    },
+    {
+      "inline": true,
+      "name": "APG",
+      "value": "9.0",
+    },
+    {
+      "inline": true,
+      "name": "SPG",
+      "value": "1.3",
+    },
+    {
+      "inline": true,
+      "name": "BPG",
+      "value": "0.6",
+    },
+    {
+      "inline": true,
+      "name": "FG%",
+      "value": "51.2%",
+    },
+    {
+      "inline": true,
+      "name": "3P%",
+      "value": "36.5%",
+    },
+    {
+      "inline": true,
+      "name": "FT%",
+      "value": "73.5%",
+    },
+  ],
+  "footer": {
+    "text": "data as of 2026-07-08 17:00 UTC · cached 0s ago · stat-api.com",
+  },
+  "title": "🏀 LeBron James",
+}
+`;
+
+exports[`player: not found 1`] = `
+{
+  "color": 13111342,
+  "description": "No NBA player matched **nobody xyz**. Check the spelling and try again.",
+  "footer": {
+    "text": "data as of 2026-07-08 17:00 UTC · cached 0s ago · stat-api.com",
+  },
+  "title": "🏀 No player found",
+}
+`;
+
+exports[`standings: NBA grouped by conference 1`] = `
+{
+  "color": 13111342,
+  "fields": [
+    {
+      "inline": false,
+      "name": "Eastern Conference",
+      "value": 
+"\`\`\`
+ 1  BOS  48-34   0.585
+\`\`\`"
+,
+    },
+    {
+      "inline": false,
+      "name": "Western Conference",
+      "value": 
+"\`\`\`
+ 1  DEN  55-27   0.671
+ 2  LAL  52-30   0.634
+\`\`\`"
+,
+    },
+  ],
+  "footer": {
+    "text": "data as of 2026-07-08 17:00 UTC · cached 0s ago · stat-api.com",
+  },
+  "title": "🏀 NBA standings",
+}
+`;
+
+exports[`news: NBA latest headlines 1`] = `
+{
+  "color": 13111342,
+  "fields": [
+    {
+      "inline": false,
+      "name": "1. Star guard questionable for opener",
+      "value": "Rotowire · 2026-07-08 18:00 UTC · [read](https://stat-api.com/n/9)",
+    },
+    {
+      "inline": false,
+      "name": "2. Front office eyes a trade",
+      "value": "ESPN · 2026-07-08 16:30 UTC",
+    },
+  ],
+  "footer": {
+    "text": "data as of 2026-07-08 17:00 UTC · cached 0s ago · stat-api.com",
+  },
+  "title": "🏀 NBA — latest news",
+}
+`;
+
+exports[`cache hit: second call within TTL reuses the fetch and ages the footer 1`] = `
+{
+  "color": 13111342,
+  "description": 
+"**Lakers** 102–98 **Celtics** · Final
+**Warriors** vs **Nuggets** · Scheduled · 02:00 UTC"
+,
+  "footer": {
+    "text": "data as of 2026-07-08 17:00 UTC · cached 30s ago · stat-api.com",
+  },
+  "title": "🏀 NBA scoreboard — 2026-07-08",
+}
+`;

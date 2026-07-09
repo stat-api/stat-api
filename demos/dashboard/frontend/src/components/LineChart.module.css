@@ -1,0 +1,43 @@
+.chart {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.grid {
+  stroke: var(--border-faint);
+  stroke-width: 1;
+}
+
+.axis {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.label {
+  fill: var(--text-faint);
+  font-size: 11px;
+  font-family: var(--font-mono);
+}
+
+.line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.dot {
+  stroke: var(--bg-panel);
+  stroke-width: 1.5;
+}
+
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  font-size: 0.85rem;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+}

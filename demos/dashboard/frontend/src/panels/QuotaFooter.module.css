@@ -1,0 +1,96 @@
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 12px 22px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-elevated);
+  position: sticky;
+  bottom: 0;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.tag {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+}
+
+.quota {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 240px;
+}
+
+.numbers {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.used {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.sep,
+.word {
+  color: var(--text-faint);
+}
+
+.limit {
+  color: var(--text-muted);
+}
+
+.word {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  margin-left: 4px;
+}
+
+.bar {
+  flex: 1;
+  height: 6px;
+  min-width: 80px;
+  background: var(--bg-panel-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--positive));
+  border-radius: 999px;
+}
+
+.remaining {
+  font-size: 0.72rem;
+  color: var(--positive);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.na {
+  flex: 1;
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+}
+
+.stamp {
+  font-size: 0.7rem;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}

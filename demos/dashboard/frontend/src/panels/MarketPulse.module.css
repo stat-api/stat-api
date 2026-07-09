@@ -1,0 +1,79 @@
+.pulse {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.team {
+  color: var(--accent);
+}
+
+.subtitle {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+}
+
+.empty {
+  padding: 28px;
+  text-align: center;
+  color: var(--text-faint);
+  font-size: 0.8rem;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+}
+
+.sources {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sourceRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.76rem;
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.sourceLabel {
+  color: var(--text-muted);
+}
+
+.sourceValue {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.freshness {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+}

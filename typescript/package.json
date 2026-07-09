@@ -1,0 +1,54 @@
+{
+  "name": "@stat-api/client",
+  "version": "0.1.0",
+  "description": "Official TypeScript / JavaScript client for the stat-api sports & prediction-market data API.",
+  "license": "MIT",
+  "homepage": "https://stat-api.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stat-api/stat-api.git",
+    "directory": "typescript"
+  },
+  "bugs": {
+    "url": "https://github.com/stat-api/stat-api/issues"
+  },
+  "keywords": [
+    "stat-api",
+    "sports",
+    "sports-data",
+    "api",
+    "nfl",
+    "nba",
+    "mlb",
+    "kalshi",
+    "prediction-markets",
+    "sdk"
+  ],
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.3"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@stat-api/cookbook",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Generated example cookbook for @stat-api/client.",
+  "type": "module",
+  "dependencies": {
+    "@stat-api/client": "^0.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.3"
+  }
+}

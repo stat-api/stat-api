@@ -1,0 +1,7 @@
+# Local dev workspace that repoints the SDK require at the in-repo copy.
+# Never committed or mirrored — the published go.mod require is the contract.
+go.work
+go.work.sum
+
+# Compiled binary (module name; produced by `go build`).
+/demo-cli

@@ -1,0 +1,148 @@
+{
+  "generatedAt": "2026-07-08T19:42:00-04:00",
+  "quota": {
+    "limit": 5000000,
+    "used": 128403,
+    "remaining": 4871597
+  },
+  "leagues": {
+    "mlb": {
+      "status": "in-season",
+      "asOf": "2026-07-08T19:41:48-04:00",
+      "games": [
+        {
+          "id": "mlb-2026-07-08-nyy-bos",
+          "status": "live",
+          "startTime": "2026-07-08T18:05:00-04:00",
+          "away": { "name": "New York Yankees", "abbr": "NYY", "score": 4 },
+          "home": { "name": "Boston Red Sox", "abbr": "BOS", "score": 3 },
+          "detail": {
+            "lines": [
+              {
+                "book": "DraftKings",
+                "points": [
+                  { "t": "2026-07-08T14:00:00-04:00", "spread": 1.5, "total": 8.5, "moneylineHome": 115, "moneylineAway": -135 },
+                  { "t": "2026-07-08T15:30:00-04:00", "spread": 1.5, "total": 8.5, "moneylineHome": 118, "moneylineAway": -138 },
+                  { "t": "2026-07-08T16:45:00-04:00", "spread": 1.5, "total": 9.0, "moneylineHome": 122, "moneylineAway": -142 },
+                  { "t": "2026-07-08T17:30:00-04:00", "spread": 1.5, "total": 9.0, "moneylineHome": 120, "moneylineAway": -140 },
+                  { "t": "2026-07-08T17:55:00-04:00", "spread": 1.5, "total": 9.5, "moneylineHome": 125, "moneylineAway": -145 },
+                  { "t": "2026-07-08T18:05:00-04:00", "spread": 1.5, "total": 9.5, "moneylineHome": 124, "moneylineAway": -144 }
+                ]
+              },
+              {
+                "book": "FanDuel",
+                "points": [
+                  { "t": "2026-07-08T14:00:00-04:00", "spread": 1.5, "total": 8.5, "moneylineHome": 112, "moneylineAway": -132 },
+                  { "t": "2026-07-08T15:30:00-04:00", "spread": 1.5, "total": 9.0, "moneylineHome": 116, "moneylineAway": -136 },
+                  { "t": "2026-07-08T16:45:00-04:00", "spread": 1.5, "total": 9.0, "moneylineHome": 120, "moneylineAway": -140 },
+                  { "t": "2026-07-08T17:30:00-04:00", "spread": 1.5, "total": 9.5, "moneylineHome": 122, "moneylineAway": -142 },
+                  { "t": "2026-07-08T17:55:00-04:00", "spread": 1.5, "total": 9.5, "moneylineHome": 126, "moneylineAway": -148 },
+                  { "t": "2026-07-08T18:05:00-04:00", "spread": 1.5, "total": 9.5, "moneylineHome": 125, "moneylineAway": -146 }
+                ]
+              }
+            ],
+            "box": [
+              { "team": "NYY", "player": "Gleyber Torres", "position": "2B", "ab": 4, "r": 1, "h": 2, "rbi": 1, "hr": 0, "bb": 1, "so": 1, "avg": "0.271" },
+              { "team": "NYY", "player": "Juan Soto", "position": "RF", "ab": 4, "r": 1, "h": 1, "rbi": 0, "hr": 0, "bb": 0, "so": 0, "avg": "0.302" },
+              { "team": "NYY", "player": "Aaron Judge", "position": "CF", "ab": 4, "r": 1, "h": 2, "rbi": 2, "hr": 1, "bb": 1, "so": 1, "avg": "0.288" },
+              { "team": "NYY", "player": "Giancarlo Stanton", "position": "DH", "ab": 4, "r": 0, "h": 1, "rbi": 1, "hr": 0, "bb": 1, "so": 2, "avg": "0.245" },
+              { "team": "NYY", "player": "Anthony Rizzo", "position": "1B", "ab": 3, "r": 0, "h": 0, "rbi": 0, "hr": 0, "bb": 1, "so": 1, "avg": "0.223" },
+              { "team": "BOS", "player": "Jarren Duran", "position": "LF", "ab": 4, "r": 1, "h": 2, "rbi": 0, "hr": 0, "bb": 0, "so": 1, "avg": "0.291" },
+              { "team": "BOS", "player": "Rafael Devers", "position": "3B", "ab": 4, "r": 1, "h": 1, "rbi": 1, "hr": 1, "bb": 1, "so": 0, "avg": "0.276" },
+              { "team": "BOS", "player": "Triston Casas", "position": "1B", "ab": 3, "r": 0, "h": 1, "rbi": 1, "hr": 0, "bb": 1, "so": 1, "avg": "0.244" },
+              { "team": "BOS", "player": "Masataka Yoshida", "position": "DH", "ab": 4, "r": 0, "h": 2, "rbi": 0, "hr": 0, "bb": 0, "so": 0, "avg": "0.281" },
+              { "team": "BOS", "player": "Trevor Story", "position": "SS", "ab": 3, "r": 1, "h": 0, "rbi": 0, "hr": 0, "bb": 1, "so": 2, "avg": "0.238" }
+            ],
+            "pulse": [
+              { "source": "sportsbook-implied", "t": "2026-07-08T18:05:00-04:00", "homeWinProb": 0.46 },
+              { "source": "sportsbook-implied", "t": "2026-07-08T18:14:00-04:00", "homeWinProb": 0.44 },
+              { "source": "sportsbook-implied", "t": "2026-07-08T18:23:00-04:00", "homeWinProb": 0.42 },
+              { "source": "sportsbook-implied", "t": "2026-07-08T18:32:00-04:00", "homeWinProb": 0.4 },
+              { "source": "sportsbook-implied", "t": "2026-07-08T18:41:00-04:00", "homeWinProb": 0.43 },
+              { "source": "sportsbook-implied", "t": "2026-07-08T18:50:00-04:00", "homeWinProb": 0.41 },
+              { "source": "sportsbook-implied", "t": "2026-07-08T18:59:00-04:00", "homeWinProb": 0.38 },
+              { "source": "sportsbook-implied", "t": "2026-07-08T19:08:00-04:00", "homeWinProb": 0.4 },
+              { "source": "sportsbook-implied", "t": "2026-07-08T19:17:00-04:00", "homeWinProb": 0.37 },
+              { "source": "sportsbook-implied", "t": "2026-07-08T19:26:00-04:00", "homeWinProb": 0.39 },
+              { "source": "sportsbook-implied", "t": "2026-07-08T19:35:00-04:00", "homeWinProb": 0.42 },
+              { "source": "sportsbook-implied", "t": "2026-07-08T19:42:00-04:00", "homeWinProb": 0.41 }
+            ]
+          }
+        },
+        {
+          "id": "mlb-2026-07-08-tb-tor",
+          "status": "live",
+          "startTime": "2026-07-08T19:07:00-04:00",
+          "away": { "name": "Tampa Bay Rays", "abbr": "TB", "score": 0 },
+          "home": { "name": "Toronto Blue Jays", "abbr": "TOR", "score": 0 }
+        },
+        {
+          "id": "mlb-2026-07-08-hou-sea",
+          "status": "live",
+          "startTime": "2026-07-08T21:40:00-04:00",
+          "away": { "name": "Houston Astros", "abbr": "HOU", "score": 1 },
+          "home": { "name": "Seattle Mariners", "abbr": "SEA", "score": 2 }
+        },
+        {
+          "id": "mlb-2026-07-08-lad-sf",
+          "status": "final",
+          "startTime": "2026-07-08T15:45:00-04:00",
+          "away": { "name": "Los Angeles Dodgers", "abbr": "LAD", "score": 6 },
+          "home": { "name": "San Francisco Giants", "abbr": "SF", "score": 2 }
+        },
+        {
+          "id": "mlb-2026-07-08-atl-nym",
+          "status": "final",
+          "startTime": "2026-07-08T13:10:00-04:00",
+          "away": { "name": "Atlanta Braves", "abbr": "ATL", "score": 5 },
+          "home": { "name": "New York Mets", "abbr": "NYM", "score": 7 }
+        },
+        {
+          "id": "mlb-2026-07-08-phi-wsn",
+          "status": "final",
+          "startTime": "2026-07-08T13:05:00-04:00",
+          "away": { "name": "Philadelphia Phillies", "abbr": "PHI", "score": 8 },
+          "home": { "name": "Washington Nationals", "abbr": "WSN", "score": 3 }
+        },
+        {
+          "id": "mlb-2026-07-08-mil-cin",
+          "status": "final",
+          "startTime": "2026-07-08T13:10:00-04:00",
+          "away": { "name": "Milwaukee Brewers", "abbr": "MIL", "score": 2 },
+          "home": { "name": "Cincinnati Reds", "abbr": "CIN", "score": 4 }
+        },
+        {
+          "id": "mlb-2026-07-08-chc-stl",
+          "status": "scheduled",
+          "startTime": "2026-07-08T20:15:00-04:00",
+          "away": { "name": "Chicago Cubs", "abbr": "CHC", "score": null },
+          "home": { "name": "St. Louis Cardinals", "abbr": "STL", "score": null }
+        },
+        {
+          "id": "mlb-2026-07-08-sd-col",
+          "status": "scheduled",
+          "startTime": "2026-07-08T20:40:00-04:00",
+          "away": { "name": "San Diego Padres", "abbr": "SD", "score": null },
+          "home": { "name": "Colorado Rockies", "abbr": "COL", "score": null }
+        },
+        {
+          "id": "mlb-2026-07-08-cle-det",
+          "status": "scheduled",
+          "startTime": "2026-07-08T18:40:00-04:00",
+          "away": { "name": "Cleveland Guardians", "abbr": "CLE", "score": null },
+          "home": { "name": "Detroit Tigers", "abbr": "DET", "score": null }
+        }
+      ]
+    },
+    "nba": {
+      "status": "offseason",
+      "asOf": "2026-07-08T19:40:00-04:00",
+      "games": []
+    },
+    "nfl": {
+      "status": "offseason",
+      "asOf": "2026-07-08T19:40:00-04:00",
+      "games": []
+    }
+  }
+}

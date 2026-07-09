@@ -1,0 +1,9 @@
+# stat-api analytics notebooks — dependencies
+#
+# `statapi` is the public stat-api Python SDK. It is NOT on PyPI yet (publishes in S11 / DM5).
+# Until then, install the local SDK editable from the monorepo instead of this line:
+#     pip install -e ../../../sdks/python
+statapi
+pandas
+matplotlib
+jupyter

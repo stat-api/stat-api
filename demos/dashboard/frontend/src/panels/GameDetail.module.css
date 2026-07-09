@@ -1,0 +1,143 @@
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 16px 18px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-faint);
+}
+
+.matchup {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.at {
+  color: var(--text-faint);
+  font-weight: 400;
+  margin: 0 2px;
+}
+
+.score {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.dash {
+  color: var(--text-faint);
+  margin: 0 4px;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.blockHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.blockTitle {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.table thead th {
+  text-align: right;
+  font-weight: 600;
+  color: var(--text-faint);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+}
+
+.table tbody td {
+  text-align: right;
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--border-faint);
+  font-family: var(--font-mono);
+  color: var(--text);
+}
+
+.table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.left {
+  text-align: left !important;
+  white-space: nowrap;
+}
+
+.boxTeam {
+  font-weight: 700;
+  color: var(--text-faint);
+  margin-right: 7px;
+}
+
+.boxPlayer {
+  font-family: var(--font-sans);
+  color: var(--text);
+}
+
+.boxPos {
+  margin-left: 7px;
+  color: var(--text-faint);
+  font-size: 0.66rem;
+}
+
+.avg {
+  color: var(--accent) !important;
+}

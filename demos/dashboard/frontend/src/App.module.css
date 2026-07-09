@@ -1,0 +1,115 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 22px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(var(--bg-elevated), var(--bg));
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.logo {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-size: 1.05rem;
+}
+
+.logo::before {
+  content: '◆';
+  color: var(--accent);
+  margin-right: 7px;
+  font-size: 0.9em;
+}
+
+.product {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.01em;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 0.78rem;
+}
+
+.connLive,
+.connIdle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  text-transform: lowercase;
+}
+
+.connDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+
+.connLive .connDot {
+  background: var(--positive);
+  box-shadow: 0 0 8px var(--positive);
+}
+
+.updated {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+}
+
+.layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  gap: 18px;
+  padding: 18px 22px 28px;
+  align-items: start;
+}
+
+.left,
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.right {
+  position: sticky;
+  top: 78px;
+}
+
+.rightEmpty {
+  padding: 48px 24px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--text-faint);
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .right {
+    position: static;
+  }
+}

@@ -1,0 +1,6 @@
+# Disposable local venvs created by verify.sh / ci-lint.sh
+.venv/
+.ci-venv/
+# Jupyter/Python scratch
+.ipynb_checkpoints/
+__pycache__/

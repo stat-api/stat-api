@@ -1,0 +1,78 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbFilteringBasics", "MlbFilteringBasics\MlbFilteringBasics.csproj", "{E4DA7753-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbHelloStatApi", "MlbHelloStatApi\MlbHelloStatApi.csproj", "{EF67E5B8-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbPaginationAuto", "MlbPaginationAuto\MlbPaginationAuto.csproj", "{7D8C17C5-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbaFilteringBasics", "NbaFilteringBasics\NbaFilteringBasics.csproj", "{40AA1B15-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbaGetById", "NbaGetById\NbaGetById.csproj", "{C6AEE0C4-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbaHelloStatApi", "NbaHelloStatApi\NbaHelloStatApi.csproj", "{CFC4D536-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbaPaginationAuto", "NbaPaginationAuto\NbaPaginationAuto.csproj", "{50092947-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NflFilteringBasics", "NflFilteringBasics\NflFilteringBasics.csproj", "{B08F0468-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NflHelloStatApi", "NflHelloStatApi\NflHelloStatApi.csproj", "{0EED69B9-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NflPaginationAuto", "NflPaginationAuto\NflPaginationAuto.csproj", "{56D53FAC-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NhlFilteringBasics", "NhlFilteringBasics\NhlFilteringBasics.csproj", "{2DB95446-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NhlHelloStatApi", "NhlHelloStatApi\NhlHelloStatApi.csproj", "{C270618B-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NhlPaginationAuto", "NhlPaginationAuto\NhlPaginationAuto.csproj", "{19E9C192-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DfsRequiredFilterSets", "DfsRequiredFilterSets\DfsRequiredFilterSets.csproj", "{E55BF612-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbaErrorHandling", "NbaErrorHandling\NbaErrorHandling.csproj", "{AC530263-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbaPaginationManual", "NbaPaginationManual\NbaPaginationManual.csproj", "{D02E6A9E-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbaQuotaHeaders", "NbaQuotaHeaders\NbaQuotaHeaders.csproj", "{26B2E192-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbBoxScore", "MlbBoxScore\MlbBoxScore.csproj", "{58B58C9B-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbRoster", "MlbRoster\MlbRoster.csproj", "{9EBCB6A5-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbSeasonLeaders", "MlbSeasonLeaders\MlbSeasonLeaders.csproj", "{232A120B-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTeamStandings", "MlbTeamStandings\MlbTeamStandings.csproj", "{D5D20658-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbaBoxScore", "NbaBoxScore\NbaBoxScore.csproj", "{B97A9059-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbaPlayerGameLog", "NbaPlayerGameLog\NbaPlayerGameLog.csproj", "{CBD961AF-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbaSeasonLeaders", "NbaSeasonLeaders\NbaSeasonLeaders.csproj", "{90865495-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbaTeamStandings", "NbaTeamStandings\NbaTeamStandings.csproj", "{8E3D3BAE-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NflBoxScore", "NflBoxScore\NflBoxScore.csproj", "{29A15776-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NflPlayerGameLog", "NflPlayerGameLog\NflPlayerGameLog.csproj", "{F7767E9A-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NflRoster", "NflRoster\NflRoster.csproj", "{A97E0798-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NflSeasonLeaders", "NflSeasonLeaders\NflSeasonLeaders.csproj", "{19FC9280-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NflTeamStandings", "NflTeamStandings\NflTeamStandings.csproj", "{EBFEB8FB-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NhlBoxScore", "NhlBoxScore\NhlBoxScore.csproj", "{26F90088-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NhlSeasonLeaders", "NhlSeasonLeaders\NhlSeasonLeaders.csproj", "{61C1759E-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PgaLeaderboard", "PgaLeaderboard\PgaLeaderboard.csproj", "{4C904B8E-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PgaScorecard", "PgaScorecard\PgaScorecard.csproj", "{CA32D0B1-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DfsSlateToSalaries", "DfsSlateToSalaries\DfsSlateToSalaries.csproj", "{ED261272-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbaKalshiMarketsForGame", "NbaKalshiMarketsForGame\NbaKalshiMarketsForGame.csproj", "{A008F024-0000-0000-0000-000000000000}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbaRollingAverages", "NbaRollingAverages\NbaRollingAverages.csproj", "{70E07A71-0000-0000-0000-000000000000}"
+EndProject
+Global
+EndGlobal

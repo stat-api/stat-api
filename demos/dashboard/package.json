@@ -1,0 +1,23 @@
+{
+  "name": "@stat-api/demo-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Live games dashboard demo — a tiered poller over the stat-api SDK fanning one snapshot out to every browser over SSE.",
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/main.ts",
+    "dev": "bun --watch run src/main.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test test/",
+    "test:smoke": "bun run test/smoke.ts",
+    "build:frontend": "cd frontend && bun install && bun run build"
+  },
+  "dependencies": {
+    "@stat-api/client": "^0.1.0",
+    "hono": "^4.6.14"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.1.14",
+    "typescript": "^5.4.3"
+  }
+}
