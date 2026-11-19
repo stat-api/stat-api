@@ -22,12 +22,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var season int64
+	var season int
 	seasonBest := -1
 	for _, s := range seasonPage.Rows {
 		if s.StartYear > seasonBest {
 			seasonBest = s.StartYear
-			season = s.ID
+			season = s.StartYear
 		}
 	}
 

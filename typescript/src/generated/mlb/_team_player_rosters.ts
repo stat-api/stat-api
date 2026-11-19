@@ -2,7 +2,12 @@
 //
 // SDK resource for mlb.team_player_rosters (public API).
 // Source: schema/api/groups/public.yml + schema/model/mlb/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface MLBTeamPlayerRoster {
   id: number;
@@ -26,6 +31,8 @@ export interface MLBTeamPlayerRostersListResponse {
   team_player_rosters: MLBTeamPlayerRoster[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -35,12 +42,17 @@ export class MLBTeamPlayerRostersResource {
 
   async list(params?: MLBTeamPlayerRostersListParams): Promise<MLBTeamPlayerRostersListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<MLBTeamPlayerRostersListResponse, 'quota'>>(this.opts, `/api/v1/mlb/team_player_rosters${qs}`);
+    const r = await fetchJson<Omit<MLBTeamPlayerRostersListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/mlb/team_player_rosters${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
   async get(id: number): Promise<MLBTeamPlayerRoster> {
-    return (await fetchJson<MLBTeamPlayerRoster>(this.opts, `/api/v1/mlb/team_player_rosters/${id}`)).data;
+    return (
+      await fetchJson<MLBTeamPlayerRoster>(this.opts, `/api/v1/mlb/team_player_rosters/${id}`)
+    ).data;
   }
   async *iter(params?: MLBTeamPlayerRostersListParams): AsyncGenerator<MLBTeamPlayerRoster> {
     // Always walk with from_id (starting at 0): from_id forces the server's
@@ -53,7 +65,10 @@ export class MLBTeamPlayerRostersResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: MLBTeamPlayerRostersListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as MLBTeamPlayerRostersListParams);
+      const page: MLBTeamPlayerRostersListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as MLBTeamPlayerRostersListParams);
       for (const row of page.team_player_rosters) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

@@ -1,5 +1,5 @@
 # Read a PGA golfer's leaderboard finishes
-# Generated from schema/api/examples/leaderboard.yml — do not edit.
+# Generated from schema/api/examples/golf-leaderboard.yml — do not edit.
 from statapi import StatApi
 
 api = StatApi()  # reads STAT_API_KEY from the environment

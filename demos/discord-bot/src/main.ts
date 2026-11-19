@@ -8,33 +8,33 @@
 // =============================================================================
 
 import {
-  Client,
-  GatewayIntentBits,
-  Events,
-  SlashCommandBuilder,
-  EmbedBuilder,
-  MessageFlags,
-  type ChatInputCommandInteraction,
-  type AutocompleteInteraction,
-  type Interaction,
-} from 'discord.js';
-import {
+  AuthenticationError,
+  NotFoundError,
+  QuotaExceededError,
   StatApi,
   StatApiError,
-  AuthenticationError,
-  QuotaExceededError,
-  NotFoundError,
   ValidationError,
 } from '@stat-api/client';
+import {
+  type AutocompleteInteraction,
+  type ChatInputCommandInteraction,
+  Client,
+  EmbedBuilder,
+  Events,
+  GatewayIntentBits,
+  type Interaction,
+  MessageFlags,
+  SlashCommandBuilder,
+} from 'discord.js';
 
 import { cache, scoresKey } from './cache';
-import type { TeamLeague, NewsLeague } from './leagues';
-import { errorEmbed, type Embed } from './format';
-import { handleScores, type Slate } from './commands/scores';
 import { handleBox } from './commands/box';
-import { handlePlayer } from './commands/player';
-import { handleStandings } from './commands/standings';
 import { handleNews } from './commands/news';
+import { handlePlayer } from './commands/player';
+import { handleScores, type Slate } from './commands/scores';
+import { handleStandings } from './commands/standings';
+import { type Embed, errorEmbed } from './format';
+import type { NewsLeague, TeamLeague } from './leagues';
 
 /** A user-facing problem (bad input) — rendered as a gentle embed, not logged. */
 class UserError extends Error {}
@@ -42,8 +42,8 @@ class UserError extends Error {}
 // ---- env ----
 
 function requireEnv(): { token: string; apiKey: string } {
-  const token = process.env['DISCORD_TOKEN'];
-  const apiKey = process.env['STAT_API_KEY'];
+  const token = process.env.DISCORD_TOKEN;
+  const apiKey = process.env.STAT_API_KEY;
   const missing = [
     ['DISCORD_TOKEN', token],
     ['STAT_API_KEY', apiKey],
@@ -71,15 +71,29 @@ const commands = [
   new SlashCommandBuilder()
     .setName('scores')
     .setDescription('Scoreboard for a league on a date')
-    .addStringOption((o) => o.setName('league').setDescription('League (default MLB)').addChoices(...TEAM_LEAGUE_CHOICES))
+    .addStringOption((o) =>
+      o
+        .setName('league')
+        .setDescription('League (default MLB)')
+        .addChoices(...TEAM_LEAGUE_CHOICES),
+    )
     .addStringOption((o) => o.setName('date').setDescription('Date YYYYMMDD, ET (default today)')),
   new SlashCommandBuilder()
     .setName('box')
     .setDescription('Box score for a game')
     .addStringOption((o) =>
-      o.setName('game').setDescription("Game — type to search today's slate").setRequired(true).setAutocomplete(true),
+      o
+        .setName('game')
+        .setDescription("Game — type to search today's slate")
+        .setRequired(true)
+        .setAutocomplete(true),
     )
-    .addStringOption((o) => o.setName('league').setDescription('League (default MLB)').addChoices(...TEAM_LEAGUE_CHOICES)),
+    .addStringOption((o) =>
+      o
+        .setName('league')
+        .setDescription('League (default MLB)')
+        .addChoices(...TEAM_LEAGUE_CHOICES),
+    ),
   new SlashCommandBuilder()
     .setName('player')
     .setDescription('NBA player season averages')
@@ -92,7 +106,11 @@ const commands = [
       o
         .setName('league')
         .setDescription('League (default NBA)')
-        .addChoices({ name: 'NBA', value: 'nba' }, { name: 'NFL', value: 'nfl' }, { name: 'MLB', value: 'mlb' }),
+        .addChoices(
+          { name: 'NBA', value: 'nba' },
+          { name: 'NFL', value: 'nfl' },
+          { name: 'MLB', value: 'mlb' },
+        ),
     ),
 ].map((c) => c.toJSON());
 
@@ -102,7 +120,10 @@ async function route(api: StatApi, interaction: ChatInputCommandInteraction): Pr
   const opts = interaction.options;
   switch (interaction.commandName) {
     case 'scores':
-      return handleScores(api, { league: (opts.getString('league') ?? 'mlb') as TeamLeague, date: opts.getString('date') ?? todayEastern() });
+      return handleScores(api, {
+        league: (opts.getString('league') ?? 'mlb') as TeamLeague,
+        date: opts.getString('date') ?? todayEastern(),
+      });
     case 'box': {
       const gameId = Number(opts.getString('game', true));
       if (!Number.isInteger(gameId)) throw new UserError('Pick a game from the autocomplete list.');
@@ -132,17 +153,25 @@ async function handleAutocomplete(interaction: AutocompleteInteraction): Promise
   const choices = (slate?.value.games ?? [])
     .filter((g) => `${g.away} ${g.home}`.toLowerCase().includes(typed))
     .slice(0, 25)
-    .map((g) => ({ name: `${g.away} @ ${g.home} (${g.status})`.slice(0, 100), value: String(g.gameId) }));
+    .map((g) => ({
+      name: `${g.away} @ ${g.home} (${g.status})`.slice(0, 100),
+      value: String(g.gameId),
+    }));
   await interaction.respond(choices);
 }
 
 function errorEmbedFor(err: unknown): Embed {
   if (err instanceof QuotaExceededError)
-    return errorEmbed('Quota exceeded', 'This bot has hit its monthly stat-api record quota. Try again later.');
-  if (err instanceof AuthenticationError) return errorEmbed('Auth error', "The bot's STAT_API_KEY is invalid or expired.");
+    return errorEmbed(
+      'Quota exceeded',
+      'This bot has hit its monthly stat-api record quota. Try again later.',
+    );
+  if (err instanceof AuthenticationError)
+    return errorEmbed('Auth error', "The bot's STAT_API_KEY is invalid or expired.");
   if (err instanceof NotFoundError) return errorEmbed('Not found', 'No data for that request.');
   if (err instanceof ValidationError) return errorEmbed('Bad request', err.message);
-  if (err instanceof StatApiError) return errorEmbed('stat-api error', `The request failed (HTTP ${err.status}).`);
+  if (err instanceof StatApiError)
+    return errorEmbed('stat-api error', `The request failed (HTTP ${err.status}).`);
   if (err instanceof UserError) return errorEmbed('Try again', err.message);
   console.error('unexpected interaction error:', err);
   return errorEmbed('Unexpected error', 'Something went wrong handling that command.');
@@ -187,7 +216,8 @@ function main(): void {
       if (interaction.isAutocomplete()) return; // can't reply with an embed
       const embed = new EmbedBuilder(errorEmbedFor(err));
       if (interaction.isChatInputCommand()) {
-        if (interaction.deferred || interaction.replied) await interaction.editReply({ embeds: [embed] });
+        if (interaction.deferred || interaction.replied)
+          await interaction.editReply({ embeds: [embed] });
         else await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
       }
     }

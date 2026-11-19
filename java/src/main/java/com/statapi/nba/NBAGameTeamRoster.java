@@ -13,13 +13,10 @@ public record NBAGameTeamRoster(
     Long teamId,
     String comment,
     Boolean confirmed,
-    Integer day,
+    Integer depthOrder,
+    String depthPosition,
     String injuryStatus,
     String position,
-    Boolean preGameConfirmed,
-    String preGameInjuryStatus,
-    Boolean preGameStarter,
-    Integer preGameStatus,
     Boolean starter,
     Integer status
 ) {
@@ -32,13 +29,10 @@ public record NBAGameTeamRoster(
             json.get("team_id").asLong(),
             json.get("comment").asString(),
             json.get("confirmed").asBoolean(),
-            json.get("day").asInt(),
+            json.get("depth_order").asInt(),
+            json.get("depth_position").asString(),
             json.get("injury_status").asString(),
             json.get("position").asString(),
-            json.get("pre_game_confirmed").asBoolean(),
-            json.get("pre_game_injury_status").asString(),
-            json.get("pre_game_starter").asBoolean(),
-            json.get("pre_game_status").asInt(),
             json.get("starter").asBoolean(),
             json.get("status").asInt()
         );

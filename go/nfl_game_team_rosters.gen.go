@@ -15,26 +15,33 @@ import (
 
 // NFLGameTeamRoster is a row from nfl.game_team_rosters.
 type NFLGameTeamRoster struct {
-	ID       int64   `json:"id"`
-	GameID   int64   `json:"game_id"`
-	PlayerID int64   `json:"player_id"`
-	TeamID   int64   `json:"team_id"`
-	Comment  *string `json:"comment"`
-	Day      int     `json:"day"`
-	Position *string `json:"position"`
-	Starter  bool    `json:"starter"`
-	Status   *string `json:"status"`
+	ID            int64   `json:"id"`
+	GameID        int64   `json:"game_id"`
+	PlayerID      int64   `json:"player_id"`
+	TeamID        int64   `json:"team_id"`
+	Comment       *string `json:"comment"`
+	DepthOrder    *int    `json:"depth_order"`
+	DepthPosition *string `json:"depth_position"`
+	Formation     *string `json:"formation"`
+	InjuryStatus  *string `json:"injury_status"`
+	Position      *string `json:"position"`
+	Starter       bool    `json:"starter"`
+	Status        *string `json:"status"`
 }
 
 // NFLGameTeamRostersListParams are the query parameters for listing nfl.game_team_rosters.
 type NFLGameTeamRostersListParams struct {
-	GameID   *int64
-	TeamID   *int64
-	PlayerID *int64
-	Position *string
-	Status   *string
-	Limit    *int
-	FromID   *int64
+	GameID       *int64
+	TeamID       *int64
+	PlayerID     *int64
+	Position     *string
+	Status       *string
+	DepthOrder   *int
+	Formation    *string
+	InjuryStatus *string
+	Mode         *string
+	Limit        *int
+	FromID       *int64
 }
 
 func (p *NFLGameTeamRostersListParams) values() url.Values {
@@ -56,6 +63,18 @@ func (p *NFLGameTeamRostersListParams) values() url.Values {
 	}
 	if p.Status != nil {
 		v.Set("status", *p.Status)
+	}
+	if p.DepthOrder != nil {
+		v.Set("depth_order", strconv.Itoa(*p.DepthOrder))
+	}
+	if p.Formation != nil {
+		v.Set("formation", *p.Formation)
+	}
+	if p.InjuryStatus != nil {
+		v.Set("injury_status", *p.InjuryStatus)
+	}
+	if p.Mode != nil {
+		v.Set("mode", *p.Mode)
 	}
 	if p.Limit != nil {
 		v.Set("limit", strconv.Itoa(*p.Limit))

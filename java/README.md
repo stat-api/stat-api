@@ -6,7 +6,7 @@ Official Java client for the [stat-api](https://stat-api.com) sports data API â€
 a single, typed surface over NBA, NFL, MLB, NHL, and PGA data.
 
 Zero runtime dependencies (JDK 17 `java.net.http` + a hand-written JSON reader).
-Version 0.1.0.
+Version 0.3.0.
 
 ## Install
 
@@ -24,7 +24,7 @@ repositories {
 }
 dependencies {
     // Deferred â€” needs a root build config for the java/ subdirectory module.
-    implementation("com.github.stat-api:stat-api:v0.1.0")
+    implementation("com.github.stat-api:stat-api:v0.3.0")
 }
 ```
 
@@ -106,6 +106,17 @@ try {
 | 404 | `NotFoundException` |
 | 429 | `QuotaExceededException` |
 | other | `StatApiException` |
+
+## NFL sim (beta)
+
+The Java client has the core calls of the NFL play-by-play simulator. Game 43418 (2026 Week 1 DEN @ KC) is free. Other games need a Pro or Elite plan, or the DFS add-on.
+
+- `api.nfl().weeks(season)`
+- `api.sim().nfl().run(new NFLSimPublicRunRequest(gameId).nDraws(5000).seed(42L))`
+
+The tutorial has 5 recipes. Each one runs on the free game and prints real output. Start with [Run your first NFL game simulation](../cookbook/java/src/main/java/com/statapi/cookbook/NFLSimSummary.java), or read the whole tutorial at https://stat-api.com/docs/cookbook/sim/.
+
+The API reference: https://stat-api.com/docs/api/sim/
 
 ## Quota
 

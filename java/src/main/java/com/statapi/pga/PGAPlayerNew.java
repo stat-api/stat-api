@@ -15,15 +15,11 @@ public record PGAPlayerNew(
     String categories,
     String content,
     String newsTime,
-    String originalSource,
-    String originalSourceUrl,
     Integer priority,
     JsonValue situationalImpact,
-    String source,
     String termsOfUse,
     String title,
-    String updatedTime,
-    String url
+    String updatedTime
 ) {
 
     public static PGAPlayerNew fromJson(JsonValue json) {
@@ -36,15 +32,11 @@ public record PGAPlayerNew(
             json.get("categories").asString(),
             json.get("content").asString(),
             json.get("news_time").asString(),
-            json.get("original_source").asString(),
-            json.get("original_source_url").asString(),
             json.get("priority").asInt(),
             json.get("situational_impact"),
-            json.get("source").asString(),
             json.get("terms_of_use").asString(),
             json.get("title").asString(),
-            json.get("updated_time").asString(),
-            json.get("url").asString()
+            json.get("updated_time").asString()
         );
     }
 }

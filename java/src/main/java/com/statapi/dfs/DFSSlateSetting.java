@@ -10,11 +10,14 @@ public record DFSSlateSetting(
     Long id,
     Long leagueId,
     Long operatorId,
+    String operatorSettingId,
     Integer contestType,
     String gameStyle,
     Integer gameType,
     String name,
-    JsonValue settings
+    JsonValue scoring,
+    JsonValue settings,
+    String validFrom
 ) {
 
     public static DFSSlateSetting fromJson(JsonValue json) {
@@ -22,11 +25,14 @@ public record DFSSlateSetting(
             json.get("id").asLong(),
             json.get("league_id").asLong(),
             json.get("operator_id").asLong(),
+            json.get("operator_setting_id").asString(),
             json.get("contest_type").asInt(),
             json.get("game_style").asString(),
             json.get("game_type").asInt(),
             json.get("name").asString(),
-            json.get("settings")
+            json.get("scoring"),
+            json.get("settings"),
+            json.get("valid_from").asString()
         );
     }
 }

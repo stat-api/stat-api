@@ -60,12 +60,16 @@ export async function rosterNameMap(
   league: TeamLeague,
   teamId: number,
 ): Promise<Map<number, string>> {
-  const { value } = await cache.fetch(cacheKey('roster', league, { team_id: teamId }), TTL.reference, async () => {
-    const rows =
-      league === 'nba'
-        ? (await api.nba.players.list({ team_id: teamId, limit: 100 })).players
-        : (await api.mlb.players.list({ team_id: teamId, limit: 100 })).players;
-    return rows.map((p) => ({ id: p.id, name: shortName(p.first_name, p.last_name) }));
-  });
+  const { value } = await cache.fetch(
+    cacheKey('roster', league, { team_id: teamId }),
+    TTL.reference,
+    async () => {
+      const rows =
+        league === 'nba'
+          ? (await api.nba.players.list({ team_id: teamId, limit: 100 })).players
+          : (await api.mlb.players.list({ team_id: teamId, limit: 100 })).players;
+      return rows.map((p) => ({ id: p.id, name: shortName(p.first_name, p.last_name) }));
+    },
+  );
   return new Map(value.map((p) => [p.id, p.name]));
 }

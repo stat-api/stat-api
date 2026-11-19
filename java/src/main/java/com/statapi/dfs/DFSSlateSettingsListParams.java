@@ -9,8 +9,20 @@ import java.util.Map;
 
 public final class DFSSlateSettingsListParams {
 
+    private Long operatorId;
+    private String operator;
     private Long limit;
     private Long fromId;
+
+    public DFSSlateSettingsListParams operatorId(Long operatorId) {
+        this.operatorId = operatorId;
+        return this;
+    }
+
+    public DFSSlateSettingsListParams operator(String operator) {
+        this.operator = operator;
+        return this;
+    }
 
     public DFSSlateSettingsListParams limit(Long limit) {
         this.limit = limit;
@@ -24,6 +36,12 @@ public final class DFSSlateSettingsListParams {
 
     public Map<String, String> toQuery() {
         Map<String, String> query = new LinkedHashMap<>();
+        if (operatorId != null) {
+            query.put("operator_id", String.valueOf(operatorId));
+        }
+        if (operator != null) {
+            query.put("operator", String.valueOf(operator));
+        }
         if (limit != null) {
             query.put("limit", String.valueOf(limit));
         }

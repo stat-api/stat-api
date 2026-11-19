@@ -2,13 +2,21 @@
 //
 // SDK resource for nfl.operator_player_lookups (public API).
 // Source: schema/api/groups/public.yml + schema/model/nfl/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NFLOperatorPlayerLookup {
   id: number;
   operator_id: number;
   operator_player_id: string;
-  player_id: number;
+  player_id?: number | null;
+  decided_at?: string | null;
+  decided_reason?: string | null;
+  decision?: string | null;
   player_name?: string | null;
   position?: string | null;
 }
@@ -25,6 +33,8 @@ export interface NFLOperatorPlayerLookupsListResponse {
   operator_player_lookups: NFLOperatorPlayerLookup[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -32,16 +42,28 @@ export interface NFLOperatorPlayerLookupsListResponse {
 export class NFLOperatorPlayerLookupsResource {
   constructor(private readonly opts: ResolvedStatApiOptions) {}
 
-  async list(params?: NFLOperatorPlayerLookupsListParams): Promise<NFLOperatorPlayerLookupsListResponse> {
+  async list(
+    params?: NFLOperatorPlayerLookupsListParams,
+  ): Promise<NFLOperatorPlayerLookupsListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NFLOperatorPlayerLookupsListResponse, 'quota'>>(this.opts, `/api/v1/nfl/operator_player_lookups${qs}`);
+    const r = await fetchJson<Omit<NFLOperatorPlayerLookupsListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nfl/operator_player_lookups${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
   async get(id: number): Promise<NFLOperatorPlayerLookup> {
-    return (await fetchJson<NFLOperatorPlayerLookup>(this.opts, `/api/v1/nfl/operator_player_lookups/${id}`)).data;
+    return (
+      await fetchJson<NFLOperatorPlayerLookup>(
+        this.opts,
+        `/api/v1/nfl/operator_player_lookups/${id}`,
+      )
+    ).data;
   }
-  async *iter(params?: NFLOperatorPlayerLookupsListParams): AsyncGenerator<NFLOperatorPlayerLookup> {
+  async *iter(
+    params?: NFLOperatorPlayerLookupsListParams,
+  ): AsyncGenerator<NFLOperatorPlayerLookup> {
     // Always walk with from_id (starting at 0): from_id forces the server's
     // ascending keyset order. Without it, DESC-default tables return page 1
     // newest-first and next_from_id (the page MINIMUM) re-yields those same
@@ -52,7 +74,10 @@ export class NFLOperatorPlayerLookupsResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NFLOperatorPlayerLookupsListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NFLOperatorPlayerLookupsListParams);
+      const page: NFLOperatorPlayerLookupsListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NFLOperatorPlayerLookupsListParams);
       for (const row of page.operator_player_lookups) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

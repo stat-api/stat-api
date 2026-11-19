@@ -44,7 +44,6 @@ type NFLPlayByPlay struct {
 	LateralRusherPlayerID            *string  `json:"lateral_rusher_player_id"`
 	LateralSackPlayerID              *string  `json:"lateral_sack_player_id"`
 	NflAPIID                         *string  `json:"nfl_api_id"`
-	NflverseGameID                   *string  `json:"nflverse_game_id"`
 	OldGameID                        *string  `json:"old_game_id"`
 	OwnKickoffRecoveryPlayerID       *string  `json:"own_kickoff_recovery_player_id"`
 	PassDefense1PlayerID             *string  `json:"pass_defense_1_player_id"`

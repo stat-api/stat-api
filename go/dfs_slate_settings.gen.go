@@ -15,26 +15,37 @@ import (
 
 // DFSSlateSetting is a row from dfs.slate_settings.
 type DFSSlateSetting struct {
-	ID          int64           `json:"id"`
-	LeagueID    int64           `json:"league_id"`
-	OperatorID  int64           `json:"operator_id"`
-	ContestType int             `json:"contest_type"`
-	GameStyle   *string         `json:"game_style"`
-	GameType    int             `json:"game_type"`
-	Name        string          `json:"name"`
-	Settings    json.RawMessage `json:"settings"`
+	ID                int64            `json:"id"`
+	LeagueID          int64            `json:"league_id"`
+	OperatorID        int64            `json:"operator_id"`
+	OperatorSettingID *string          `json:"operator_setting_id"`
+	ContestType       int              `json:"contest_type"`
+	GameStyle         *string          `json:"game_style"`
+	GameType          int              `json:"game_type"`
+	Name              string           `json:"name"`
+	Scoring           *json.RawMessage `json:"scoring"`
+	Settings          json.RawMessage  `json:"settings"`
+	ValidFrom         *string          `json:"valid_from"`
 }
 
 // DFSSlateSettingsListParams are the query parameters for listing dfs.slate_settings.
 type DFSSlateSettingsListParams struct {
-	Limit  *int
-	FromID *int64
+	OperatorID *int64
+	Operator   *string
+	Limit      *int
+	FromID     *int64
 }
 
 func (p *DFSSlateSettingsListParams) values() url.Values {
 	v := url.Values{}
 	if p == nil {
 		return v
+	}
+	if p.OperatorID != nil {
+		v.Set("operator_id", strconv.FormatInt(*p.OperatorID, 10))
+	}
+	if p.Operator != nil {
+		v.Set("operator", *p.Operator)
 	}
 	if p.Limit != nil {
 		v.Set("limit", strconv.Itoa(*p.Limit))

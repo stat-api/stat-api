@@ -14,6 +14,7 @@ public final class NFLInjuriesListParams {
     private Long teamId;
     private Long seasonId;
     private Integer week;
+    private String mode;
     private Long limit;
     private Long fromId;
 
@@ -39,6 +40,11 @@ public final class NFLInjuriesListParams {
 
     public NFLInjuriesListParams week(Integer week) {
         this.week = week;
+        return this;
+    }
+
+    public NFLInjuriesListParams mode(String mode) {
+        this.mode = mode;
         return this;
     }
 
@@ -68,6 +74,9 @@ public final class NFLInjuriesListParams {
         }
         if (week != null) {
             query.put("week", String.valueOf(week));
+        }
+        if (mode != null) {
+            query.put("mode", String.valueOf(mode));
         }
         if (limit != null) {
             query.put("limit", String.valueOf(limit));

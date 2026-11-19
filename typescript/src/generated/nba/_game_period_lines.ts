@@ -2,7 +2,12 @@
 //
 // SDK resource for nba.game_period_lines (public API).
 // Source: schema/api/groups/public.yml + schema/model/nba/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NBAGamePeriodLine {
   id: number;
@@ -37,6 +42,8 @@ export interface NBAGamePeriodLinesListResponse {
   game_period_lines: NBAGamePeriodLine[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -46,12 +53,16 @@ export class NBAGamePeriodLinesResource {
 
   async list(params?: NBAGamePeriodLinesListParams): Promise<NBAGamePeriodLinesListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NBAGamePeriodLinesListResponse, 'quota'>>(this.opts, `/api/v1/nba/game_period_lines${qs}`);
+    const r = await fetchJson<Omit<NBAGamePeriodLinesListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nba/game_period_lines${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
   async get(id: number): Promise<NBAGamePeriodLine> {
-    return (await fetchJson<NBAGamePeriodLine>(this.opts, `/api/v1/nba/game_period_lines/${id}`)).data;
+    return (await fetchJson<NBAGamePeriodLine>(this.opts, `/api/v1/nba/game_period_lines/${id}`))
+      .data;
   }
   async *iter(params?: NBAGamePeriodLinesListParams): AsyncGenerator<NBAGamePeriodLine> {
     // Always walk with from_id (starting at 0): from_id forces the server's
@@ -64,7 +75,10 @@ export class NBAGamePeriodLinesResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NBAGamePeriodLinesListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NBAGamePeriodLinesListParams);
+      const page: NBAGamePeriodLinesListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NBAGamePeriodLinesListParams);
       for (const row of page.game_period_lines) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

@@ -16,7 +16,6 @@ public record NFLTeam(
     String conference,
     String division,
     String fullName,
-    String logoUrl,
     String name,
     String primaryColor,
     String secondaryColor
@@ -33,7 +32,6 @@ public record NFLTeam(
             json.get("conference").asString(),
             json.get("division").asString(),
             json.get("full_name").asString(),
-            json.get("logo_url").asString(),
             json.get("name").asString(),
             json.get("primary_color").asString(),
             json.get("secondary_color").asString()

@@ -2,7 +2,12 @@
 //
 // SDK resource for pga.player_season_stats (public API).
 // Source: schema/api/groups/public.yml + schema/model/golf/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface PGAPlayerSeasonStat {
   id: number;
@@ -59,6 +64,8 @@ export interface PGAPlayerSeasonStatsListResponse {
   player_season_stats: PGAPlayerSeasonStat[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -68,12 +75,17 @@ export class PGAPlayerSeasonStatsResource {
 
   async list(params?: PGAPlayerSeasonStatsListParams): Promise<PGAPlayerSeasonStatsListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<PGAPlayerSeasonStatsListResponse, 'quota'>>(this.opts, `/api/v1/pga/player_season_stats${qs}`);
+    const r = await fetchJson<Omit<PGAPlayerSeasonStatsListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/pga/player_season_stats${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
   async get(id: number): Promise<PGAPlayerSeasonStat> {
-    return (await fetchJson<PGAPlayerSeasonStat>(this.opts, `/api/v1/pga/player_season_stats/${id}`)).data;
+    return (
+      await fetchJson<PGAPlayerSeasonStat>(this.opts, `/api/v1/pga/player_season_stats/${id}`)
+    ).data;
   }
   async *iter(params?: PGAPlayerSeasonStatsListParams): AsyncGenerator<PGAPlayerSeasonStat> {
     // Always walk with from_id (starting at 0): from_id forces the server's
@@ -86,7 +98,10 @@ export class PGAPlayerSeasonStatsResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: PGAPlayerSeasonStatsListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as PGAPlayerSeasonStatsListParams);
+      const page: PGAPlayerSeasonStatsListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as PGAPlayerSeasonStatsListParams);
       for (const row of page.player_season_stats) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

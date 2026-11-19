@@ -13,7 +13,6 @@ public record MLBGameTeamRoster(
     Long teamId,
     Integer battingOrder,
     String comment,
-    Integer day,
     String position,
     Boolean starter,
     String status
@@ -27,7 +26,6 @@ public record MLBGameTeamRoster(
             json.get("team_id").asLong(),
             json.get("batting_order").asInt(),
             json.get("comment").asString(),
-            json.get("day").asInt(),
             json.get("position").asString(),
             json.get("starter").asBoolean(),
             json.get("status").asString()

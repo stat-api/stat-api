@@ -1,8 +1,8 @@
 // /scores [league] [date] — scoreboard for a league on a date (YYYYMMDD, ET).
 import type { StatApi } from '@stat-api/client';
 import { cache, scoresKey, TTL } from '../cache';
+import { type Embed, offseasonEmbed, type ScoreLine, scoresEmbed, statFooter } from '../format';
 import { mlbTeamAbbrevMap, type TeamLeague } from '../leagues';
-import { offseasonEmbed, scoresEmbed, statFooter, type Embed, type ScoreLine } from '../format';
 
 export interface ScoresArgs {
   league: TeamLeague;

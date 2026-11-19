@@ -11,11 +11,21 @@ public record DFSSlate(
     Long externalId,
     Long leagueId,
     Long operatorId,
+    String operatorSettingId,
     Long slateSettingId,
+    Integer completeFileCount,
+    Integer contestCount,
     String date,
+    Integer gameCount,
+    String gameType,
+    Integer lineupContestCount,
     Boolean main,
     String name,
-    String startTime
+    String partOfGame,
+    Integer playerCount,
+    String startTime,
+    String state,
+    String status
 ) {
 
     public static DFSSlate fromJson(JsonValue json) {
@@ -24,11 +34,21 @@ public record DFSSlate(
             json.get("external_id").asLong(),
             json.get("league_id").asLong(),
             json.get("operator_id").asLong(),
+            json.get("operator_setting_id").asString(),
             json.get("slate_setting_id").asLong(),
+            json.get("complete_file_count").asInt(),
+            json.get("contest_count").asInt(),
             json.get("date").asString(),
+            json.get("game_count").asInt(),
+            json.get("game_type").asString(),
+            json.get("lineup_contest_count").asInt(),
             json.get("main").asBoolean(),
             json.get("name").asString(),
-            json.get("start_time").asString()
+            json.get("part_of_game").asString(),
+            json.get("player_count").asInt(),
+            json.get("start_time").asString(),
+            json.get("state").asString(),
+            json.get("status").asString()
         );
     }
 }

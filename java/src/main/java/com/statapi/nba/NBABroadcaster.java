@@ -8,7 +8,6 @@ import com.statapi.JsonValue;
 
 public record NBABroadcaster(
     Long id,
-    Integer broadcasterId,
     Integer broadcasterTeamId,
     Integer regionId,
     String broadcasterAbbreviation,
@@ -24,7 +23,6 @@ public record NBABroadcaster(
     public static NBABroadcaster fromJson(JsonValue json) {
         return new NBABroadcaster(
             json.get("id").asLong(),
-            json.get("broadcaster_id").asInt(),
             json.get("broadcaster_team_id").asInt(),
             json.get("region_id").asInt(),
             json.get("broadcaster_abbreviation").asString(),

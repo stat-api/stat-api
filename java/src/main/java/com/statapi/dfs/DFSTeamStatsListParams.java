@@ -9,8 +9,62 @@ import java.util.Map;
 
 public final class DFSTeamStatsListParams {
 
+    private Long slateId;
+    private Long operatorSlateId;
+    private Long gameId;
+    private String slateDate;
+    private Long teamId;
+    private String scoringFormat;
+    private Long operatorId;
+    private String operator;
+    private Long leagueId;
     private Long limit;
     private Long fromId;
+
+    public DFSTeamStatsListParams slateId(Long slateId) {
+        this.slateId = slateId;
+        return this;
+    }
+
+    public DFSTeamStatsListParams operatorSlateId(Long operatorSlateId) {
+        this.operatorSlateId = operatorSlateId;
+        return this;
+    }
+
+    public DFSTeamStatsListParams gameId(Long gameId) {
+        this.gameId = gameId;
+        return this;
+    }
+
+    public DFSTeamStatsListParams slateDate(String slateDate) {
+        this.slateDate = slateDate;
+        return this;
+    }
+
+    public DFSTeamStatsListParams teamId(Long teamId) {
+        this.teamId = teamId;
+        return this;
+    }
+
+    public DFSTeamStatsListParams scoringFormat(String scoringFormat) {
+        this.scoringFormat = scoringFormat;
+        return this;
+    }
+
+    public DFSTeamStatsListParams operatorId(Long operatorId) {
+        this.operatorId = operatorId;
+        return this;
+    }
+
+    public DFSTeamStatsListParams operator(String operator) {
+        this.operator = operator;
+        return this;
+    }
+
+    public DFSTeamStatsListParams leagueId(Long leagueId) {
+        this.leagueId = leagueId;
+        return this;
+    }
 
     public DFSTeamStatsListParams limit(Long limit) {
         this.limit = limit;
@@ -24,6 +78,33 @@ public final class DFSTeamStatsListParams {
 
     public Map<String, String> toQuery() {
         Map<String, String> query = new LinkedHashMap<>();
+        if (slateId != null) {
+            query.put("slate_id", String.valueOf(slateId));
+        }
+        if (operatorSlateId != null) {
+            query.put("operator_slate_id", String.valueOf(operatorSlateId));
+        }
+        if (gameId != null) {
+            query.put("game_id", String.valueOf(gameId));
+        }
+        if (slateDate != null) {
+            query.put("slate_date", String.valueOf(slateDate));
+        }
+        if (teamId != null) {
+            query.put("team_id", String.valueOf(teamId));
+        }
+        if (scoringFormat != null) {
+            query.put("scoring_format", String.valueOf(scoringFormat));
+        }
+        if (operatorId != null) {
+            query.put("operator_id", String.valueOf(operatorId));
+        }
+        if (operator != null) {
+            query.put("operator", String.valueOf(operator));
+        }
+        if (leagueId != null) {
+            query.put("league_id", String.valueOf(leagueId));
+        }
         if (limit != null) {
             query.put("limit", String.valueOf(limit));
         }

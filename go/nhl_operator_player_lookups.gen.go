@@ -18,7 +18,10 @@ type NHLOperatorPlayerLookup struct {
 	ID               int64   `json:"id"`
 	OperatorID       int64   `json:"operator_id"`
 	OperatorPlayerID string  `json:"operator_player_id"`
-	PlayerID         int64   `json:"player_id"`
+	PlayerID         *int64  `json:"player_id"`
+	DecidedAt        *string `json:"decided_at"`
+	DecidedReason    *string `json:"decided_reason"`
+	Decision         *string `json:"decision"`
 	PlayerName       *string `json:"player_name"`
 	Position         *string `json:"position"`
 }

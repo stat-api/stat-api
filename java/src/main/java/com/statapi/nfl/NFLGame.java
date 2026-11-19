@@ -34,8 +34,8 @@ public record NFLGame(
     Integer playoffSeedHome,
     String postponedStatus,
     String seasonType,
-    String startTime,
     String status,
+    Boolean timeTbd,
     String type,
     Integer week
 ) {
@@ -69,8 +69,8 @@ public record NFLGame(
             json.get("playoff_seed_home").asInt(),
             json.get("postponed_status").asString(),
             json.get("season_type").asString(),
-            json.get("start_time").asString(),
             json.get("status").asString(),
+            json.get("time_tbd").asBoolean(),
             json.get("type").asString(),
             json.get("week").asInt()
         );

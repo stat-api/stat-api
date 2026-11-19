@@ -29,7 +29,7 @@ NBAGame = TypedDict(
         "end_time": str | None,
         "game_label": str | None,
         "game_sub_label": str | None,
-        "game_time": str,
+        "game_time": str | None,
         "home_rotation_number": int | None,
         "home_team": str,
         "home_team_score": int,
@@ -40,7 +40,6 @@ NBAGame = TypedDict(
         "series_game_number": str | None,
         "series_name": str | None,
         "series_text": str | None,
-        "start_time": str,
         "status": str,
     },
 )

@@ -29,7 +29,7 @@
 }
 
 .logo::before {
-  content: '◆';
+  content: "◆";
   color: var(--accent);
   margin-right: 7px;
   font-size: 0.9em;

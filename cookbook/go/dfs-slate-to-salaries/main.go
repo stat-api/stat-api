@@ -1,5 +1,5 @@
 // Rank a DFS slate by salary and value
-// Generated from schema/api/examples/slate-to-salaries.yml — do not edit.
+// Generated from schema/api/examples/dfs-slate-to-salaries.yml — do not edit.
 package main
 
 import (
@@ -7,25 +7,9 @@ import (
 	"fmt"
 	statapi "github.com/stat-api/stat-api/go"
 	"log"
-	"reflect"
 	"sort"
 	"strings"
 )
-
-// str renders any value (dereferencing nil pointers to an empty cell).
-func str(v any) string {
-	if v == nil {
-		return ""
-	}
-	rv := reflect.ValueOf(v)
-	if rv.Kind() == reflect.Ptr {
-		if rv.IsNil() {
-			return ""
-		}
-		return fmt.Sprintf("%v", rv.Elem().Interface())
-	}
-	return fmt.Sprintf("%v", v)
-}
 
 func main() {
 	client, err := statapi.New()
@@ -34,48 +18,54 @@ func main() {
 	}
 	ctx := context.Background()
 
-	// Page the slate's players
-	var players []statapi.DFSSlatePlayer
-	for row, err := range client.DFS.SlatePlayers.All(ctx, &statapi.DFSSlatePlayersListParams{SlateID: statapi.Int64(int64(91396))}) {
+	// Page the slate's scoring rows
+	var stats []statapi.DFSPlayerStat
+	for row, err := range client.DFS.PlayerStats.All(ctx, &statapi.DFSPlayerStatsListParams{SlateID: statapi.Int64(int64(129036))}) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		players = append(players, row)
+		stats = append(stats, row)
 	}
 
-	// Rank by salary, highest first
-	bysalary := append([]statapi.DFSSlatePlayer(nil), players...)
-	bysalaryKey := func(r statapi.DFSSlatePlayer) int {
-		return r.Salary
-	}
-	sort.Slice(bysalary, func(i, j int) bool {
-		return bysalaryKey(bysalary[j]) < bysalaryKey(bysalary[i])
-	})
-
-	// Take the ten priciest players
-	top := bysalary
-	if len(top) > 10 {
-		top = top[:10]
+	// Drop the players who did not play
+	scored := make([]statapi.DFSPlayerStat, 0, len(stats))
+	for _, r := range stats {
+		if r.FantasyPts != nil {
+			scored = append(scored, r)
+		}
 	}
 
-	// Fetch the top player's projection
-	projPage, err := client.DFS.SlatePlayerProjections.List(ctx, &statapi.DFSSlatePlayerProjectionsListParams{SlatePlayerID: statapi.Int64(int64(top[0].ID))})
-	if err != nil {
-		log.Fatal(err)
-	}
-	proj := projPage.Rows
-
-	// Compute projected points per $1000 of salary
-	if len(proj) > 0 && len(top) > 0 {
-	    value := (proj[0].Projection / float64(top[0].Salary)) * 1000
-	    fmt.Printf("value of highest-salaried player = %.2f projected pts per $1000\n", value)
+	// Drop minimum-salary players
+	playable := make([]statapi.DFSPlayerStat, 0, len(scored))
+	for _, r := range scored {
+		if r.Salary >= 4000 {
+			playable = append(playable, r)
+		}
 	}
 
-	// Print the salary board
-	fmt.Println("Highest-salaried players on the slate")
-	fmt.Println(strings.Join([]string{"display_name", "position", "salary"}, "\t"))
-	for _, row := range top {
-		fmt.Println(strings.Join([]string{str(row.DisplayName), str(row.Position), str(row.Salary)}, "\t"))
+	// Compute points per $1,000 of salary
+	type valueRow struct {
+	    PlayerID int64
+	    Position string
+	    Salary   int
+	    Points   float64
+	    Value    float64
+	}
+	board := make([]valueRow, 0, len(playable))
+	for _, r := range playable {
+	    pts := 0.0
+	    if r.FantasyPts != nil {
+	        pts = *r.FantasyPts
+	    }
+	    board = append(board, valueRow{r.PlayerID, r.Position, r.Salary, pts, (pts / float64(r.Salary)) * 1000})
+	}
+	sort.Slice(board, func(i, j int) bool { return board[j].Value < board[i].Value })
+	if len(board) > 10 {
+	    board = board[:10]
+	}
+	fmt.Println(strings.Join([]string{"player_id", "position", "salary", "points", "per $1k"}, "\t"))
+	for _, r := range board {
+	    fmt.Printf("%d\t%s\t%d\t%.2f\t%.2f\n", r.PlayerID, r.Position, r.Salary, r.Points, r.Value)
 	}
 
 }

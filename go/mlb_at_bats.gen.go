@@ -22,8 +22,10 @@ type MLBAtBat struct {
 	PitcherID            int64    `json:"pitcher_id"`
 	AtBatNumber          int      `json:"at_bat_number"`
 	Balls                int      `json:"balls"`
+	BatSide              *string  `json:"bat_side"`
 	EndOuts              int      `json:"end_outs"`
 	EndRunners           int      `json:"end_runners"`
+	EndTime              *string  `json:"end_time"`
 	ExpectedBattingAvg   *float64 `json:"expected_batting_avg"`
 	ExpectedWoba         *float64 `json:"expected_woba"`
 	HitCoordX            *float64 `json:"hit_coord_x"`
@@ -42,11 +44,13 @@ type MLBAtBat struct {
 	IsUnder              *bool    `json:"is_under"`
 	LaunchSpeedAngleZone *int     `json:"launch_speed_angle_zone"`
 	PitchCount           int      `json:"pitch_count"`
+	PitchHand            *string  `json:"pitch_hand"`
 	Result               string   `json:"result"`
 	RunsScored           int      `json:"runs_scored"`
 	SprayAngle           *float64 `json:"spray_angle"`
 	StartOuts            int      `json:"start_outs"`
 	StartRunners         int      `json:"start_runners"`
+	StartTime            *string  `json:"start_time"`
 	StatcastQualityScore *float64 `json:"statcast_quality_score"`
 	Strikes              int      `json:"strikes"`
 	TrackingConfidence   *float64 `json:"tracking_confidence"`

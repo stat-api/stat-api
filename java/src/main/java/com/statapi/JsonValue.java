@@ -76,6 +76,19 @@ public final class JsonValue {
         return value instanceof Map ? (Map<String, JsonValue>) value : Map.of();
     }
 
+    /** Array of numbers (a DOUBLE PRECISION[] column), or {@code null} when this node is not a JSON array. An element
+     *  that is not a number is {@code null}. */
+    public List<Double> asDoubleList() {
+        if (!(value instanceof List)) {
+            return null;
+        }
+        List<Double> out = new java.util.ArrayList<>();
+        for (Object element : (List<?>) value) {
+            out.add(element instanceof JsonValue ? ((JsonValue) element).asDouble() : null);
+        }
+        return out;
+    }
+
     /** Array elements, or an empty list when this node is not a JSON array. */
     @SuppressWarnings("unchecked")
     public List<JsonValue> asArray() {
@@ -94,6 +107,49 @@ public final class JsonValue {
     /** True when this node is an object carrying {@code key}. */
     public boolean has(String key) {
         return value instanceof Map && ((Map<?, ?>) value).containsKey(key);
+    }
+
+    /** This node as JSON text. */
+    public String toJson() {
+        StringBuilder sb = new StringBuilder();
+        writeTo(sb);
+        return sb.toString();
+    }
+
+    private void writeTo(StringBuilder sb) {
+        if (value == null) {
+            sb.append("null");
+        } else if (value instanceof String s) {
+            JsonOut.quote(sb, s);
+        } else if (value instanceof Double d) {
+            JsonOut.number(sb, d);
+        } else if (value instanceof List<?> list) {
+            sb.append('[');
+            boolean first = true;
+            for (Object element : list) {
+                if (!first) {
+                    sb.append(',');
+                }
+                first = false;
+                ((JsonValue) element).writeTo(sb);
+            }
+            sb.append(']');
+        } else if (value instanceof Map<?, ?> map) {
+            sb.append('{');
+            boolean first = true;
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                if (!first) {
+                    sb.append(',');
+                }
+                first = false;
+                JsonOut.quote(sb, String.valueOf(entry.getKey()));
+                sb.append(':');
+                ((JsonValue) entry.getValue()).writeTo(sb);
+            }
+            sb.append('}');
+        } else {
+            sb.append(value);
+        }
     }
 
     @Override

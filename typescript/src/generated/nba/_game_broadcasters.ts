@@ -2,7 +2,12 @@
 //
 // SDK resource for nba.game_broadcasters (public API).
 // Source: schema/api/groups/public.yml + schema/model/nba/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NBAGameBroadcaster {
   id: number;
@@ -23,6 +28,8 @@ export interface NBAGameBroadcastersListResponse {
   game_broadcasters: NBAGameBroadcaster[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -32,12 +39,16 @@ export class NBAGameBroadcastersResource {
 
   async list(params?: NBAGameBroadcastersListParams): Promise<NBAGameBroadcastersListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NBAGameBroadcastersListResponse, 'quota'>>(this.opts, `/api/v1/nba/game_broadcasters${qs}`);
+    const r = await fetchJson<Omit<NBAGameBroadcastersListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nba/game_broadcasters${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
   async get(id: number): Promise<NBAGameBroadcaster> {
-    return (await fetchJson<NBAGameBroadcaster>(this.opts, `/api/v1/nba/game_broadcasters/${id}`)).data;
+    return (await fetchJson<NBAGameBroadcaster>(this.opts, `/api/v1/nba/game_broadcasters/${id}`))
+      .data;
   }
   async *iter(params?: NBAGameBroadcastersListParams): AsyncGenerator<NBAGameBroadcaster> {
     // Always walk with from_id (starting at 0): from_id forces the server's
@@ -50,7 +61,10 @@ export class NBAGameBroadcastersResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NBAGameBroadcastersListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NBAGameBroadcastersListParams);
+      const page: NBAGameBroadcastersListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NBAGameBroadcastersListParams);
       for (const row of page.game_broadcasters) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

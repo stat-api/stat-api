@@ -1,6 +1,6 @@
-import type { BoxLine, GameCard } from '../lib/contract';
 import type { LineSeries } from '../components/LineChart';
 import { LineChart } from '../components/LineChart';
+import type { BoxLine, GameCard } from '../lib/contract';
 import { formatClock } from '../lib/format';
 import styles from './GameDetail.module.css';
 
@@ -87,6 +87,7 @@ function BoxTable({ box }: { box: BoxLine[] }) {
         </thead>
         <tbody>
           {box.map((b, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: a box score can list the same team+player twice (two stat lines), so position disambiguates
             <tr key={`${b.team}-${b.player}-${i}`}>
               <td className={styles.left}>
                 <span className={styles.boxTeam}>{b.team}</span>

@@ -16,7 +16,6 @@ import (
 // NBABroadcaster is a row from nba.broadcasters.
 type NBABroadcaster struct {
 	ID                      int64   `json:"id"`
-	BroadcasterID           int     `json:"broadcaster_id"`
 	BroadcasterTeamID       int     `json:"broadcaster_team_id"`
 	RegionID                int     `json:"region_id"`
 	BroadcasterAbbreviation string  `json:"broadcaster_abbreviation"`

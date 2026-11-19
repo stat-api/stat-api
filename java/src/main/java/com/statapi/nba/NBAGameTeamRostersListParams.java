@@ -12,6 +12,11 @@ public final class NBAGameTeamRostersListParams {
     private Long gameId;
     private Long teamId;
     private Long playerId;
+    private String position;
+    private Integer status;
+    private String injuryStatus;
+    private Integer depthOrder;
+    private String mode;
     private Long limit;
     private Long fromId;
 
@@ -27,6 +32,31 @@ public final class NBAGameTeamRostersListParams {
 
     public NBAGameTeamRostersListParams playerId(Long playerId) {
         this.playerId = playerId;
+        return this;
+    }
+
+    public NBAGameTeamRostersListParams position(String position) {
+        this.position = position;
+        return this;
+    }
+
+    public NBAGameTeamRostersListParams status(Integer status) {
+        this.status = status;
+        return this;
+    }
+
+    public NBAGameTeamRostersListParams injuryStatus(String injuryStatus) {
+        this.injuryStatus = injuryStatus;
+        return this;
+    }
+
+    public NBAGameTeamRostersListParams depthOrder(Integer depthOrder) {
+        this.depthOrder = depthOrder;
+        return this;
+    }
+
+    public NBAGameTeamRostersListParams mode(String mode) {
+        this.mode = mode;
         return this;
     }
 
@@ -50,6 +80,21 @@ public final class NBAGameTeamRostersListParams {
         }
         if (playerId != null) {
             query.put("player_id", String.valueOf(playerId));
+        }
+        if (position != null) {
+            query.put("position", String.valueOf(position));
+        }
+        if (status != null) {
+            query.put("status", String.valueOf(status));
+        }
+        if (injuryStatus != null) {
+            query.put("injury_status", String.valueOf(injuryStatus));
+        }
+        if (depthOrder != null) {
+            query.put("depth_order", String.valueOf(depthOrder));
+        }
+        if (mode != null) {
+            query.put("mode", String.valueOf(mode));
         }
         if (limit != null) {
             query.put("limit", String.valueOf(limit));

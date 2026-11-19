@@ -24,6 +24,8 @@ type DFSContestUser struct {
 // DFSContestUsersListParams are the query parameters for listing dfs.contest_users.
 type DFSContestUsersListParams struct {
 	OperatorID *int64
+	Operator   *string
+	Name       *string
 	Limit      *int
 	FromID     *int64
 }
@@ -35,6 +37,12 @@ func (p *DFSContestUsersListParams) values() url.Values {
 	}
 	if p.OperatorID != nil {
 		v.Set("operator_id", strconv.FormatInt(*p.OperatorID, 10))
+	}
+	if p.Operator != nil {
+		v.Set("operator", *p.Operator)
+	}
+	if p.Name != nil {
+		v.Set("name", *p.Name)
 	}
 	if p.Limit != nil {
 		v.Set("limit", strconv.Itoa(*p.Limit))

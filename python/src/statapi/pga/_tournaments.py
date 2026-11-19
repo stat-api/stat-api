@@ -18,7 +18,6 @@ PGATournament = TypedDict(
         "league_id": str | None,
         "season_id": int | None,
         "tour_id": int | None,
-        "tournament_id": int,
         "canceled": bool,
         "city": str | None,
         "country": str | None,

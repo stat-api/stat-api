@@ -15,24 +15,39 @@ import (
 
 // DFSSlate is a row from dfs.slates.
 type DFSSlate struct {
-	ID             int64   `json:"id"`
-	ExternalID     int64   `json:"external_id"`
-	LeagueID       int64   `json:"league_id"`
-	OperatorID     int64   `json:"operator_id"`
-	SlateSettingID int64   `json:"slate_setting_id"`
-	Date           string  `json:"date"`
-	Main           bool    `json:"main"`
-	Name           *string `json:"name"`
-	StartTime      string  `json:"start_time"`
+	ID                 int64   `json:"id"`
+	ExternalID         int64   `json:"external_id"`
+	LeagueID           int64   `json:"league_id"`
+	OperatorID         int64   `json:"operator_id"`
+	OperatorSettingID  *string `json:"operator_setting_id"`
+	SlateSettingID     int64   `json:"slate_setting_id"`
+	CompleteFileCount  int     `json:"complete_file_count"`
+	ContestCount       int     `json:"contest_count"`
+	Date               string  `json:"date"`
+	GameCount          int     `json:"game_count"`
+	GameType           *string `json:"game_type"`
+	LineupContestCount int     `json:"lineup_contest_count"`
+	Main               bool    `json:"main"`
+	Name               *string `json:"name"`
+	PartOfGame         *string `json:"part_of_game"`
+	PlayerCount        int     `json:"player_count"`
+	StartTime          string  `json:"start_time"`
+	State              string  `json:"state"`
+	Status             string  `json:"status"`
 }
 
 // DFSSlatesListParams are the query parameters for listing dfs.slates.
 type DFSSlatesListParams struct {
-	OperatorID *int64
-	Date       *string
-	League     *string
-	Limit      *int
-	FromID     *int64
+	OperatorID      *int64
+	Operator        *string
+	Date            *string
+	League          *string
+	Sport           *string
+	ExternalID      *int64
+	OperatorSlateID *int
+	Status          *string
+	Limit           *int
+	FromID          *int64
 }
 
 func (p *DFSSlatesListParams) values() url.Values {
@@ -43,11 +58,26 @@ func (p *DFSSlatesListParams) values() url.Values {
 	if p.OperatorID != nil {
 		v.Set("operator_id", strconv.FormatInt(*p.OperatorID, 10))
 	}
+	if p.Operator != nil {
+		v.Set("operator", *p.Operator)
+	}
 	if p.Date != nil {
 		v.Set("date", *p.Date)
 	}
 	if p.League != nil {
 		v.Set("league", *p.League)
+	}
+	if p.Sport != nil {
+		v.Set("sport", *p.Sport)
+	}
+	if p.ExternalID != nil {
+		v.Set("external_id", strconv.FormatInt(*p.ExternalID, 10))
+	}
+	if p.OperatorSlateID != nil {
+		v.Set("operator_slate_id", strconv.Itoa(*p.OperatorSlateID))
+	}
+	if p.Status != nil {
+		v.Set("status", *p.Status)
 	}
 	if p.Limit != nil {
 		v.Set("limit", strconv.Itoa(*p.Limit))

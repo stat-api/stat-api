@@ -8,7 +8,7 @@ def _cell(value: object) -> str:
     return "" if value is None else str(value)
 
 # Resolve the current season
-season = max(api.nfl.seasons.list(limit=200).rows, key=lambda s: s["start_year"])["id"]
+season = max(api.nfl.seasons.list(limit=200).rows, key=lambda s: s["start_year"])["start_year"]
 
 # Page every team's season record
 rows = list(api.nfl.season_team_stats.iter(season_id=season))

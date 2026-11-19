@@ -70,7 +70,7 @@ STAT_API_KEY=sdb_... bun run start      # http://localhost:4400
 > Run every `bun` command from **inside this directory**. This is a standalone project — see
 > [Workspace isolation](#workspace-isolation). `bun link @stat-api/client` both installs the other
 > dependencies and symlinks the local SDK in one step; do **not** run a bare `bun install`
-> afterward — the committed manifest pins `@stat-api/client@^0.1.0`, which does not resolve from npm
+> afterward — the committed manifest pins `@stat-api/client@^0.2.0`, which does not resolve from npm
 > until the SDK publishes (DM5). The committable lockfile lands at DM5 alongside the registry swap.
 
 Serving the built frontend too:

@@ -43,7 +43,6 @@ NFLPlayByPlay = TypedDict(
         "lateral_rusher_player_id": str | None,
         "lateral_sack_player_id": str | None,
         "nfl_api_id": str | None,
-        "nflverse_game_id": str | None,
         "old_game_id": str | None,
         "own_kickoff_recovery_player_id": str | None,
         "pass_defense_1_player_id": str | None,

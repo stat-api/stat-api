@@ -2,7 +2,12 @@
 //
 // SDK resource for nba.games (public API).
 // Source: schema/api/groups/public.yml + schema/model/nba/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NBAGame {
   id: number;
@@ -20,7 +25,7 @@ export interface NBAGame {
   end_time?: string | null;
   game_label?: string | null;
   game_sub_label?: string | null;
-  game_time: string;
+  game_time?: string | null;
   home_rotation_number?: number | null;
   home_team: string;
   home_team_score: number;
@@ -31,7 +36,6 @@ export interface NBAGame {
   series_game_number?: string | null;
   series_name?: string | null;
   series_text?: string | null;
-  start_time: string;
   status: string;
 }
 
@@ -41,6 +45,9 @@ export interface NBAGamesListParams {
   away_team_id?: number;
   status?: string;
   day?: number;
+  day__gte?: number;
+  day__lte?: number;
+  day__between?: string;
   season_type?: string;
   limit?: number;
   from_id?: number;
@@ -50,6 +57,8 @@ export interface NBAGamesListResponse {
   games: NBAGame[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -59,7 +68,10 @@ export class NBAGamesResource {
 
   async list(params?: NBAGamesListParams): Promise<NBAGamesListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NBAGamesListResponse, 'quota'>>(this.opts, `/api/v1/nba/games${qs}`);
+    const r = await fetchJson<Omit<NBAGamesListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nba/games${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -77,7 +89,10 @@ export class NBAGamesResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NBAGamesListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NBAGamesListParams);
+      const page: NBAGamesListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NBAGamesListParams);
       for (const row of page.games) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

@@ -58,10 +58,10 @@ export async function fetchBox(
     limit,
   });
   const rows = game_player_batter_stats;
-  await rosters.ensureTeams(new Set(rows.map(r => r.team_id)));
+  await rosters.ensureTeams(new Set(rows.map((r) => r.team_id)));
 
   return rows
-    .map(r => {
+    .map((r) => {
       const player = rosters.get(r.player_id);
       return {
         team: teams.get(r.team_id)?.abbr ?? `T${r.team_id}`,
@@ -78,6 +78,10 @@ export async function fetchBox(
       } satisfies BoxLine;
     })
     .sort(
-      (a, b) => a.team.localeCompare(b.team) || b.ab - a.ab || b.h - a.h || a.player.localeCompare(b.player),
+      (a, b) =>
+        a.team.localeCompare(b.team) ||
+        b.ab - a.ab ||
+        b.h - a.h ||
+        a.player.localeCompare(b.player),
     );
 }

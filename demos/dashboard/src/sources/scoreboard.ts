@@ -70,7 +70,7 @@ export async function fetchScoreboard(
       ? await fetchNflDayRows(api, day, limit)
       : await fetchDayFilteredRows(api, league, day, limit);
   const scored = rows
-    .map(row => buildScoredGame(league, row, teams))
+    .map((row) => buildScoredGame(league, row, teams))
     .sort((a, b) => a.card.startTime.localeCompare(b.card.startTime));
   return { games: scored, asOf: new Date().toISOString() };
 }
@@ -114,7 +114,7 @@ async function fetchNflDayRows(
     });
     rows.push(...page.games);
   }
-  return rows.filter(row => row.day === day);
+  return rows.filter((row) => row.day === day);
 }
 
 /** How many recent seasons to inspect when resolving the last completed one. */
@@ -141,7 +141,7 @@ export async function fetchLastFinalSlate(
   const nowMs = now.getTime();
   const completed = seasons
     .filter((s): s is typeof s & { end_date: string } => Boolean(s.end_date))
-    .filter(s => Date.parse(s.end_date) < nowMs)
+    .filter((s) => Date.parse(s.end_date) < nowMs)
     .sort((a, b) => Date.parse(b.end_date) - Date.parse(a.end_date));
   const season = completed[0];
   if (!season) return { games: [], asOf: new Date().toISOString() };
@@ -153,7 +153,7 @@ export async function fetchLastFinalSlate(
   });
   const rows: AnyGameRow[] = games;
   const scored = rows
-    .map(row => buildScoredGame(league, row, teams))
+    .map((row) => buildScoredGame(league, row, teams))
     .sort((a, b) => b.card.startTime.localeCompare(a.card.startTime)); // most recent first
   return { games: scored, asOf: new Date().toISOString() };
 }

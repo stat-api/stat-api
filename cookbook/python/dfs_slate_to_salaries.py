@@ -1,32 +1,33 @@
 # Rank a DFS slate by salary and value
-# Generated from schema/api/examples/slate-to-salaries.yml — do not edit.
+# Generated from schema/api/examples/dfs-slate-to-salaries.yml — do not edit.
 from statapi import StatApi
 
 api = StatApi()  # reads STAT_API_KEY from the environment
 
-def _cell(value: object) -> str:
-    return "" if value is None else str(value)
+# Page the slate's scoring rows
+stats = list(api.dfs.player_stats.iter(slate_id=129036))
 
-# Page the slate's players
-players = list(api.dfs.slate_players.iter(slate_id=91396))
+# Drop the players who did not play
+scored = [r for r in stats if r["fantasy_pts"] is not None]
 
-# Rank by salary, highest first
-bysalary = sorted(players, key=lambda r: r["salary"], reverse=True)
+# Drop minimum-salary players
+playable = [r for r in scored if r["salary"] >= 4000]
 
-# Take the ten priciest players
-top = bysalary[:10]
-
-# Fetch the top player's projection
-proj = api.dfs.slate_player_projections.list(slate_player_id=top[0]["id"]).rows
-
-# Compute projected points per $1000 of salary
-if proj and top:
-    value = (proj[0]["projection"] / top[0]["salary"]) * 1000
-    who = top[0]["display_name"] or top[0]["id"]
-    print(f"value({who}) = {value:.2f} projected pts per $1000")
-
-# Print the salary board
-print("Highest-salaried players on the slate")
-print("\t".join(["display_name", "position", "salary"]))
-for row in top:
-    print("\t".join([_cell(row["display_name"]), _cell(row["position"]), _cell(row["salary"])]))
+# Compute points per $1,000 of salary
+board = sorted(
+    (
+        {
+            "player_id": r["player_id"],
+            "position": r["position"],
+            "salary": r["salary"],
+            "points": r["fantasy_pts"],
+            "value": (r["fantasy_pts"] / r["salary"]) * 1000,
+        }
+        for r in playable
+    ),
+    key=lambda r: r["value"],
+    reverse=True,
+)[:10]
+print("\t".join(["player_id", "position", "salary", "points", "per $1k"]))
+for r in board:
+    print(f"{r['player_id']}\t{r['position']}\t{r['salary']}\t{r['points']}\t{r['value']:.2f}")

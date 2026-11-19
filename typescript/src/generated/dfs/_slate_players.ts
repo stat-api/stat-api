@@ -2,7 +2,14 @@
 //
 // SDK resource for dfs.slate_players (public API).
 // Source: schema/api/groups/public.yml + schema/model/dfs/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  type FileResult,
+  fetchFile,
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface DFSSlatePlayer {
   id: number;
@@ -15,17 +22,23 @@ export interface DFSSlatePlayer {
   team_id?: number | null;
   avg_points?: number | null;
   display_name?: string | null;
+  eligible_positions?: string | null;
   first_name?: string | null;
   injury_details?: string | null;
   injury_status?: string | null;
   last_name?: string | null;
   position: string;
-  roster_position: string;
   salary: number;
 }
 
 export interface DFSSlatePlayersListParams {
   slate_id?: number;
+  operator_slate_id?: number;
+  operator_id?: string | number;
+  operator?: string | number;
+  position?: string;
+  team_id?: number;
+  mode?: 'pre' | 'full';
   limit?: number;
   from_id?: number;
 }
@@ -34,6 +47,10 @@ export interface DFSSlatePlayersListResponse {
   slate_players: DFSSlatePlayer[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
+  /** The time-wall mode that served these rows. */
+  mode: 'pre' | 'full';
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -43,12 +60,26 @@ export class DFSSlatePlayersResource {
 
   async list(params?: DFSSlatePlayersListParams): Promise<DFSSlatePlayersListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<DFSSlatePlayersListResponse, 'quota'>>(this.opts, `/api/v1/dfs/slate_players${qs}`);
+    const r = await fetchJson<Omit<DFSSlatePlayersListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/dfs/slate_players${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
-  async get(id: number): Promise<DFSSlatePlayer> {
-    return (await fetchJson<DFSSlatePlayer>(this.opts, `/api/v1/dfs/slate_players/${id}`)).data;
+  /**
+   * The list as a CSV file: the bytes the API writes for these filters, the file name it gives and every header. The rows
+   * are those of `list`; one file holds up to `limit` rows. A 202 throws NotReadyError, like every call.
+   */
+  async listFile(params?: Omit<DFSSlatePlayersListParams, 'from_id'>): Promise<FileResult> {
+    const qs = toQueryString({ ...params, format: 'csv' });
+    return fetchFile(this.opts, `/api/v1/dfs/slate_players${qs}`);
+  }
+
+  async get(id: number, params?: { mode?: 'pre' | 'full' }): Promise<DFSSlatePlayer> {
+    const qs = toQueryString(params as Record<string, unknown> | undefined);
+    return (await fetchJson<DFSSlatePlayer>(this.opts, `/api/v1/dfs/slate_players/${id}${qs}`))
+      .data;
   }
   async *iter(params?: DFSSlatePlayersListParams): AsyncGenerator<DFSSlatePlayer> {
     // Always walk with from_id (starting at 0): from_id forces the server's
@@ -61,7 +92,10 @@ export class DFSSlatePlayersResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: DFSSlatePlayersListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as DFSSlatePlayersListParams);
+      const page: DFSSlatePlayersListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as DFSSlatePlayersListParams);
       for (const row of page.slate_players) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

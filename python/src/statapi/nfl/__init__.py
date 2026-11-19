@@ -6,25 +6,25 @@ from ._seasons import NFLSeasonsResource
 from ._stadiums import NFLStadiumsResource
 from ._referees import NFLRefereesResource
 from ._teams import NFLTeamsResource
-from ._players import NFLPlayersResource
 from ._games import NFLGamesResource
+from ._players import NFLPlayersResource
 from ._coaching_staff_tenures import NFLCoachingStaffTenuresResource
 from ._coaching_staffs import NFLCoachingStaffsResource
-from ._depth_chart_snapshots import NFLDepthChartSnapshotsResource
 from ._operator_team_lookups import NFLOperatorTeamLookupsResource
 from ._playoffs import NFLPlayoffsResource
 from ._season_team_stats import NFLSeasonTeamStatsResource
+from ._game_drives import NFLGameDrivesResource
+from ._coach_scheme_tendencies import NFLCoachSchemeTendenciesResource
 from ._combine_results import NFLCombineResultsResource
-from ._depth_chart_entries import NFLDepthChartEntriesResource
 from ._depth_charts import NFLDepthChartsResource
 from ._draft_picks import NFLDraftPicksResource
-from ._game_drives import NFLGameDrivesResource
 from ._game_lines import NFLGameLinesResource
+from ._game_player_advanced_stats import NFLGamePlayerAdvancedStatsResource
 from ._game_player_firstdown_stats import NFLGamePlayerFirstdownStatsResource
 from ._game_player_ngs_passings import NFLGamePlayerNgsPassingsResource
 from ._game_player_ngs_receivings import NFLGamePlayerNgsReceivingsResource
 from ._game_player_ngs_rushings import NFLGamePlayerNgsRushingsResource
-from ._game_player_pfr_advstats import NFLGamePlayerPfrAdvstatsResource
+from ._game_player_props import NFLGamePlayerPropsResource
 from ._game_player_redzone_stats import NFLGamePlayerRedzoneStatsResource
 from ._game_player_stats import NFLGamePlayerStatsResource
 from ._game_player_thirddown_stats import NFLGamePlayerThirddownStatsResource
@@ -35,40 +35,43 @@ from ._game_team_stats import NFLGameTeamStatsResource
 from ._game_weathers import NFLGameWeathersResource
 from ._injuries import NFLInjuriesResource
 from ._operator_player_lookups import NFLOperatorPlayerLookupsResource
-from ._play_by_plays import NFLPlayByPlaysResource
 from ._play_participations import NFLPlayParticipationsResource
 from ._player_contracts import NFLPlayerContractsResource
 from ._player_news import NFLPlayerNewsResource
+from ._projected_player_snaps import NFLProjectedPlayerSnapsResource
+from ._projected_team_snaps import NFLProjectedTeamSnapsResource
 from ._season_player_firstdown_stats import NFLSeasonPlayerFirstdownStatsResource
 from ._season_player_redzone_stats import NFLSeasonPlayerRedzoneStatsResource
 from ._season_player_stats import NFLSeasonPlayerStatsResource
 from ._season_player_thirddown_stats import NFLSeasonPlayerThirddownStatsResource
+from ._team_news import NFLTeamNewsResource
 from ._team_player_rosters import NFLTeamPlayerRostersResource
+from ._play_by_plays import NFLPlayByPlaysResource
 
 __all__ = [
     "NFLSeasonsResource",
     "NFLStadiumsResource",
     "NFLRefereesResource",
     "NFLTeamsResource",
-    "NFLPlayersResource",
     "NFLGamesResource",
+    "NFLPlayersResource",
     "NFLCoachingStaffTenuresResource",
     "NFLCoachingStaffsResource",
-    "NFLDepthChartSnapshotsResource",
     "NFLOperatorTeamLookupsResource",
     "NFLPlayoffsResource",
     "NFLSeasonTeamStatsResource",
+    "NFLGameDrivesResource",
+    "NFLCoachSchemeTendenciesResource",
     "NFLCombineResultsResource",
-    "NFLDepthChartEntriesResource",
     "NFLDepthChartsResource",
     "NFLDraftPicksResource",
-    "NFLGameDrivesResource",
     "NFLGameLinesResource",
+    "NFLGamePlayerAdvancedStatsResource",
     "NFLGamePlayerFirstdownStatsResource",
     "NFLGamePlayerNgsPassingsResource",
     "NFLGamePlayerNgsReceivingsResource",
     "NFLGamePlayerNgsRushingsResource",
-    "NFLGamePlayerPfrAdvstatsResource",
+    "NFLGamePlayerPropsResource",
     "NFLGamePlayerRedzoneStatsResource",
     "NFLGamePlayerStatsResource",
     "NFLGamePlayerThirddownStatsResource",
@@ -79,13 +82,16 @@ __all__ = [
     "NFLGameWeathersResource",
     "NFLInjuriesResource",
     "NFLOperatorPlayerLookupsResource",
-    "NFLPlayByPlaysResource",
     "NFLPlayParticipationsResource",
     "NFLPlayerContractsResource",
     "NFLPlayerNewsResource",
+    "NFLProjectedPlayerSnapsResource",
+    "NFLProjectedTeamSnapsResource",
     "NFLSeasonPlayerFirstdownStatsResource",
     "NFLSeasonPlayerRedzoneStatsResource",
     "NFLSeasonPlayerStatsResource",
     "NFLSeasonPlayerThirddownStatsResource",
+    "NFLTeamNewsResource",
     "NFLTeamPlayerRostersResource",
+    "NFLPlayByPlaysResource",
 ]

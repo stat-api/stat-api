@@ -15,23 +15,130 @@ import (
 
 // DFSTeamStat is a row from dfs.team_stats.
 type DFSTeamStat struct {
-	ID       int64           `json:"id"`
-	GameID   int64           `json:"game_id"`
-	LeagueID int64           `json:"league_id"`
-	TeamID   int64           `json:"team_id"`
-	Data     json.RawMessage `json:"data"`
+	ID                         int64    `json:"id"`
+	GameID                     int64    `json:"game_id"`
+	LeagueID                   int64    `json:"league_id"`
+	OperatorID                 int64    `json:"operator_id"`
+	OpponentTeamID             int64    `json:"opponent_team_id"`
+	SlateID                    int64    `json:"slate_id"`
+	TeamID                     int64    `json:"team_id"`
+	Assists                    *int     `json:"assists"`
+	AssistsFpts                *float64 `json:"assists_fpts"`
+	BlockedKickFpts            *float64 `json:"blocked_kick_fpts"`
+	BlockedKicks               *int     `json:"blocked_kicks"`
+	Blocks                     *int     `json:"blocks"`
+	BlocksFpts                 *float64 `json:"blocks_fpts"`
+	DefenseInterceptionFpts    *float64 `json:"defense_interception_fpts"`
+	DefensiveInterceptions     *int     `json:"defensive_interceptions"`
+	DefensiveSacks             *int     `json:"defensive_sacks"`
+	DefensiveTdFpts            *float64 `json:"defensive_td_fpts"`
+	DefensiveTds               *int     `json:"defensive_tds"`
+	DoubleDoubleFpts           *float64 `json:"double_double_fpts"`
+	ExtraPointFpts             *float64 `json:"extra_point_fpts"`
+	ExtraPtsMade               *int     `json:"extra_pts_made"`
+	FantasyPts                 *float64 `json:"fantasy_pts"`
+	FieldGoalFpts              *float64 `json:"field_goal_fpts"`
+	FieldGoalMissedFpts        *float64 `json:"field_goal_missed_fpts"`
+	FieldGoalsAttempted        *int     `json:"field_goals_attempted"`
+	FieldGoalsMade             *int     `json:"field_goals_made"`
+	FirstDowns                 *int     `json:"first_downs"`
+	FumbleLostFpts             *float64 `json:"fumble_lost_fpts"`
+	FumbleRecoveryFpts         *float64 `json:"fumble_recovery_fpts"`
+	FumblesLost                *int     `json:"fumbles_lost"`
+	FumblesRecovered           *int     `json:"fumbles_recovered"`
+	InterceptionFpts           *float64 `json:"interception_fpts"`
+	InterceptionsThrown        *int     `json:"interceptions_thrown"`
+	IsHome                     bool     `json:"is_home"`
+	KickReturnTds              *int     `json:"kick_return_tds"`
+	Passing2ptConversionFpts   *float64 `json:"passing_2pt_conversion_fpts"`
+	PassingBonusFpts           *float64 `json:"passing_bonus_fpts"`
+	PassingTdFpts              *float64 `json:"passing_td_fpts"`
+	PassingYds                 *int     `json:"passing_yds"`
+	PassingYdsFpts             *float64 `json:"passing_yds_fpts"`
+	PlayerCount                *int     `json:"player_count"`
+	Pts                        *int     `json:"pts"`
+	PtsAllowedDef              *int     `json:"pts_allowed_def"`
+	PtsAllowedDst              *int     `json:"pts_allowed_dst"`
+	PtsAllowedFpts             *float64 `json:"pts_allowed_fpts"`
+	PtsFpts                    *float64 `json:"pts_fpts"`
+	PuntReturnTds              *int     `json:"punt_return_tds"`
+	Rebounds                   *int     `json:"rebounds"`
+	ReboundsFpts               *float64 `json:"rebounds_fpts"`
+	Receiving2ptConversionFpts *float64 `json:"receiving_2pt_conversion_fpts"`
+	ReceivingBonusFpts         *float64 `json:"receiving_bonus_fpts"`
+	ReceivingTdFpts            *float64 `json:"receiving_td_fpts"`
+	ReceivingYds               *int     `json:"receiving_yds"`
+	ReceivingYdsFpts           *float64 `json:"receiving_yds_fpts"`
+	ReceptionFpts              *float64 `json:"reception_fpts"`
+	ReturnTdFpts               *float64 `json:"return_td_fpts"`
+	ReturnYdsFpts              *float64 `json:"return_yds_fpts"`
+	Rushing2ptConversionFpts   *float64 `json:"rushing_2pt_conversion_fpts"`
+	RushingBonusFpts           *float64 `json:"rushing_bonus_fpts"`
+	RushingTdFpts              *float64 `json:"rushing_td_fpts"`
+	RushingYds                 *int     `json:"rushing_yds"`
+	RushingYdsFpts             *float64 `json:"rushing_yds_fpts"`
+	SackFpts                   *float64 `json:"sack_fpts"`
+	Safeties                   *int     `json:"safeties"`
+	SafetyFpts                 *float64 `json:"safety_fpts"`
+	ScoringFormat              *string  `json:"scoring_format"`
+	ScoringRule                *string  `json:"scoring_rule"`
+	SlateDate                  string   `json:"slate_date"`
+	Steals                     *int     `json:"steals"`
+	StealsFpts                 *float64 `json:"steals_fpts"`
+	ThreePointersMade          *int     `json:"three_pointers_made"`
+	ThreePointersMadeFpts      *float64 `json:"three_pointers_made_fpts"`
+	TotalYds                   *int     `json:"total_yds"`
+	TripleDoubleFpts           *float64 `json:"triple_double_fpts"`
+	Turnovers                  *int     `json:"turnovers"`
+	TurnoversFpts              *float64 `json:"turnovers_fpts"`
 }
 
 // DFSTeamStatsListParams are the query parameters for listing dfs.team_stats.
 type DFSTeamStatsListParams struct {
-	Limit  *int
-	FromID *int64
+	SlateID         *int64
+	OperatorSlateID *int
+	GameID          *int64
+	SlateDate       *string
+	TeamID          *int64
+	ScoringFormat   *string
+	OperatorID      *int64
+	Operator        *string
+	LeagueID        *int64
+	Limit           *int
+	FromID          *int64
 }
 
 func (p *DFSTeamStatsListParams) values() url.Values {
 	v := url.Values{}
 	if p == nil {
 		return v
+	}
+	if p.SlateID != nil {
+		v.Set("slate_id", strconv.FormatInt(*p.SlateID, 10))
+	}
+	if p.OperatorSlateID != nil {
+		v.Set("operator_slate_id", strconv.Itoa(*p.OperatorSlateID))
+	}
+	if p.GameID != nil {
+		v.Set("game_id", strconv.FormatInt(*p.GameID, 10))
+	}
+	if p.SlateDate != nil {
+		v.Set("slate_date", *p.SlateDate)
+	}
+	if p.TeamID != nil {
+		v.Set("team_id", strconv.FormatInt(*p.TeamID, 10))
+	}
+	if p.ScoringFormat != nil {
+		v.Set("scoring_format", *p.ScoringFormat)
+	}
+	if p.OperatorID != nil {
+		v.Set("operator_id", strconv.FormatInt(*p.OperatorID, 10))
+	}
+	if p.Operator != nil {
+		v.Set("operator", *p.Operator)
+	}
+	if p.LeagueID != nil {
+		v.Set("league_id", strconv.FormatInt(*p.LeagueID, 10))
 	}
 	if p.Limit != nil {
 		v.Set("limit", strconv.Itoa(*p.Limit))

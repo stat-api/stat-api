@@ -1,34 +1,82 @@
 // Handler snapshot + cache-behavior tests. No Discord token, no live API — the
 // SDK is a fixture stub, the cache clock is frozen for deterministic footers.
-import { test, expect, beforeEach, mock } from 'bun:test';
+import { beforeEach, expect, mock, test } from 'bun:test';
 import type { StatApi } from '@stat-api/client';
 
 import { cache } from '../src/cache';
-import { handleScores } from '../src/commands/scores';
 import { handleBox } from '../src/commands/box';
-import { handlePlayer } from '../src/commands/player';
-import { handleStandings } from '../src/commands/standings';
 import { handleNews } from '../src/commands/news';
+import { handlePlayer } from '../src/commands/player';
+import { handleScores } from '../src/commands/scores';
+import { handleStandings } from '../src/commands/standings';
 
 // ---- fixtures ----
 
 const NBA_GAMES = [
-  { id: 501, away_team: 'Lakers', home_team: 'Celtics', away_team_score: 102, home_team_score: 98, status: 'Final', game_time: '2026-07-08T23:30:00Z' },
-  { id: 502, away_team: 'Warriors', home_team: 'Nuggets', away_team_score: 0, home_team_score: 0, status: 'Scheduled', game_time: '2026-07-09T02:00:00Z' },
+  {
+    id: 501,
+    away_team: 'Lakers',
+    home_team: 'Celtics',
+    away_team_score: 102,
+    home_team_score: 98,
+    status: 'Final',
+    game_time: '2026-07-08T23:30:00Z',
+  },
+  {
+    id: 502,
+    away_team: 'Warriors',
+    home_team: 'Nuggets',
+    away_team_score: 0,
+    home_team_score: 0,
+    status: 'Scheduled',
+    game_time: '2026-07-09T02:00:00Z',
+  },
 ];
-const NBA_GAME_501 = { id: 501, away_team_id: 1, home_team_id: 2, away_team: 'Lakers', home_team: 'Celtics', away_team_score: 102, home_team_score: 98, status: 'Final' };
+const NBA_GAME_501 = {
+  id: 501,
+  away_team_id: 1,
+  home_team_id: 2,
+  away_team: 'Lakers',
+  home_team: 'Celtics',
+  away_team_score: 102,
+  home_team_score: 98,
+  status: 'Final',
+};
 const NBA_PLAYER_STATS_501 = [
   { game_id: 501, player_id: 10, team_id: 1, pts: 33, rebounds: 8, assists: 9 },
   { game_id: 501, player_id: 11, team_id: 1, pts: 21, rebounds: 5, assists: 3 },
   { game_id: 501, player_id: 20, team_id: 2, pts: 28, rebounds: 11, assists: 6 },
 ];
 const NBA_ROSTERS: Record<number, { id: number; first_name: string; last_name: string }[]> = {
-  1: [{ id: 10, first_name: 'LeBron', last_name: 'James' }, { id: 11, first_name: 'Austin', last_name: 'Reaves' }],
+  1: [
+    { id: 10, first_name: 'LeBron', last_name: 'James' },
+    { id: 11, first_name: 'Austin', last_name: 'Reaves' },
+  ],
   2: [{ id: 20, first_name: 'Jayson', last_name: 'Tatum' }],
 };
-const NBA_SEARCH = [{ id: 10, full_name: 'LeBron James', team_name: 'Los Angeles Lakers', team_abbreviation: 'LAL', primary_position: 'F' }];
+const NBA_SEARCH = [
+  {
+    id: 10,
+    full_name: 'LeBron James',
+    team_name: 'Los Angeles Lakers',
+    team_abbreviation: 'LAL',
+    primary_position: 'F',
+  },
+];
 const NBA_SEASON_STATS = [
-  { season_id: 30, player_id: 10, games_played: 70, pts: 1750, rebounds: 560, assists: 630, steals: 91, blocks: 42, field_goal_percentage: '0.512', three_point_percentage: '0.365', free_throw_percentage: '0.735' },
+  {
+    season_id: 30,
+    player_id: 10,
+    games_played: 70,
+    pts: 1750,
+    rebounds: 560,
+    assists: 630,
+    steals: 91,
+    blocks: 42,
+    field_goal_percentage: '0.512',
+    three_point_percentage: '0.365',
+    free_throw_percentage: '0.735',
+  },
 ];
 const NBA_SEASON_30 = { id: 30, start_year: 2025 };
 const NBA_STANDINGS = [
@@ -43,20 +91,64 @@ const NBA_TEAMS = [
   { id: 3, abbreviation: 'DEN', conference: 'Western' },
 ];
 const NBA_NEWS = [
-  { id: 9, title: 'Star guard questionable for opener', source: 'Rotowire', link: 'https://stat-api.com/n/9', news_time: '2026-07-08T18:00:00Z' },
-  { id: 8, title: 'Front office eyes a trade', source: 'ESPN', link: null, news_time: '2026-07-08T16:30:00Z' },
+  {
+    id: 9,
+    title: 'Star guard questionable for opener',
+    source: 'Rotowire',
+    link: 'https://stat-api.com/n/9',
+    news_time: '2026-07-08T18:00:00Z',
+  },
+  {
+    id: 8,
+    title: 'Front office eyes a trade',
+    source: 'ESPN',
+    link: null,
+    news_time: '2026-07-08T16:30:00Z',
+  },
 ];
 
-const MLB_TEAMS = [{ id: 100, abbreviation: 'NYY' }, { id: 101, abbreviation: 'BOS' }];
-const MLB_GAMES = [{ id: 900, away_team_id: 100, home_team_id: 101, away_team_score: 5, home_team_score: 3, status: 'Final', game_time: '2026-07-08T23:05:00Z' }];
-const MLB_GAME_900 = { id: 900, away_team_id: 100, home_team_id: 101, away_team_score: 5, home_team_score: 3, status: 'Final' };
+const MLB_TEAMS = [
+  { id: 100, abbreviation: 'NYY' },
+  { id: 101, abbreviation: 'BOS' },
+];
+const MLB_GAMES = [
+  {
+    id: 900,
+    away_team_id: 100,
+    home_team_id: 101,
+    away_team_score: 5,
+    home_team_score: 3,
+    status: 'Final',
+    game_time: '2026-07-08T23:05:00Z',
+  },
+];
+const MLB_GAME_900 = {
+  id: 900,
+  away_team_id: 100,
+  home_team_id: 101,
+  away_team_score: 5,
+  home_team_score: 3,
+  status: 'Final',
+};
 const MLB_BATTERS_900 = [
   { game_id: 900, player_id: 200, team_id: 100, hits: 3, at_bats: 5, runs_batted_in: 2 },
   { game_id: 900, player_id: 201, team_id: 101, hits: 2, at_bats: 4, runs_batted_in: 1 },
 ];
-const MLB_PITCHERS_900 = [{ game_id: 900, player_id: 210, team_id: 100, innings_pitched: '6.0', strikeouts_pitched: 7, earned_runs: 2 }];
+const MLB_PITCHERS_900 = [
+  {
+    game_id: 900,
+    player_id: 210,
+    team_id: 100,
+    innings_pitched: '6.0',
+    strikeouts_pitched: 7,
+    earned_runs: 2,
+  },
+];
 const MLB_ROSTERS: Record<number, { id: number; first_name: string; last_name: string }[]> = {
-  100: [{ id: 200, first_name: 'Aaron', last_name: 'Judge' }, { id: 210, first_name: 'Gerrit', last_name: 'Cole' }],
+  100: [
+    { id: 200, first_name: 'Aaron', last_name: 'Judge' },
+    { id: 210, first_name: 'Gerrit', last_name: 'Cole' },
+  ],
   101: [{ id: 201, first_name: 'Rafael', last_name: 'Devers' }],
 };
 
@@ -68,12 +160,18 @@ function makeApi() {
   const api = {
     nba: {
       games: { list: nbaGamesList, get: mock(async (_id: number) => NBA_GAME_501) },
-      game_player_stats: { list: mock(async (_p?: unknown) => ({ game_player_stats: NBA_PLAYER_STATS_501 })) },
+      game_player_stats: {
+        list: mock(async (_p?: unknown) => ({ game_player_stats: NBA_PLAYER_STATS_501 })),
+      },
       players: {
         list: mock(async (p: { team_id: number }) => ({ players: NBA_ROSTERS[p.team_id] ?? [] })),
         search: mock(async (_p: { q: string }) => NBA_SEARCH),
       },
-      season_player_stats: { list: mock(async (_p: { player_id: number }) => ({ season_player_stats: NBA_SEASON_STATS })) },
+      season_player_stats: {
+        list: mock(async (_p: { player_id: number }) => ({
+          season_player_stats: NBA_SEASON_STATS,
+        })),
+      },
       seasons: { get: mock(async (_id: number) => NBA_SEASON_30) },
       team_standings: { list: mock(async (_p?: unknown) => ({ team_standings: NBA_STANDINGS })) },
       teams: { list: mock(async (_p?: unknown) => ({ teams: NBA_TEAMS })) },
@@ -83,9 +181,15 @@ function makeApi() {
     mlb: {
       games: { list: mlbGamesList, get: mock(async (_id: number) => MLB_GAME_900) },
       teams: { list: mock(async (_p?: unknown) => ({ teams: MLB_TEAMS })) },
-      players: { list: mock(async (p: { team_id: number }) => ({ players: MLB_ROSTERS[p.team_id] ?? [] })) },
-      game_player_batter_stats: { list: mock(async (_p?: unknown) => ({ game_player_batter_stats: MLB_BATTERS_900 })) },
-      game_player_pitching_stats: { list: mock(async (_p?: unknown) => ({ game_player_pitching_stats: MLB_PITCHERS_900 })) },
+      players: {
+        list: mock(async (p: { team_id: number }) => ({ players: MLB_ROSTERS[p.team_id] ?? [] })),
+      },
+      game_player_batter_stats: {
+        list: mock(async (_p?: unknown) => ({ game_player_batter_stats: MLB_BATTERS_900 })),
+      },
+      game_player_pitching_stats: {
+        list: mock(async (_p?: unknown) => ({ game_player_pitching_stats: MLB_PITCHERS_900 })),
+      },
       player_news: { list: mock(async (_p?: unknown) => ({ player_news: [] })) },
     },
   };

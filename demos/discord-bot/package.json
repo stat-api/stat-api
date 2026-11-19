@@ -15,7 +15,7 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@stat-api/client": "^0.1.0",
+    "@stat-api/client": "^0.2.0",
     "discord.js": "^14.16.3"
   },
   "devDependencies": {

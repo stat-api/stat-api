@@ -13,6 +13,7 @@ public final class NFLTeamPlayerRostersListParams {
     private Long playerId;
     private Long seasonId;
     private String position;
+    private String mode;
     private Long limit;
     private Long fromId;
 
@@ -33,6 +34,11 @@ public final class NFLTeamPlayerRostersListParams {
 
     public NFLTeamPlayerRostersListParams position(String position) {
         this.position = position;
+        return this;
+    }
+
+    public NFLTeamPlayerRostersListParams mode(String mode) {
+        this.mode = mode;
         return this;
     }
 
@@ -59,6 +65,9 @@ public final class NFLTeamPlayerRostersListParams {
         }
         if (position != null) {
             query.put("position", String.valueOf(position));
+        }
+        if (mode != null) {
+            query.put("mode", String.valueOf(mode));
         }
         if (limit != null) {
             query.put("limit", String.valueOf(limit));

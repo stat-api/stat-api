@@ -16,7 +16,6 @@ import (
 // PGATour is a row from pga.tours.
 type PGATour struct {
 	ID          int64   `json:"id"`
-	TourID      int     `json:"tour_id"`
 	Active      bool    `json:"active"`
 	Code        string  `json:"code"`
 	Description *string `json:"description"`

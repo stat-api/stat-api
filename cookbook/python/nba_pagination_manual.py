@@ -5,7 +5,7 @@ from statapi import StatApi
 api = StatApi()  # reads STAT_API_KEY from the environment
 
 # Follow next_from_id until it is null
-from_id = None
+from_id = 0
 total = 0
 page_num = 0
 while True:

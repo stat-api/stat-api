@@ -16,7 +16,6 @@ import (
 // NFLDepthChart is a row from nfl.depth_charts.
 type NFLDepthChart struct {
 	ID            int64   `json:"id"`
-	EliasID       *string `json:"elias_id"`
 	GameID        int64   `json:"game_id"`
 	PlayerID      int64   `json:"player_id"`
 	SeasonID      int64   `json:"season_id"`

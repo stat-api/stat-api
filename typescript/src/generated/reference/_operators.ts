@@ -2,7 +2,12 @@
 //
 // SDK resource for reference.operators (public API).
 // Source: schema/api/groups/public.yml + schema/model/main/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface ReferenceOperator {
   id: number;
@@ -23,6 +28,8 @@ export interface ReferenceOperatorsListResponse {
   operators: ReferenceOperator[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -32,12 +39,16 @@ export class ReferenceOperatorsResource {
 
   async list(params?: ReferenceOperatorsListParams): Promise<ReferenceOperatorsListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<ReferenceOperatorsListResponse, 'quota'>>(this.opts, `/api/v1/reference/operators${qs}`);
+    const r = await fetchJson<Omit<ReferenceOperatorsListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/reference/operators${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
   async get(id: number): Promise<ReferenceOperator> {
-    return (await fetchJson<ReferenceOperator>(this.opts, `/api/v1/reference/operators/${id}`)).data;
+    return (await fetchJson<ReferenceOperator>(this.opts, `/api/v1/reference/operators/${id}`))
+      .data;
   }
   async *iter(params?: ReferenceOperatorsListParams): AsyncGenerator<ReferenceOperator> {
     // Always walk with from_id (starting at 0): from_id forces the server's
@@ -50,7 +61,10 @@ export class ReferenceOperatorsResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: ReferenceOperatorsListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as ReferenceOperatorsListParams);
+      const page: ReferenceOperatorsListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as ReferenceOperatorsListParams);
       for (const row of page.operators) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

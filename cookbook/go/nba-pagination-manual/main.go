@@ -17,7 +17,7 @@ func main() {
 
 	// Follow next_from_id until it is null
 	ctx := context.Background()
-	var fromID *int64
+	fromID := statapi.Int64(0)
 	total := 0
 	pageNum := 0
 	for {

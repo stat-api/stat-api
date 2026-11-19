@@ -10,13 +10,23 @@ import java.util.Map;
 public final class DFSSlatesListParams {
 
     private Long operatorId;
+    private String operator;
     private String date;
     private String league;
+    private String sport;
+    private Long externalId;
+    private Long operatorSlateId;
+    private String status;
     private Long limit;
     private Long fromId;
 
     public DFSSlatesListParams operatorId(Long operatorId) {
         this.operatorId = operatorId;
+        return this;
+    }
+
+    public DFSSlatesListParams operator(String operator) {
+        this.operator = operator;
         return this;
     }
 
@@ -27,6 +37,26 @@ public final class DFSSlatesListParams {
 
     public DFSSlatesListParams league(String league) {
         this.league = league;
+        return this;
+    }
+
+    public DFSSlatesListParams sport(String sport) {
+        this.sport = sport;
+        return this;
+    }
+
+    public DFSSlatesListParams externalId(Long externalId) {
+        this.externalId = externalId;
+        return this;
+    }
+
+    public DFSSlatesListParams operatorSlateId(Long operatorSlateId) {
+        this.operatorSlateId = operatorSlateId;
+        return this;
+    }
+
+    public DFSSlatesListParams status(String status) {
+        this.status = status;
         return this;
     }
 
@@ -45,11 +75,26 @@ public final class DFSSlatesListParams {
         if (operatorId != null) {
             query.put("operator_id", String.valueOf(operatorId));
         }
+        if (operator != null) {
+            query.put("operator", String.valueOf(operator));
+        }
         if (date != null) {
             query.put("date", String.valueOf(date));
         }
         if (league != null) {
             query.put("league", String.valueOf(league));
+        }
+        if (sport != null) {
+            query.put("sport", String.valueOf(sport));
+        }
+        if (externalId != null) {
+            query.put("external_id", String.valueOf(externalId));
+        }
+        if (operatorSlateId != null) {
+            query.put("operator_slate_id", String.valueOf(operatorSlateId));
+        }
+        if (status != null) {
+            query.put("status", String.valueOf(status));
         }
         if (limit != null) {
             query.put("limit", String.valueOf(limit));

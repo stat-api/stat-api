@@ -14,6 +14,10 @@ public final class NFLGameTeamRostersListParams {
     private Long playerId;
     private String position;
     private String status;
+    private Integer depthOrder;
+    private String formation;
+    private String injuryStatus;
+    private String mode;
     private Long limit;
     private Long fromId;
 
@@ -39,6 +43,26 @@ public final class NFLGameTeamRostersListParams {
 
     public NFLGameTeamRostersListParams status(String status) {
         this.status = status;
+        return this;
+    }
+
+    public NFLGameTeamRostersListParams depthOrder(Integer depthOrder) {
+        this.depthOrder = depthOrder;
+        return this;
+    }
+
+    public NFLGameTeamRostersListParams formation(String formation) {
+        this.formation = formation;
+        return this;
+    }
+
+    public NFLGameTeamRostersListParams injuryStatus(String injuryStatus) {
+        this.injuryStatus = injuryStatus;
+        return this;
+    }
+
+    public NFLGameTeamRostersListParams mode(String mode) {
+        this.mode = mode;
         return this;
     }
 
@@ -68,6 +92,18 @@ public final class NFLGameTeamRostersListParams {
         }
         if (status != null) {
             query.put("status", String.valueOf(status));
+        }
+        if (depthOrder != null) {
+            query.put("depth_order", String.valueOf(depthOrder));
+        }
+        if (formation != null) {
+            query.put("formation", String.valueOf(formation));
+        }
+        if (injuryStatus != null) {
+            query.put("injury_status", String.valueOf(injuryStatus));
+        }
+        if (mode != null) {
+            query.put("mode", String.valueOf(mode));
         }
         if (limit != null) {
             query.put("limit", String.valueOf(limit));

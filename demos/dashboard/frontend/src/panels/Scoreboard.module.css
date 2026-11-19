@@ -59,7 +59,9 @@
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   width: 100%;
-  transition: border-color 0.12s ease, transform 0.12s ease;
+  transition:
+    border-color 0.12s ease,
+    transform 0.12s ease;
 }
 
 .cardInteractive:hover {
@@ -69,7 +71,9 @@
 
 .cardSelected {
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent), var(--shadow);
+  box-shadow:
+    0 0 0 1px var(--accent),
+    var(--shadow);
 }
 
 .cardTop {

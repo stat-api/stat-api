@@ -15,7 +15,6 @@ MLBBroadcaster = TypedDict(
     "MLBBroadcaster",
     {
         "id": int,
-        "broadcaster_id": int,
         "broadcaster_team_id": int,
         "region_id": int,
         "broadcaster_abbreviation": str,

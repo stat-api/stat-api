@@ -2,7 +2,12 @@
 //
 // SDK resource for mlb.player_injuries (public API).
 // Source: schema/api/groups/public.yml + schema/model/mlb/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface MLBPlayerInjury {
   id: number;
@@ -17,7 +22,6 @@ export interface MLBPlayerInjury {
   injury_type: string;
   is_surgery_required?: boolean | null;
   side?: string | null;
-  source?: string | null;
   start_date: string;
   status: string;
   updated_date: string;
@@ -34,6 +38,8 @@ export interface MLBPlayerInjuriesListResponse {
   player_injuries: MLBPlayerInjury[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -43,7 +49,10 @@ export class MLBPlayerInjuriesResource {
 
   async list(params?: MLBPlayerInjuriesListParams): Promise<MLBPlayerInjuriesListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<MLBPlayerInjuriesListResponse, 'quota'>>(this.opts, `/api/v1/mlb/player_injuries${qs}`);
+    const r = await fetchJson<Omit<MLBPlayerInjuriesListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/mlb/player_injuries${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -61,7 +70,10 @@ export class MLBPlayerInjuriesResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: MLBPlayerInjuriesListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as MLBPlayerInjuriesListParams);
+      const page: MLBPlayerInjuriesListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as MLBPlayerInjuriesListParams);
       for (const row of page.player_injuries) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

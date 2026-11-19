@@ -12,16 +12,71 @@
 //   const { teams } = await api.nfl.teams.list({ limit: 10 });
 // =============================================================================
 
-export { StatApi } from './generated/_index.js';
-export type * from './generated/_index.js';
-
+export type { FileResult, Quota, StatApiOptions } from './core/client.js';
+export type {
+  BuiltLineupModel,
+  ContestPayoutMetrics,
+  ContestPayoutTierView,
+  ContestSummaryView,
+  CustomLineupInput,
+  DiversityFrontierPoint,
+  DrawSetCounts,
+  ExcludedBreakdown,
+  GroupBlock,
+  LateSwapDiagnostics,
+  LateSwapEntryDiff,
+  LateSwapPortfolioSummary,
+  LateSwapRequest,
+  LateSwapResponse,
+  LineupOwnershipMetrics,
+  LineupRankingView,
+  LineupScenarioFit,
+  LineupSeatRef,
+  LineupStackModel,
+  LiveGameStateInput,
+  OpponentFieldView,
+  OptimizerDiagnostics,
+  OptimizerLineupsRequest,
+  OptimizerLineupsResponse,
+  OptimizerLineupView,
+  OptimizerMinExposureShortfallView,
+  OptimizerPlayerControls,
+  OptimizerPlayerExposureView,
+  OptimizerPortfolioSummary,
+  OptimizerSeatView,
+  PlayerControls,
+  PlayerSimRates,
+  PortfolioDiversityMetrics,
+  PortfolioExposuresBreakdown,
+  PortfolioModel,
+  PortfolioSelectDiagnostics,
+  PortfolioSelectRequest,
+  PortfolioSelectResponse,
+  QuantileSummary,
+  RequestWarning,
+  ScenarioFilterRule,
+  SimDiagnosticsView,
+  SimJobPollResult,
+  SimJobStatusResponse,
+  SimLineupsRequest,
+  SimLineupsResponse,
+  SimRequestOptions,
+  SimSummaryView,
+  SimVersionKeysView,
+  SlatePlayerModel,
+  SlateView,
+  SourceView,
+  StackBlock,
+} from './core/dfs_lineups.js';
 export {
-  StatApiError,
   AuthenticationError,
-  PlanRequiredError,
   NotFoundError,
-  ValidationError,
+  NotReadyError,
+  PlanRequiredError,
   QuotaExceededError,
+  StatApiError,
+  ValidationError,
 } from './core/error.js';
-
-export type { StatApiOptions, Quota } from './core/client.js';
+export { SimNBAResource, SimNFLResource } from './core/sim.js';
+export type * from './generated/_index.js';
+export { StatApi } from './generated/_index.js';

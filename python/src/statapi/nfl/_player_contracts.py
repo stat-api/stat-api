@@ -15,7 +15,6 @@ NFLPlayerContract = TypedDict(
     "NFLPlayerContract",
     {
         "id": int,
-        "otc_id": str,
         "player_id": int,
         "team_id": int,
         "apy": int,
@@ -28,7 +27,6 @@ NFLPlayerContract = TypedDict(
         "inflated_guaranteed": int,
         "inflated_value": int,
         "is_active": bool,
-        "player_page_url": str | None,
         "position": str,
         "season_history_json": str | None,
         "value": int,

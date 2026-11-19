@@ -14,14 +14,14 @@ public final class PgaApi {
     private final PGAOperatorPlayerLookupsResource operatorPlayerLookups;
     private final PGATournamentsResource tournaments;
     private final PGAPlayerSeasonStatsResource playerSeasonStats;
+    private final PGAPlayerRoundsResource playerRounds;
     private final PGACourseHoleStatsResource courseHoleStats;
     private final PGALeaderboardsResource leaderboards;
-    private final PGAPlayerHolesResource playerHoles;
     private final PGAPlayerNewsResource playerNews;
-    private final PGAPlayerRoundsResource playerRounds;
     private final PGAPlayerShotsResource playerShots;
     private final PGATournamentOddsResource tournamentOdds;
     private final PGATournamentRoundsResource tournamentRounds;
+    private final PGAPlayerHolesResource playerHoles;
 
     public PgaApi(Http http) {
         this.players = new PGAPlayersResource(http);
@@ -31,14 +31,14 @@ public final class PgaApi {
         this.operatorPlayerLookups = new PGAOperatorPlayerLookupsResource(http);
         this.tournaments = new PGATournamentsResource(http);
         this.playerSeasonStats = new PGAPlayerSeasonStatsResource(http);
+        this.playerRounds = new PGAPlayerRoundsResource(http);
         this.courseHoleStats = new PGACourseHoleStatsResource(http);
         this.leaderboards = new PGALeaderboardsResource(http);
-        this.playerHoles = new PGAPlayerHolesResource(http);
         this.playerNews = new PGAPlayerNewsResource(http);
-        this.playerRounds = new PGAPlayerRoundsResource(http);
         this.playerShots = new PGAPlayerShotsResource(http);
         this.tournamentOdds = new PGATournamentOddsResource(http);
         this.tournamentRounds = new PGATournamentRoundsResource(http);
+        this.playerHoles = new PGAPlayerHolesResource(http);
     }
 
     public PGAPlayersResource players() {
@@ -69,6 +69,10 @@ public final class PgaApi {
         return playerSeasonStats;
     }
 
+    public PGAPlayerRoundsResource playerRounds() {
+        return playerRounds;
+    }
+
     public PGACourseHoleStatsResource courseHoleStats() {
         return courseHoleStats;
     }
@@ -77,16 +81,8 @@ public final class PgaApi {
         return leaderboards;
     }
 
-    public PGAPlayerHolesResource playerHoles() {
-        return playerHoles;
-    }
-
     public PGAPlayerNewsResource playerNews() {
         return playerNews;
-    }
-
-    public PGAPlayerRoundsResource playerRounds() {
-        return playerRounds;
     }
 
     public PGAPlayerShotsResource playerShots() {
@@ -99,5 +95,9 @@ public final class PgaApi {
 
     public PGATournamentRoundsResource tournamentRounds() {
         return tournamentRounds;
+    }
+
+    public PGAPlayerHolesResource playerHoles() {
+        return playerHoles;
     }
 }

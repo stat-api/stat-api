@@ -100,15 +100,23 @@ export interface NewsItem {
 
 /** The provenance footer every embed carries. */
 export function statFooter(meta: { fetchedAt: number; ageSeconds: number }): EmbedFooter {
-  return { text: `data as of ${formatAsOf(meta.fetchedAt)} · cached ${meta.ageSeconds}s ago · stat-api.com` };
+  return {
+    text: `data as of ${formatAsOf(meta.fetchedAt)} · cached ${meta.ageSeconds}s ago · stat-api.com`,
+  };
 }
 
 // ---- builders ----
 
-export function scoresEmbed(league: string, date: string, games: ScoreLine[], footer: EmbedFooter): Embed {
+export function scoresEmbed(
+  league: string,
+  date: string,
+  games: ScoreLine[],
+  footer: EmbedFooter,
+): Embed {
   const meta = leagueMeta(league);
   const lines = games.map((g) => {
-    const scored = /final|progress|live|end|half/i.test(g.status) || g.awayScore > 0 || g.homeScore > 0;
+    const scored =
+      /final|progress|live|end|half/i.test(g.status) || g.awayScore > 0 || g.homeScore > 0;
     const body = scored ? `${g.awayScore}–${g.homeScore}` : 'vs';
     const time = /final/i.test(g.status) ? '' : ` · ${hhmmUtc(g.startTime)}`;
     return `**${g.away}** ${body} **${g.home}** · ${g.status}${time}`.trimEnd();
@@ -149,10 +157,16 @@ export function boxEmbed(box: BoxScore, footer: EmbedFooter): Embed {
 }
 
 export function playerEmbed(card: PlayerCard, footer: EmbedFooter): Embed {
-  const fields: EmbedField[] = card.stats.map((s) => ({ name: s.label, value: s.value, inline: true }));
+  const fields: EmbedField[] = card.stats.map((s) => ({
+    name: s.label,
+    value: s.value,
+    inline: true,
+  }));
   return {
     title: `🏀 ${card.name}`,
-    description: [card.team, card.position, card.season].filter(Boolean).join(' · ') + (card.note ? `\n${card.note}` : ''),
+    description:
+      [card.team, card.position, card.season].filter(Boolean).join(' · ') +
+      (card.note ? `\n${card.note}` : ''),
     color: leagueMeta('nba').color,
     fields,
     footer,
@@ -215,16 +229,19 @@ export function errorEmbed(title: string, message: string): Embed {
 function standingsTable(rows: StandingRow[]): string {
   if (rows.length === 0) return 'no standings';
   return rows
-    .map((r) => `${String(r.rank).padStart(2)}  ${r.abbrev.padEnd(4)} ${`${r.wins}-${r.losses}`.padEnd(7)} ${r.pct}`)
+    .map(
+      (r) =>
+        `${String(r.rank).padStart(2)}  ${r.abbrev.padEnd(4)} ${`${r.wins}-${r.losses}`.padEnd(7)} ${r.pct}`,
+    )
     .join('\n');
 }
 
 function codeBlock(body: string): string {
-  return '```\n' + body + '\n```';
+  return `\`\`\`\n${body}\n\`\`\``;
 }
 
 function truncate(text: string, max: number): string {
-  return text.length <= max ? text : text.slice(0, max - 1) + '…';
+  return text.length <= max ? text : `${text.slice(0, max - 1)}…`;
 }
 
 /** "20260708" → "2026-07-08". Leaves non-8-digit input untouched. */

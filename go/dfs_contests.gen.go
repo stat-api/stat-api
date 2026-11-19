@@ -15,24 +15,55 @@ import (
 
 // DFSContest is a row from dfs.contests.
 type DFSContest struct {
-	ID                int64  `json:"id"`
-	ExternalID        int64  `json:"external_id"`
-	SlateID           int64  `json:"slate_id"`
-	ContestType       int    `json:"contest_type"`
-	EntryCount        int    `json:"entry_count"`
-	EntryFee          int    `json:"entry_fee"`
-	Guaranteed        bool   `json:"guaranteed"`
-	MaxEntries        int    `json:"max_entries"`
-	MaxEntriesPerUser int    `json:"max_entries_per_user"`
-	Name              string `json:"name"`
-	PrizePool         int    `json:"prize_pool"`
+	ID                  int64            `json:"id"`
+	ExternalID          int64            `json:"external_id"`
+	GameTypeID          *int             `json:"game_type_id"`
+	OperatorExternalID  *string          `json:"operator_external_id"`
+	OperatorID          int64            `json:"operator_id"`
+	SlateID             int64            `json:"slate_id"`
+	Attributes          *json.RawMessage `json:"attributes"`
+	CompleteFile        bool             `json:"complete_file"`
+	ContestState        *string          `json:"contest_state"`
+	ContestType         int              `json:"contest_type"`
+	EntryCount          int              `json:"entry_count"`
+	EntryFee            int              `json:"entry_fee"`
+	FileLineups         *int             `json:"file_lineups"`
+	FileSampled         *bool            `json:"file_sampled"`
+	FirstPrize          *int             `json:"first_prize"`
+	FirstSeenAt         *string          `json:"first_seen_at"`
+	GameCount           int              `json:"game_count"`
+	Guaranteed          bool             `json:"guaranteed"`
+	LastSeenAt          *string          `json:"last_seen_at"`
+	LineupsStatus       string           `json:"lineups_status"`
+	MaxEntries          int              `json:"max_entries"`
+	MaxEntriesPerUser   int              `json:"max_entries_per_user"`
+	Name                string           `json:"name"`
+	PaidPlaces          *int             `json:"paid_places"`
+	PartialLineupsCount *int             `json:"partial_lineups_count"`
+	PayoutType          *int             `json:"payout_type"`
+	PlayerCount         int              `json:"player_count"`
+	PrizePool           int              `json:"prize_pool"`
+	Qualifier           bool             `json:"qualifier"`
+	SlateStatus         *string          `json:"slate_status"`
+	StartTime           *string          `json:"start_time"`
+	State               string           `json:"state"`
+	Status              *string          `json:"status"`
 }
 
 // DFSContestsListParams are the query parameters for listing dfs.contests.
 type DFSContestsListParams struct {
-	SlateID *int64
-	Limit   *int
-	FromID  *int64
+	SlateID             *int64
+	OperatorSlateID     *int
+	OperatorID          *int64
+	Operator            *string
+	Status              *string
+	SlateStatus         *string
+	LineupsStatus       *string
+	HasLineups          *string
+	PartialLineupsCount *int
+	CompleteFile        *bool
+	Limit               *int
+	FromID              *int64
 }
 
 func (p *DFSContestsListParams) values() url.Values {
@@ -42,6 +73,33 @@ func (p *DFSContestsListParams) values() url.Values {
 	}
 	if p.SlateID != nil {
 		v.Set("slate_id", strconv.FormatInt(*p.SlateID, 10))
+	}
+	if p.OperatorSlateID != nil {
+		v.Set("operator_slate_id", strconv.Itoa(*p.OperatorSlateID))
+	}
+	if p.OperatorID != nil {
+		v.Set("operator_id", strconv.FormatInt(*p.OperatorID, 10))
+	}
+	if p.Operator != nil {
+		v.Set("operator", *p.Operator)
+	}
+	if p.Status != nil {
+		v.Set("status", *p.Status)
+	}
+	if p.SlateStatus != nil {
+		v.Set("slate_status", *p.SlateStatus)
+	}
+	if p.LineupsStatus != nil {
+		v.Set("lineups_status", *p.LineupsStatus)
+	}
+	if p.HasLineups != nil {
+		v.Set("has_lineups", *p.HasLineups)
+	}
+	if p.PartialLineupsCount != nil {
+		v.Set("partial_lineups_count", strconv.Itoa(*p.PartialLineupsCount))
+	}
+	if p.CompleteFile != nil {
+		v.Set("complete_file", strconv.FormatBool(*p.CompleteFile))
 	}
 	if p.Limit != nil {
 		v.Set("limit", strconv.Itoa(*p.Limit))

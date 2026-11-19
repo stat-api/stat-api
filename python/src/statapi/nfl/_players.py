@@ -16,7 +16,7 @@ NFLPlayer = TypedDict(
     {
         "id": int,
         "gsis_id": str,
-        "league_player_id": str,
+        "league_player_id": str | None,
         "team_id": int | None,
         "birth_city": str | None,
         "birth_country": str | None,

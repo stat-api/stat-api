@@ -29,8 +29,6 @@ NHLGame = TypedDict(
         "away_team_score_period3": int | None,
         "away_team_series_wins": int | None,
         "channel": str | None,
-        "date_time": str,
-        "date_time_utc": str | None,
         "day": int,
         "game_time": str,
         "home_team_score": int | None,

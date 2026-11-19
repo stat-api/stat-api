@@ -2,7 +2,12 @@
 //
 // SDK resource for mlb.game_player_pitching_stats (public API).
 // Source: schema/api/groups/public.yml + schema/model/mlb/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface MLBGamePlayerPitchingStat {
   id: number;
@@ -86,6 +91,8 @@ export interface MLBGamePlayerPitchingStatsListResponse {
   game_player_pitching_stats: MLBGamePlayerPitchingStat[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -93,16 +100,28 @@ export interface MLBGamePlayerPitchingStatsListResponse {
 export class MLBGamePlayerPitchingStatsResource {
   constructor(private readonly opts: ResolvedStatApiOptions) {}
 
-  async list(params?: MLBGamePlayerPitchingStatsListParams): Promise<MLBGamePlayerPitchingStatsListResponse> {
+  async list(
+    params?: MLBGamePlayerPitchingStatsListParams,
+  ): Promise<MLBGamePlayerPitchingStatsListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<MLBGamePlayerPitchingStatsListResponse, 'quota'>>(this.opts, `/api/v1/mlb/game_player_pitching_stats${qs}`);
+    const r = await fetchJson<Omit<MLBGamePlayerPitchingStatsListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/mlb/game_player_pitching_stats${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
   async get(id: number): Promise<MLBGamePlayerPitchingStat> {
-    return (await fetchJson<MLBGamePlayerPitchingStat>(this.opts, `/api/v1/mlb/game_player_pitching_stats/${id}`)).data;
+    return (
+      await fetchJson<MLBGamePlayerPitchingStat>(
+        this.opts,
+        `/api/v1/mlb/game_player_pitching_stats/${id}`,
+      )
+    ).data;
   }
-  async *iter(params?: MLBGamePlayerPitchingStatsListParams): AsyncGenerator<MLBGamePlayerPitchingStat> {
+  async *iter(
+    params?: MLBGamePlayerPitchingStatsListParams,
+  ): AsyncGenerator<MLBGamePlayerPitchingStat> {
     // Always walk with from_id (starting at 0): from_id forces the server's
     // ascending keyset order. Without it, DESC-default tables return page 1
     // newest-first and next_from_id (the page MINIMUM) re-yields those same
@@ -113,7 +132,10 @@ export class MLBGamePlayerPitchingStatsResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: MLBGamePlayerPitchingStatsListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as MLBGamePlayerPitchingStatsListParams);
+      const page: MLBGamePlayerPitchingStatsListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as MLBGamePlayerPitchingStatsListParams);
       for (const row of page.game_player_pitching_stats) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

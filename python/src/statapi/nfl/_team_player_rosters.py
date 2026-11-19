@@ -15,13 +15,22 @@ NFLTeamPlayerRoster = TypedDict(
     "NFLTeamPlayerRoster",
     {
         "id": int,
+        "game_id": int,
         "player_id": int,
         "season_id": int,
         "team_id": int,
         "day": int,
         "depth_order": int | None,
+        "game_time": str | None,
+        "injury_status": str | None,
         "position": str | None,
         "position_group": str | None,
+        "practice_status": str | None,
+        "report_primary_injury": str | None,
+        "report_status": str | None,
+        "season_type": str | None,
+        "status": str | None,
+        "week": int | None,
     },
 )
 
@@ -32,12 +41,13 @@ class NFLTeamPlayerRostersResource:
     def __init__(self, transport: HttpTransport) -> None:
         self._transport = transport
 
-    def list(self, *, team_id: int | None = None, player_id: int | None = None, season_id: int | None = None, position: str | None = None, limit: int | None = None, from_id: int | None = None) -> Page[NFLTeamPlayerRoster]:
+    def list(self, *, team_id: int | None = None, player_id: int | None = None, season_id: int | None = None, position: str | None = None, mode: str | None = None, limit: int | None = None, from_id: int | None = None) -> Page[NFLTeamPlayerRoster]:
         body, quota = self._transport.request(self._PATH, {
             "team_id": team_id,
             "player_id": player_id,
             "season_id": season_id,
             "position": position,
+            "mode": mode,
             "limit": limit,
             "from_id": from_id,
         })
@@ -49,18 +59,18 @@ class NFLTeamPlayerRostersResource:
             quota=quota,
         )
 
-    def get(self, id: int) -> NFLTeamPlayerRoster:
-        body, _ = self._transport.request(f"{self._PATH}/{id}")
+    def get(self, id: int, *, mode: str | None = None) -> NFLTeamPlayerRoster:
+        body, _ = self._transport.request(f"{self._PATH}/{id}", {"mode": mode})
         row: NFLTeamPlayerRoster = body
         return row
 
-    def iter(self, *, team_id: int | None = None, player_id: int | None = None, season_id: int | None = None, position: str | None = None, limit: int | None = None) -> Iterator[NFLTeamPlayerRoster]:
+    def iter(self, *, team_id: int | None = None, player_id: int | None = None, season_id: int | None = None, position: str | None = None, mode: str | None = None, limit: int | None = None) -> Iterator[NFLTeamPlayerRoster]:
         # Always walk with from_id (starting at 0): from_id forces the server's
         # ascending keyset order. Without it, DESC-default tables re-yield page
         # 1 and under-walk. Iteration is therefore always oldest-first.
         from_id: int | None = 0
         while True:
-            page = self.list(team_id=team_id, player_id=player_id, season_id=season_id, position=position, limit=limit, from_id=from_id)
+            page = self.list(team_id=team_id, player_id=player_id, season_id=season_id, position=position, mode=mode, limit=limit, from_id=from_id)
             for row in page.rows:
                 yield row
             if page.next_from_id is None:

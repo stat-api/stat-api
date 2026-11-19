@@ -24,7 +24,7 @@ from email.message import Message
 from typing import Any
 
 from ._version import __version__
-from .errors import StatApiError, error_for_status
+from .errors import NotReadyError, StatApiError, error_for_status
 from .page import Quota
 
 _ENV_API_KEY = "STAT_API_KEY"
@@ -63,7 +63,9 @@ class HttpTransport:
     ) -> tuple[Any, Quota | None]:
         """Perform a GET and return ``(parsed_json, quota)``.
 
-        Raises the mapped :class:`StatApiError` subclass on any non-2xx status.
+        Raises the mapped :class:`StatApiError` subclass on any non-2xx status,
+        and :class:`NotReadyError` on a 202 (a 202 holds no data, so it is never
+        returned as data and never retried).
         """
         url = f"{self._base_url}{path}{_encode_params(params)}"
         req = urllib.request.Request(
@@ -75,14 +77,93 @@ class HttpTransport:
                 "Accept": "application/json",
             },
         )
-        return self._send(req, path)
+        return self._send(req, path, retry_5xx=True)
 
-    def _send(self, req: urllib.request.Request, path: str) -> tuple[Any, Quota | None]:
-        for attempt in range(_MAX_ATTEMPTS):
-            is_last = attempt == _MAX_ATTEMPTS - 1
+    def post(
+        self, path: str, payload: Mapping[str, object]
+    ) -> tuple[Any, Quota | None]:
+        """Perform a JSON POST and return ``(parsed_json, quota)``."""
+        url = f"{self._base_url}{path}"
+        clean = {k: v for k, v in payload.items() if v is not None}
+        raw_body = json.dumps(clean).encode("utf-8")
+        req = urllib.request.Request(
+            url,
+            data=raw_body,
+            method="POST",
+            headers={
+                "Authorization": f"Bearer {self._api_key}",
+                "User-Agent": self._user_agent,
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+        )
+        return self._send(req, path, retry_5xx=False)
+
+    def request_raw(
+        self,
+        method: str,
+        path: str,
+        *,
+        payload: Mapping[str, object] | None = None,
+        headers: Mapping[str, str] | None = None,
+        retry_5xx: bool = False,
+    ) -> tuple[int, Any, str, Quota | None]:
+        """Perform a raw HTTP request returning ``(status, headers, text, quota)`` for ``2xx`` (including ``202``)."""
+        url = f"{self._base_url}{path}"
+        req_headers: dict[str, str] = {
+            "Authorization": f"Bearer {self._api_key}",
+            "User-Agent": self._user_agent,
+            "Accept": "application/json",
+        }
+        raw_body: bytes | None = None
+        if payload is not None:
+            clean = {k: v for k, v in payload.items() if v is not None}
+            raw_body = json.dumps(clean).encode("utf-8")
+            req_headers["Content-Type"] = "application/json"
+        if headers:
+            for k, v in headers.items():
+                if v:
+                    req_headers[k] = v
+        req = urllib.request.Request(url, data=raw_body, method=method, headers=req_headers)
+        max_attempts = _MAX_ATTEMPTS if retry_5xx else 1
+        for attempt in range(max_attempts):
+            is_last = attempt == max_attempts - 1
+            try:
+                with urllib.request.urlopen(req, timeout=self._timeout) as resp:
+                    text = resp.read().decode("utf-8")
+                    return resp.status, resp.headers, text, _parse_quota(resp.headers)
+            except urllib.error.HTTPError as exc:
+                body = _parse_json(exc.read())
+                if exc.code < 500 or is_last:
+                    raise error_for_status(exc.code, body, path) from None
+            except urllib.error.URLError as exc:
+                if is_last:
+                    raise StatApiError(
+                        0,
+                        {"error": "connection_error", "message": str(exc.reason)},
+                        path,
+                    ) from exc
+            _sleep_backoff(attempt)
+        raise AssertionError("stat-api: retry loop exhausted without a result")
+
+    def _send(
+        self, req: urllib.request.Request, path: str, *, retry_5xx: bool = True
+    ) -> tuple[Any, Quota | None]:
+        max_attempts = _MAX_ATTEMPTS if retry_5xx else 1
+        for attempt in range(max_attempts):
+            is_last = attempt == max_attempts - 1
             try:
                 with urllib.request.urlopen(req, timeout=self._timeout) as resp:
                     body = _parse_json(resp.read())
+                    if resp.status == 202:
+                        # 202 Accepted: the work is queued and the body holds no
+                        # data. Raise (never return it as data), never retry.
+                        raise NotReadyError(
+                            resp.status,
+                            body,
+                            path,
+                            retry_after=resp.headers.get("Retry-After"),
+                        )
                     return body, _parse_quota(resp.headers)
             except urllib.error.HTTPError as exc:
                 body = _parse_json(exc.read())

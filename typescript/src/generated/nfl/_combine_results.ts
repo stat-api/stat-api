@@ -2,12 +2,16 @@
 //
 // SDK resource for nfl.combine_results (public API).
 // Source: schema/api/groups/public.yml + schema/model/nfl/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NFLCombineResult {
   id: number;
   cfb_id?: string | null;
-  pfr_id?: string | null;
   player_id: number;
   team_id?: number | null;
   bench?: number | null;
@@ -35,6 +39,8 @@ export interface NFLCombineResultsListResponse {
   combine_results: NFLCombineResult[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -44,7 +50,10 @@ export class NFLCombineResultsResource {
 
   async list(params?: NFLCombineResultsListParams): Promise<NFLCombineResultsListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NFLCombineResultsListResponse, 'quota'>>(this.opts, `/api/v1/nfl/combine_results${qs}`);
+    const r = await fetchJson<Omit<NFLCombineResultsListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nfl/combine_results${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -62,7 +71,10 @@ export class NFLCombineResultsResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NFLCombineResultsListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NFLCombineResultsListParams);
+      const page: NFLCombineResultsListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NFLCombineResultsListParams);
       for (const row of page.combine_results) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

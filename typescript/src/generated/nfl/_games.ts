@@ -2,7 +2,12 @@
 //
 // SDK resource for nfl.games (public API).
 // Source: schema/api/groups/public.yml + schema/model/nfl/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NFLGame {
   id: number;
@@ -20,7 +25,7 @@ export interface NFLGame {
   end_time?: string | null;
   game_label?: string | null;
   game_sub_label?: string | null;
-  game_time: string;
+  game_time?: string | null;
   home_rotation_number?: number | null;
   home_team: string;
   home_team_score: number;
@@ -32,8 +37,8 @@ export interface NFLGame {
   playoff_seed_home?: number | null;
   postponed_status?: string | null;
   season_type: string;
-  start_time: string;
   status: string;
+  time_tbd: boolean;
   type: string;
   week: number;
 }
@@ -41,6 +46,9 @@ export interface NFLGame {
 export interface NFLGamesListParams {
   season_id?: number;
   week?: number;
+  week__gte?: number;
+  week__lte?: number;
+  week__between?: string;
   season_type?: string;
   home_team_id?: number;
   away_team_id?: number;
@@ -53,6 +61,8 @@ export interface NFLGamesListResponse {
   games: NFLGame[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -62,7 +72,10 @@ export class NFLGamesResource {
 
   async list(params?: NFLGamesListParams): Promise<NFLGamesListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NFLGamesListResponse, 'quota'>>(this.opts, `/api/v1/nfl/games${qs}`);
+    const r = await fetchJson<Omit<NFLGamesListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nfl/games${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -80,7 +93,10 @@ export class NFLGamesResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NFLGamesListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NFLGamesListParams);
+      const page: NFLGamesListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NFLGamesListParams);
       for (const row of page.games) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

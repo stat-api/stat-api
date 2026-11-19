@@ -2,17 +2,31 @@
 //
 // SDK resource for nfl.team_player_rosters (public API).
 // Source: schema/api/groups/public.yml + schema/model/nfl/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NFLTeamPlayerRoster {
   id: number;
+  game_id: number;
   player_id: number;
   season_id: number;
   team_id: number;
   day: number;
   depth_order?: number | null;
+  game_time?: string | null;
+  injury_status?: string | null;
   position?: string | null;
   position_group?: string | null;
+  practice_status?: string | null;
+  report_primary_injury?: string | null;
+  report_status?: string | null;
+  season_type?: string | null;
+  status?: string | null;
+  week?: number | null;
 }
 
 export interface NFLTeamPlayerRostersListParams {
@@ -20,6 +34,7 @@ export interface NFLTeamPlayerRostersListParams {
   player_id?: number;
   season_id?: number;
   position?: string;
+  mode?: 'pre' | 'full';
   limit?: number;
   from_id?: number;
 }
@@ -28,6 +43,10 @@ export interface NFLTeamPlayerRostersListResponse {
   team_player_rosters: NFLTeamPlayerRoster[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
+  /** The time-wall mode that served these rows. */
+  mode: 'pre' | 'full';
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -37,12 +56,18 @@ export class NFLTeamPlayerRostersResource {
 
   async list(params?: NFLTeamPlayerRostersListParams): Promise<NFLTeamPlayerRostersListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NFLTeamPlayerRostersListResponse, 'quota'>>(this.opts, `/api/v1/nfl/team_player_rosters${qs}`);
+    const r = await fetchJson<Omit<NFLTeamPlayerRostersListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nfl/team_player_rosters${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
-  async get(id: number): Promise<NFLTeamPlayerRoster> {
-    return (await fetchJson<NFLTeamPlayerRoster>(this.opts, `/api/v1/nfl/team_player_rosters/${id}`)).data;
+  async get(id: number, params?: { mode?: 'pre' | 'full' }): Promise<NFLTeamPlayerRoster> {
+    const qs = toQueryString(params as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<NFLTeamPlayerRoster>(this.opts, `/api/v1/nfl/team_player_rosters/${id}${qs}`)
+    ).data;
   }
   async *iter(params?: NFLTeamPlayerRostersListParams): AsyncGenerator<NFLTeamPlayerRoster> {
     // Always walk with from_id (starting at 0): from_id forces the server's
@@ -55,7 +80,10 @@ export class NFLTeamPlayerRostersResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NFLTeamPlayerRostersListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NFLTeamPlayerRostersListParams);
+      const page: NFLTeamPlayerRostersListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NFLTeamPlayerRostersListParams);
       for (const row of page.team_player_rosters) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

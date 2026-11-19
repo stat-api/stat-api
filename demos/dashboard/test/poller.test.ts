@@ -4,11 +4,11 @@
 //   (c) snapshot diff → SSE patch
 import { describe, expect, test } from 'bun:test';
 
-import { loadConfig, type Config } from '../src/config.ts';
+import { type Config, loadConfig } from '../src/config.ts';
+import type { Quota, SseEvent } from '../src/contract.ts';
 import { Poller } from '../src/poller.ts';
 import { SnapshotStore } from '../src/snapshot.ts';
-import type { Quota, SseEvent } from '../src/contract.ts';
-import { emptyState, makeMockApi, type MockState } from './mock-api.ts';
+import { emptyState, type MockState, makeMockApi } from './mock-api.ts';
 
 // A July evening (ET): MLB in season, NBA + NFL offseason.
 const NOW = new Date('2026-07-15T22:00:00.000Z');
@@ -22,7 +22,10 @@ function config(): Config {
   return loadConfig({});
 }
 
-function makePoller(state: MockState, opts: { quota?: () => Quota | null; logger?: (m: string) => void } = {}) {
+function makePoller(
+  state: MockState,
+  opts: { quota?: () => Quota | null; logger?: (m: string) => void } = {},
+) {
   const { api, counts } = makeMockApi(state);
   const store = new SnapshotStore(['mlb', 'nba', 'nfl']);
   const poller = new Poller({
@@ -49,18 +52,69 @@ function fullSlate(): MockState {
     { id: 104, full_name: 'St. Louis Cardinals', abbreviation: 'STL' },
   ];
   state.mlbGames = [
-    { id: 9001, away_team_id: 105, home_team_id: 106, away_team_score: 3, home_team_score: 2, status: 'In Progress', game_time: LIVE_START },
-    { id: 9002, away_team_id: 101, home_team_id: 102, away_team_score: 0, home_team_score: 0, status: 'Scheduled', game_time: SCHEDULED_START },
-    { id: 9003, away_team_id: 103, home_team_id: 104, away_team_score: 5, home_team_score: 4, status: 'Final', game_time: FINAL_START },
+    {
+      id: 9001,
+      away_team_id: 105,
+      home_team_id: 106,
+      away_team_score: 3,
+      home_team_score: 2,
+      status: 'In Progress',
+      game_time: LIVE_START,
+    },
+    {
+      id: 9002,
+      away_team_id: 101,
+      home_team_id: 102,
+      away_team_score: 0,
+      home_team_score: 0,
+      status: 'Scheduled',
+      game_time: SCHEDULED_START,
+    },
+    {
+      id: 9003,
+      away_team_id: 103,
+      home_team_id: 104,
+      away_team_score: 5,
+      home_team_score: 4,
+      status: 'Final',
+      game_time: FINAL_START,
+    },
   ];
   state.operators = [
     { id: 1, name: 'DraftKings' },
     { id: 2, name: 'FanDuel' },
   ];
   state.mlbLines = [
-    { id: 1, game_id: 9001, operator_id: 1, captured_at: '2026-07-15T20:30:00.000Z', spread: '1.5', total: '8.5', moneyline_home: 120, moneyline_away: -140 },
-    { id: 2, game_id: 9001, operator_id: 1, captured_at: '2026-07-15T21:00:00.000Z', spread: '1.5', total: '9.0', moneyline_home: 118, moneyline_away: -138 },
-    { id: 3, game_id: 9001, operator_id: 2, captured_at: '2026-07-15T20:30:00.000Z', spread: '1.5', total: '8.5', moneyline_home: 122, moneyline_away: -142 },
+    {
+      id: 1,
+      game_id: 9001,
+      operator_id: 1,
+      captured_at: '2026-07-15T20:30:00.000Z',
+      spread: '1.5',
+      total: '8.5',
+      moneyline_home: 120,
+      moneyline_away: -140,
+    },
+    {
+      id: 2,
+      game_id: 9001,
+      operator_id: 1,
+      captured_at: '2026-07-15T21:00:00.000Z',
+      spread: '1.5',
+      total: '9.0',
+      moneyline_home: 118,
+      moneyline_away: -138,
+    },
+    {
+      id: 3,
+      game_id: 9001,
+      operator_id: 2,
+      captured_at: '2026-07-15T20:30:00.000Z',
+      spread: '1.5',
+      total: '8.5',
+      moneyline_home: 122,
+      moneyline_away: -142,
+    },
   ];
   state.mlbPlayers = [
     { id: 501, team_id: 105, full_name: 'Jose Altuve', primary_position: '2B' },
@@ -69,10 +123,62 @@ function fullSlate(): MockState {
     { id: 504, team_id: 106, full_name: 'Cal Raleigh', primary_position: 'C' },
   ];
   state.mlbBatters = [
-    { id: 1, game_id: 9001, player_id: 501, team_id: 105, at_bats: 4, runs: 1, hits: 2, runs_batted_in: 1, home_runs: 0, walks: 1, strikeouts: 1, batting_average: '0.312' },
-    { id: 2, game_id: 9001, player_id: 502, team_id: 105, at_bats: 4, runs: 2, hits: 3, runs_batted_in: 2, home_runs: 1, walks: 0, strikeouts: 0, batting_average: '0.298' },
-    { id: 3, game_id: 9001, player_id: 503, team_id: 106, at_bats: 3, runs: 0, hits: 1, runs_batted_in: 0, home_runs: 0, walks: 1, strikeouts: 1, batting_average: '0.276' },
-    { id: 4, game_id: 9001, player_id: 504, team_id: 106, at_bats: 4, runs: 1, hits: 1, runs_batted_in: 1, home_runs: 1, walks: 0, strikeouts: 2, batting_average: '0.244' },
+    {
+      id: 1,
+      game_id: 9001,
+      player_id: 501,
+      team_id: 105,
+      at_bats: 4,
+      runs: 1,
+      hits: 2,
+      runs_batted_in: 1,
+      home_runs: 0,
+      walks: 1,
+      strikeouts: 1,
+      batting_average: '0.312',
+    },
+    {
+      id: 2,
+      game_id: 9001,
+      player_id: 502,
+      team_id: 105,
+      at_bats: 4,
+      runs: 2,
+      hits: 3,
+      runs_batted_in: 2,
+      home_runs: 1,
+      walks: 0,
+      strikeouts: 0,
+      batting_average: '0.298',
+    },
+    {
+      id: 3,
+      game_id: 9001,
+      player_id: 503,
+      team_id: 106,
+      at_bats: 3,
+      runs: 0,
+      hits: 1,
+      runs_batted_in: 0,
+      home_runs: 0,
+      walks: 1,
+      strikeouts: 1,
+      batting_average: '0.276',
+    },
+    {
+      id: 4,
+      game_id: 9001,
+      player_id: 504,
+      team_id: 106,
+      at_bats: 4,
+      runs: 1,
+      hits: 1,
+      runs_batted_in: 1,
+      home_runs: 1,
+      walks: 0,
+      strikeouts: 2,
+      batting_average: '0.244',
+    },
   ];
   return state;
 }
@@ -105,8 +211,24 @@ describe('request budget + window gating', () => {
     state.mlbTeams = fullSlate().mlbTeams;
     // Only out-of-window games: one far-future scheduled, one already final.
     state.mlbGames = [
-      { id: 9002, away_team_id: 101, home_team_id: 102, away_team_score: 0, home_team_score: 0, status: 'Scheduled', game_time: SCHEDULED_START },
-      { id: 9003, away_team_id: 103, home_team_id: 104, away_team_score: 5, home_team_score: 4, status: 'Final', game_time: FINAL_START },
+      {
+        id: 9002,
+        away_team_id: 101,
+        home_team_id: 102,
+        away_team_score: 0,
+        home_team_score: 0,
+        status: 'Scheduled',
+        game_time: SCHEDULED_START,
+      },
+      {
+        id: 9003,
+        away_team_id: 103,
+        home_team_id: 104,
+        away_team_score: 5,
+        home_team_score: 4,
+        status: 'Final',
+        game_time: FINAL_START,
+      },
     ];
     const { poller, counts } = makePoller(state);
 
@@ -148,7 +270,7 @@ describe('request budget + window gating', () => {
     expect(game.detail!.box).toHaveLength(4);
     expect(game.detail!.pulse.length).toBeGreaterThanOrEqual(1);
     // Box lines carry resolved player names, not numeric ids.
-    expect(game.detail!.box.some(b => b.player === 'Jose Altuve')).toBe(true);
+    expect(game.detail!.box.some((b) => b.player === 'Jose Altuve')).toBe(true);
     // Pulse is a market-implied home win probability in [0, 1].
     for (const point of game.detail!.pulse) {
       expect(point.source).toBe('sportsbook-implied');
@@ -175,9 +297,54 @@ describe('nfl scoreboard query shape', () => {
     // Anchor: last week's finished game (week 10). This week (11) has a Thursday
     // game today and a Sunday game later — neither is Final yet.
     state.nflGames = [
-      { id: 200, away_team_id: 22, home_team_id: 23, away_team_score: 24, home_team_score: 17, status: 'Final', season_id: 2031, season_type: 'regular', week: 10, day: 20251110, game_time: '2025-11-10T20:15:00.000Z', start_time: '2025-11-10T20:15:00.000Z', away_team: 'Kansas City Chiefs', home_team: 'Denver Broncos' },
-      { id: 210, away_team_id: 20, home_team_id: 21, away_team_score: 0, home_team_score: 0, status: 'Scheduled', season_id: 2031, season_type: 'regular', week: 11, day: TODAY, game_time: '2025-11-13T20:15:00.000Z', start_time: '2025-11-13T20:15:00.000Z', away_team: 'Buffalo Bills', home_team: 'Miami Dolphins' },
-      { id: 211, away_team_id: 22, home_team_id: 20, away_team_score: 0, home_team_score: 0, status: 'Scheduled', season_id: 2031, season_type: 'regular', week: 11, day: 20251116, game_time: '2025-11-16T18:00:00.000Z', start_time: '2025-11-16T18:00:00.000Z', away_team: 'Kansas City Chiefs', home_team: 'Buffalo Bills' },
+      {
+        id: 200,
+        away_team_id: 22,
+        home_team_id: 23,
+        away_team_score: 24,
+        home_team_score: 17,
+        status: 'Final',
+        season_id: 2031,
+        season_type: 'regular',
+        week: 10,
+        day: 20251110,
+        game_time: '2025-11-10T20:15:00.000Z',
+        start_time: '2025-11-10T20:15:00.000Z',
+        away_team: 'Kansas City Chiefs',
+        home_team: 'Denver Broncos',
+      },
+      {
+        id: 210,
+        away_team_id: 20,
+        home_team_id: 21,
+        away_team_score: 0,
+        home_team_score: 0,
+        status: 'Scheduled',
+        season_id: 2031,
+        season_type: 'regular',
+        week: 11,
+        day: TODAY,
+        game_time: '2025-11-13T20:15:00.000Z',
+        start_time: '2025-11-13T20:15:00.000Z',
+        away_team: 'Buffalo Bills',
+        home_team: 'Miami Dolphins',
+      },
+      {
+        id: 211,
+        away_team_id: 22,
+        home_team_id: 20,
+        away_team_score: 0,
+        home_team_score: 0,
+        status: 'Scheduled',
+        season_id: 2031,
+        season_type: 'regular',
+        week: 11,
+        day: 20251116,
+        game_time: '2025-11-16T18:00:00.000Z',
+        start_time: '2025-11-16T18:00:00.000Z',
+        away_team: 'Kansas City Chiefs',
+        home_team: 'Buffalo Bills',
+      },
     ];
     return state;
   }
@@ -185,12 +352,19 @@ describe('nfl scoreboard query shape', () => {
   test('resolves the current week and filters by day — never sends a `day` param to NFL', async () => {
     const { api, calls } = makeMockApi(nflSlate());
     const store = new SnapshotStore(['mlb', 'nba', 'nfl']);
-    const poller = new Poller({ api, store, config: config(), now: () => NOV, quota: () => null, logger: () => {} });
+    const poller = new Poller({
+      api,
+      store,
+      config: config(),
+      now: () => NOV,
+      quota: () => null,
+      logger: () => {},
+    });
 
     await poller.runScoreboardCycle(NOV);
 
     // The bug this guards against: `day` is not an NFL games filter.
-    const nflGameCalls = calls.filter(c => c.key === 'nfl.games');
+    const nflGameCalls = calls.filter((c) => c.key === 'nfl.games');
     expect(nflGameCalls.length).toBeGreaterThan(0);
     for (const call of nflGameCalls) {
       const params = (call.params ?? {}) as Record<string, unknown>;
@@ -233,12 +407,50 @@ describe('offseason last-final slate', () => {
       { id: 2025, start_date: '2025-09-03T20:00:00-04:00', end_date: '2026-02-07T19:00:00-05:00' },
     ];
     state.nbaGames = [
-      { id: 900, season_id: 2025, status: 'Final', away_team_id: 30, home_team_id: 31, away_team: 'Boston Celtics', home_team: 'New York Knicks', away_team_score: 110, home_team_score: 105, game_time: '2026-06-20T20:30:00-04:00', start_time: '2026-06-20T20:30:00-04:00' },
+      {
+        id: 900,
+        season_id: 2025,
+        status: 'Final',
+        away_team_id: 30,
+        home_team_id: 31,
+        away_team: 'Boston Celtics',
+        home_team: 'New York Knicks',
+        away_team_score: 110,
+        home_team_score: 105,
+        game_time: '2026-06-20T20:30:00-04:00',
+        start_time: '2026-06-20T20:30:00-04:00',
+      },
     ];
     state.nflGames = [
-      { id: 800, season_id: 2025, season_type: 'postseason', week: 4, status: 'Final', away_team_id: 40, home_team_id: 41, away_team: 'Kansas City Chiefs', home_team: 'Philadelphia Eagles', away_team_score: 24, home_team_score: 21, game_time: '2026-02-07T18:30:00-05:00', start_time: '2026-02-07T18:30:00-05:00' },
+      {
+        id: 800,
+        season_id: 2025,
+        season_type: 'postseason',
+        week: 4,
+        status: 'Final',
+        away_team_id: 40,
+        home_team_id: 41,
+        away_team: 'Kansas City Chiefs',
+        home_team: 'Philadelphia Eagles',
+        away_team_score: 24,
+        home_team_score: 21,
+        game_time: '2026-02-07T18:30:00-05:00',
+        start_time: '2026-02-07T18:30:00-05:00',
+      },
       // Upcoming-season scheduled game — must NOT appear in the offseason slate.
-      { id: 850, season_id: 2032, status: 'Scheduled', away_team_id: 41, home_team_id: 40, away_team: 'Philadelphia Eagles', home_team: 'Kansas City Chiefs', away_team_score: 0, home_team_score: 0, game_time: '2026-09-10T20:00:00-04:00', start_time: '2026-09-10T20:00:00-04:00' },
+      {
+        id: 850,
+        season_id: 2032,
+        status: 'Scheduled',
+        away_team_id: 41,
+        home_team_id: 40,
+        away_team: 'Philadelphia Eagles',
+        home_team: 'Kansas City Chiefs',
+        away_team_score: 0,
+        home_team_score: 0,
+        game_time: '2026-09-10T20:00:00-04:00',
+        start_time: '2026-09-10T20:00:00-04:00',
+      },
     ];
     return state;
   }
@@ -246,7 +458,14 @@ describe('offseason last-final slate', () => {
   test('populates offseason leagues with recent finals, skipping the upcoming season', async () => {
     const { api, calls, counts } = makeMockApi(offseasonState());
     const store = new SnapshotStore(['mlb', 'nba', 'nfl']);
-    const poller = new Poller({ api, store, config: config(), now: () => NOW, quota: () => null, logger: () => {} });
+    const poller = new Poller({
+      api,
+      store,
+      config: config(),
+      now: () => NOW,
+      quota: () => null,
+      logger: () => {},
+    });
 
     await poller.runScoreboardCycle(NOW);
     const snap = store.snapshot();
@@ -265,7 +484,7 @@ describe('offseason last-final slate', () => {
     expect(snap.leagues.nfl.games).toHaveLength(1);
     expect(snap.leagues.nfl.games[0]!.id).toBe('nfl-800');
     const nflFinalsCall = calls.find(
-      c => c.key === 'nfl.games' && (c.params as { status?: string })?.status === 'Final',
+      (c) => c.key === 'nfl.games' && (c.params as { status?: string })?.status === 'Final',
     );
     expect((nflFinalsCall?.params as { season_id?: number })?.season_id).toBe(2025);
 
@@ -282,14 +501,21 @@ describe('periodic full-snapshot fan-out', () => {
     const { api } = makeMockApi(fullSlate());
     const store = new SnapshotStore(['mlb', 'nba', 'nfl']);
     const events: SseEvent[] = [];
-    store.subscribe(e => events.push(e)); // initial snapshot (1)
+    store.subscribe((e) => events.push(e)); // initial snapshot (1)
 
-    const poller = new Poller({ api, store, config: config(), now: () => NOW, quota: () => null, logger: () => {} });
+    const poller = new Poller({
+      api,
+      store,
+      config: config(),
+      now: () => NOW,
+      quota: () => null,
+      logger: () => {},
+    });
     await poller.runScoreboardCycle(NOW);
 
     // The cycle ends with a broadcast snapshot, so at least two snapshot events
     // have reached the subscriber (initial + periodic).
-    const snapshots = events.filter(e => e.type === 'snapshot');
+    const snapshots = events.filter((e) => e.type === 'snapshot');
     expect(snapshots.length).toBeGreaterThanOrEqual(2);
   });
 });
@@ -300,17 +526,17 @@ describe('quota self-throttle', () => {
     let quota: Quota | null = null;
     const { poller } = makePoller(emptyState(), {
       quota: () => quota,
-      logger: m => logs.push(m),
+      logger: (m) => logs.push(m),
     });
 
     // Floor is 100_000 by default.
     quota = { limit: 5_000_000, used: 4_999_950, remaining: 50 };
     expect(poller.throttleMultiplier()).toBe(2);
-    expect(logs.some(l => l.includes('QUOTA LOW'))).toBe(true);
+    expect(logs.some((l) => l.includes('QUOTA LOW'))).toBe(true);
 
     quota = { limit: 5_000_000, used: 100_000, remaining: 4_900_000 };
     expect(poller.throttleMultiplier()).toBe(1);
-    expect(logs.some(l => l.includes('recovered'))).toBe(true);
+    expect(logs.some((l) => l.includes('recovered'))).toBe(true);
 
     // No quota yet → never throttle.
     quota = null;
@@ -324,7 +550,7 @@ describe('snapshot diff → SSE patch', () => {
     const { api } = makeMockApi(state);
     const store = new SnapshotStore(['mlb', 'nba', 'nfl']);
     const events: SseEvent[] = [];
-    store.subscribe(e => events.push(e));
+    store.subscribe((e) => events.push(e));
 
     const poller = new Poller({
       api,
@@ -337,18 +563,18 @@ describe('snapshot diff → SSE patch', () => {
 
     // First scoreboard: MLB flips offseason→in-season with games → one patch.
     await poller.runScoreboardCycle(NOW);
-    const firstPatches = events.filter(e => e.type === 'patch');
+    const firstPatches = events.filter((e) => e.type === 'patch');
     expect(firstPatches).toHaveLength(1);
     expect(firstPatches[0]!.type === 'patch' && firstPatches[0].league).toBe('mlb');
 
     // Identical slate again → no new patch (games unchanged).
     await poller.runScoreboardCycle(NOW);
-    expect(events.filter(e => e.type === 'patch')).toHaveLength(1);
+    expect(events.filter((e) => e.type === 'patch')).toHaveLength(1);
 
     // A score change → a new patch.
     state.mlbGames[0]!.home_team_score = 7;
     await poller.runScoreboardCycle(NOW);
-    const patches = events.filter(e => e.type === 'patch');
+    const patches = events.filter((e) => e.type === 'patch');
     expect(patches.length).toBe(2);
     expect(patches[1]!.type === 'patch' && patches[1].league).toBe('mlb');
   });

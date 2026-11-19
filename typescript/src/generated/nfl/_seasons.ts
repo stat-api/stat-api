@@ -2,7 +2,12 @@
 //
 // SDK resource for nfl.seasons (public API).
 // Source: schema/api/groups/public.yml + schema/model/nfl/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NFLSeason {
   id: number;
@@ -24,16 +29,52 @@ export interface NFLSeasonsListResponse {
   seasons: NFLSeason[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
+
+export interface NFLSeasonsContextParams {
+  season?: number;
+  week?: number;
+}
+
+export interface NflContextResponse {
+  today: string;
+  as_of: string;
+  phase: string;
+  current_season?: number;
+  current_week?: number;
+  season?: number;
+  week?: number;
+  start_date?: string;
+  end_date?: string;
+  games: number;
+  games_final: number;
+  games_live: number;
+  games_upcoming: number;
+  first_kickoff?: string;
+  next_kickoff?: string;
+  last_kickoff?: string;
+  slates: unknown[];
+  flagships: unknown;
+  flagships_latest: unknown;
+  primetime_slates: unknown;
+  primetime_flagships: unknown;
+}
+
+export type NFLSeasonsContextResponse = NflContextResponse;
 
 export class NFLSeasonsResource {
   constructor(private readonly opts: ResolvedStatApiOptions) {}
 
   async list(params?: NFLSeasonsListParams): Promise<NFLSeasonsListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NFLSeasonsListResponse, 'quota'>>(this.opts, `/api/v1/nfl/seasons${qs}`);
+    const r = await fetchJson<Omit<NFLSeasonsListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nfl/seasons${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -51,10 +92,37 @@ export class NFLSeasonsResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NFLSeasonsListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NFLSeasonsListParams);
+      const page: NFLSeasonsListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NFLSeasonsListParams);
       for (const row of page.seasons) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;
     }
+  }
+
+  /**
+   * Current NFL week and its DFS slates
+   *
+   * The current NFL season, week and phase in US Eastern time, the week's window and games,
+   * and the week's DFS slates with their prize money and largest contest, largest first.
+   * Pass season and week to describe another regular-season week the same way.
+   * Week windows are the ones /api/v1/dfs/slates/seasons publishes: week N runs from the day
+   * after week N-1's last game to week N's last game day, so every slate belongs to one week.
+   * Slates and contests are the ones the public DFS lists serve (no test, cancelled or
+   * excluded-format slate, no cancelled contest).
+   * Flagships (Frank 2026-09-27, the free flagship model): per week and operator, one flagship
+   * contest, chosen by rule without looking at data (DraftKings: the main-slate Millionaire
+   * with the most entries; FanDuel: the main-slate Sunday Million with the most entries;
+   * satellites and qualifiers never count). A week's flagship is null until its contest has a
+   * lineup capsule, and never a substitute. From season 2026 every week's flagship is free for
+   * good: anyone reads its top 100 entries in the Contest Analysis routes, with or without a key. The
+   * 2021-2025 archive names its flagships with free false (the Pro product).
+   *
+   */
+  async context(params?: NFLSeasonsContextParams): Promise<NFLSeasonsContextResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (await fetchJson<NFLSeasonsContextResponse>(this.opts, `/api/v1/nfl/context${qs}`)).data;
   }
 }

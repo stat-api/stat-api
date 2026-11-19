@@ -39,13 +39,14 @@ class NFLInjuriesResource:
     def __init__(self, transport: HttpTransport) -> None:
         self._transport = transport
 
-    def list(self, *, player_id: int | None = None, game_id: int | None = None, team_id: int | None = None, season_id: int | None = None, week: int | None = None, limit: int | None = None, from_id: int | None = None) -> Page[NFLInjury]:
+    def list(self, *, player_id: int | None = None, game_id: int | None = None, team_id: int | None = None, season_id: int | None = None, week: int | None = None, mode: str | None = None, limit: int | None = None, from_id: int | None = None) -> Page[NFLInjury]:
         body, quota = self._transport.request(self._PATH, {
             "player_id": player_id,
             "game_id": game_id,
             "team_id": team_id,
             "season_id": season_id,
             "week": week,
+            "mode": mode,
             "limit": limit,
             "from_id": from_id,
         })
@@ -57,18 +58,18 @@ class NFLInjuriesResource:
             quota=quota,
         )
 
-    def get(self, id: int) -> NFLInjury:
-        body, _ = self._transport.request(f"{self._PATH}/{id}")
+    def get(self, id: int, *, mode: str | None = None) -> NFLInjury:
+        body, _ = self._transport.request(f"{self._PATH}/{id}", {"mode": mode})
         row: NFLInjury = body
         return row
 
-    def iter(self, *, player_id: int | None = None, game_id: int | None = None, team_id: int | None = None, season_id: int | None = None, week: int | None = None, limit: int | None = None) -> Iterator[NFLInjury]:
+    def iter(self, *, player_id: int | None = None, game_id: int | None = None, team_id: int | None = None, season_id: int | None = None, week: int | None = None, mode: str | None = None, limit: int | None = None) -> Iterator[NFLInjury]:
         # Always walk with from_id (starting at 0): from_id forces the server's
         # ascending keyset order. Without it, DESC-default tables re-yield page
         # 1 and under-walk. Iteration is therefore always oldest-first.
         from_id: int | None = 0
         while True:
-            page = self.list(player_id=player_id, game_id=game_id, team_id=team_id, season_id=season_id, week=week, limit=limit, from_id=from_id)
+            page = self.list(player_id=player_id, game_id=game_id, team_id=team_id, season_id=season_id, week=week, mode=mode, limit=limit, from_id=from_id)
             for row in page.rows:
                 yield row
             if page.next_from_id is None:

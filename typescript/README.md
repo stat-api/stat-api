@@ -1,10 +1,10 @@
 # @stat-api/client
 
-Official TypeScript / JavaScript client for the [stat-api](https://stat-api.com) sports and
-prediction-market data API. Zero runtime dependencies; ships dual ESM + CommonJS
+Official TypeScript / JavaScript client for the [stat-api](https://stat-api.com) sports
+data API. Zero runtime dependencies; ships dual ESM + CommonJS
 builds with full type declarations.
 
-> Generated from the stat-api schema — do not hand-edit. Version 0.1.0.
+> Generated from the stat-api schema — do not hand-edit. Version 0.3.0.
 
 ## Install
 
@@ -62,6 +62,17 @@ try {
 `AuthenticationError` (401), `PlanRequiredError` (402), `ValidationError` (400,
 covers the required-filter-set envelope), `NotFoundError` (404), and
 `QuotaExceededError` (429) each carry the raw server `body` and request `path`.
+
+## NFL sim (beta)
+
+The TypeScript client has the core calls of the NFL play-by-play simulator. Game 43418 (2026 Week 1 DEN @ KC) is free. Other games need a Pro or Elite plan, or the DFS add-on.
+
+- `api.nfl.weeks({ season })`
+- `api.sim.nfl.run({ game_id, n_draws, seed, include, home_spread })`
+
+The tutorial has 5 recipes. Each one runs on the free game and prints real output. Start with [Run your first NFL game simulation](../cookbook/typescript/src/nfl-sim-summary.ts), or read the whole tutorial at https://stat-api.com/docs/cookbook/sim/.
+
+The API reference: https://stat-api.com/docs/api/sim/
 
 ## Quota
 

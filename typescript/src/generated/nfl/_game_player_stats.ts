@@ -2,7 +2,12 @@
 //
 // SDK resource for nfl.game_player_stats (public API).
 // Source: schema/api/groups/public.yml + schema/model/nfl/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NFLGamePlayerStat {
   id: number;
@@ -162,6 +167,8 @@ export interface NFLGamePlayerStatsListResponse {
   game_player_stats: NFLGamePlayerStat[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -171,12 +178,16 @@ export class NFLGamePlayerStatsResource {
 
   async list(params?: NFLGamePlayerStatsListParams): Promise<NFLGamePlayerStatsListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NFLGamePlayerStatsListResponse, 'quota'>>(this.opts, `/api/v1/nfl/game_player_stats${qs}`);
+    const r = await fetchJson<Omit<NFLGamePlayerStatsListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nfl/game_player_stats${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
   async get(id: number): Promise<NFLGamePlayerStat> {
-    return (await fetchJson<NFLGamePlayerStat>(this.opts, `/api/v1/nfl/game_player_stats/${id}`)).data;
+    return (await fetchJson<NFLGamePlayerStat>(this.opts, `/api/v1/nfl/game_player_stats/${id}`))
+      .data;
   }
   async *iter(params?: NFLGamePlayerStatsListParams): AsyncGenerator<NFLGamePlayerStat> {
     // Always walk with from_id (starting at 0): from_id forces the server's
@@ -189,7 +200,10 @@ export class NFLGamePlayerStatsResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NFLGamePlayerStatsListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NFLGamePlayerStatsListParams);
+      const page: NFLGamePlayerStatsListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NFLGamePlayerStatsListParams);
       for (const row of page.game_player_stats) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

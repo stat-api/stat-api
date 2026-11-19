@@ -12,6 +12,8 @@ public final class NBAPlayerNewsListParams {
     private Long playerId;
     private Long teamId;
     private String category;
+    private String statusEnum;
+    private String urgency;
     private String newsTime;
     private Long limit;
     private Long fromId;
@@ -28,6 +30,16 @@ public final class NBAPlayerNewsListParams {
 
     public NBAPlayerNewsListParams category(String category) {
         this.category = category;
+        return this;
+    }
+
+    public NBAPlayerNewsListParams statusEnum(String statusEnum) {
+        this.statusEnum = statusEnum;
+        return this;
+    }
+
+    public NBAPlayerNewsListParams urgency(String urgency) {
+        this.urgency = urgency;
         return this;
     }
 
@@ -56,6 +68,12 @@ public final class NBAPlayerNewsListParams {
         }
         if (category != null) {
             query.put("category", String.valueOf(category));
+        }
+        if (statusEnum != null) {
+            query.put("status_enum", String.valueOf(statusEnum));
+        }
+        if (urgency != null) {
+            query.put("urgency", String.valueOf(urgency));
         }
         if (newsTime != null) {
             query.put("news_time", String.valueOf(newsTime));

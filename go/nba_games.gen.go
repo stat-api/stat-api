@@ -30,7 +30,7 @@ type NBAGame struct {
 	EndTime            *string `json:"end_time"`
 	GameLabel          *string `json:"game_label"`
 	GameSubLabel       *string `json:"game_sub_label"`
-	GameTime           string  `json:"game_time"`
+	GameTime           *string `json:"game_time"`
 	HomeRotationNumber *int    `json:"home_rotation_number"`
 	HomeTeam           string  `json:"home_team"`
 	HomeTeamScore      int     `json:"home_team_score"`
@@ -41,7 +41,6 @@ type NBAGame struct {
 	SeriesGameNumber   *string `json:"series_game_number"`
 	SeriesName         *string `json:"series_name"`
 	SeriesText         *string `json:"series_text"`
-	StartTime          string  `json:"start_time"`
 	Status             string  `json:"status"`
 }
 

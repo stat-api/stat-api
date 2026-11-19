@@ -2,7 +2,12 @@
 //
 // SDK resource for nfl.injuries (public API).
 // Source: schema/api/groups/public.yml + schema/model/nfl/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NFLInjury {
   id: number;
@@ -28,6 +33,7 @@ export interface NFLInjuriesListParams {
   team_id?: number;
   season_id?: number;
   week?: number;
+  mode?: 'pre' | 'full';
   limit?: number;
   from_id?: number;
 }
@@ -36,6 +42,10 @@ export interface NFLInjuriesListResponse {
   injuries: NFLInjury[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
+  /** The time-wall mode that served these rows. */
+  mode: 'pre' | 'full';
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -45,12 +55,16 @@ export class NFLInjuriesResource {
 
   async list(params?: NFLInjuriesListParams): Promise<NFLInjuriesListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NFLInjuriesListResponse, 'quota'>>(this.opts, `/api/v1/nfl/injuries${qs}`);
+    const r = await fetchJson<Omit<NFLInjuriesListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nfl/injuries${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
-  async get(id: number): Promise<NFLInjury> {
-    return (await fetchJson<NFLInjury>(this.opts, `/api/v1/nfl/injuries/${id}`)).data;
+  async get(id: number, params?: { mode?: 'pre' | 'full' }): Promise<NFLInjury> {
+    const qs = toQueryString(params as Record<string, unknown> | undefined);
+    return (await fetchJson<NFLInjury>(this.opts, `/api/v1/nfl/injuries/${id}${qs}`)).data;
   }
   async *iter(params?: NFLInjuriesListParams): AsyncGenerator<NFLInjury> {
     // Always walk with from_id (starting at 0): from_id forces the server's
@@ -63,7 +77,10 @@ export class NFLInjuriesResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NFLInjuriesListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NFLInjuriesListParams);
+      const page: NFLInjuriesListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NFLInjuriesListParams);
       for (const row of page.injuries) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

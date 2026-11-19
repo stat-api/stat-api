@@ -19,7 +19,6 @@ type PGATournament struct {
 	LeagueID      *string `json:"league_id"`
 	SeasonID      *int64  `json:"season_id"`
 	TourID        *int64  `json:"tour_id"`
-	TournamentID  int     `json:"tournament_id"`
 	Canceled      bool    `json:"canceled"`
 	City          *string `json:"city"`
 	Country       *string `json:"country"`

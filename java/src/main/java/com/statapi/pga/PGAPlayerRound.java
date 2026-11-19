@@ -9,7 +9,6 @@ import com.statapi.JsonValue;
 public record PGAPlayerRound(
     Long id,
     Long playerId,
-    Integer playerRoundId,
     Long tournamentId,
     Boolean backNineStart,
     Integer birdies,
@@ -39,7 +38,6 @@ public record PGAPlayerRound(
         return new PGAPlayerRound(
             json.get("id").asLong(),
             json.get("player_id").asLong(),
-            json.get("player_round_id").asInt(),
             json.get("tournament_id").asLong(),
             json.get("back_nine_start").asBoolean(),
             json.get("birdies").asInt(),

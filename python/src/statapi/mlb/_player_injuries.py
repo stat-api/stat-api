@@ -26,7 +26,6 @@ MLBPlayerInjury = TypedDict(
         "injury_type": str,
         "is_surgery_required": bool | None,
         "side": str | None,
-        "source": str | None,
         "start_date": str,
         "status": str,
         "updated_date": str,

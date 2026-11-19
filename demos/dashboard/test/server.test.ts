@@ -5,8 +5,8 @@
 import { describe, expect, test } from 'bun:test';
 
 import { createApp } from '../src/app.ts';
-import { SnapshotStore } from '../src/snapshot.ts';
 import type { GameCard, SseEvent } from '../src/contract.ts';
+import { SnapshotStore } from '../src/snapshot.ts';
 
 function newApp() {
   const store = new SnapshotStore(['mlb', 'nba', 'nfl']);
@@ -64,14 +64,13 @@ describe('sse stream', () => {
         const { value, done } = await reader.read();
         if (done) return;
         buffer += decoder.decode(value, { stream: true });
-        let sep: number;
-        while ((sep = buffer.indexOf('\n\n')) >= 0) {
+        for (let sep = buffer.indexOf('\n\n'); sep >= 0; sep = buffer.indexOf('\n\n')) {
           const block = buffer.slice(0, sep);
           buffer = buffer.slice(sep + 2);
           if (block.includes('event: ping')) continue;
-          const dataLine = block.split('\n').find(l => l.startsWith('data:'));
+          const dataLine = block.split('\n').find((l) => l.startsWith('data:'));
           const json = dataLine?.slice('data:'.length).trim();
-          if (json && json.startsWith('{')) events.push(JSON.parse(json) as SseEvent);
+          if (json?.startsWith('{')) events.push(JSON.parse(json) as SseEvent);
         }
       }
     }

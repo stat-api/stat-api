@@ -6,7 +6,7 @@ import json
 api = StatApi()  # reads STAT_API_KEY from the environment
 
 # Resolve the current season
-season = max(api.nfl.seasons.list(limit=200).rows, key=lambda s: s["start_year"])["id"]
+season = max(api.nfl.seasons.list(limit=200).rows, key=lambda s: s["start_year"])["start_year"]
 
 # Find a game
 games = api.nfl.games.list(season_id=season, limit=1).rows

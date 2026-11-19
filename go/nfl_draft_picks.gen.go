@@ -18,7 +18,6 @@ type NFLDraftPick struct {
 	ID              int64   `json:"id"`
 	CfbPlayerID     *string `json:"cfb_player_id"`
 	GsisID          string  `json:"gsis_id"`
-	PfrPlayerID     string  `json:"pfr_player_id"`
 	PlayerID        int64   `json:"player_id"`
 	TeamID          int64   `json:"team_id"`
 	Age             *int    `json:"age"`
@@ -38,7 +37,6 @@ type NFLDraftPick struct {
 	PassInts        int     `json:"pass_ints"`
 	PassTds         int     `json:"pass_tds"`
 	PassYds         int     `json:"pass_yds"`
-	PfrPlayerName   *string `json:"pfr_player_name"`
 	Pick            int     `json:"pick"`
 	Position        string  `json:"position"`
 	ProbowlCount    int     `json:"probowl_count"`

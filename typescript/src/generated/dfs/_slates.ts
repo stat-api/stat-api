@@ -2,24 +2,70 @@
 //
 // SDK resource for dfs.slates (public API).
 // Source: schema/api/groups/public.yml + schema/model/dfs/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  type FileResult,
+  fetchFile,
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
+import {
+  optimizerLineups as callOptimizerLineups,
+  optimizerLineupsCsv as callOptimizerLineupsCsv,
+  simJob as callSimJob,
+  simLateSwap as callSimLateSwap,
+  simLineups as callSimLineups,
+  simLineupsCsv as callSimLineupsCsv,
+  simLineupsStart as callSimLineupsStart,
+  simSelectPool as callSimSelectPool,
+  type LateSwapRequest,
+  type LateSwapResponse,
+  type OptimizerLineupsRequest,
+  type OptimizerLineupsResponse,
+  type PortfolioSelectRequest,
+  type PortfolioSelectResponse,
+  type SimJobPollResult,
+  type SimJobStatusResponse,
+  type SimLineupsRequest,
+  type SimLineupsResponse,
+  type SimRequestOptions,
+} from '../../core/dfs_lineups.js';
 
 export interface DFSSlate {
   id: number;
   external_id: number;
   league_id: number;
   operator_id: number;
+  operator_setting_id?: string | null;
   slate_setting_id: number;
+  complete_file_count: number;
+  contest_count: number;
   date: string;
+  game_count: number;
+  game_type?: string | null;
+  lineup_contest_count: number;
   main: boolean;
   name?: string | null;
+  part_of_game?: string | null;
+  player_count: number;
   start_time: string;
+  state: string;
+  status: string;
 }
 
 export interface DFSSlatesListParams {
   operator_id?: number;
+  operator?: string | number;
   date?: string;
+  date__gte?: string;
+  date__lte?: string;
+  date__between?: string;
   league?: string | number;
+  sport?: string | number;
+  external_id?: number;
+  operator_slate_id?: number;
+  status?: string;
   limit?: number;
   from_id?: number;
 }
@@ -28,16 +74,181 @@ export interface DFSSlatesListResponse {
   slates: DFSSlate[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
+
+export interface DFSSlatesContestOwnershipParams {
+  mode?: string;
+  contest?: number;
+  compare?: number;
+  format?: string;
+  csv?: string;
+}
+
+export interface DfsSlateContestOwnershipResponse {
+  slate: unknown;
+  source: string;
+  model?: string;
+  as_of?: string;
+  reason?: string;
+  access: unknown;
+  default_contest?: number;
+  default_compare?: number;
+  contests: unknown[];
+  contest?: unknown;
+  compare?: unknown;
+  across: unknown;
+  default_group?: string;
+  groups: unknown[];
+  players: unknown[];
+  _metadata: unknown;
+}
+
+export type DFSSlatesContestOwnershipResponse = DfsSlateContestOwnershipResponse;
+
+export interface DFSSlatesContestsOwnershipParams {
+  contest?: string;
+  format?: string;
+}
+
+export interface DfsSlateContestsOwnershipResponse {
+  slate: unknown;
+  source: string;
+  model?: string;
+  as_of?: string;
+  reason?: string;
+  access: unknown;
+  contests: unknown[];
+  players: unknown[];
+  _metadata: unknown;
+}
+
+export type DFSSlatesContestsOwnershipResponse = DfsSlateContestsOwnershipResponse;
+
+export interface DFSSlatesInjuriesParams {
+  format?: string;
+  mode?: string;
+}
+
+export interface DfsSlateInjuriesResponse {
+  slate_id: number;
+  injuries: unknown[];
+}
+
+export type DFSSlatesInjuriesResponse = DfsSlateInjuriesResponse;
+
+export interface DFSSlatesLinesParams {
+  format?: string;
+}
+
+export interface DfsSlateLinesResponse {
+  slate_id: number;
+  games: unknown[];
+}
+
+export type DFSSlatesLinesResponse = DfsSlateLinesResponse;
+
+export interface DFSSlatesOwnershipParams {
+  mode?: string;
+  contest?: number;
+  compare?: number;
+  format?: string;
+  csv?: string;
+}
+
+export interface DfsSlateOwnershipResponse {
+  slate: unknown;
+  source: string;
+  model?: string;
+  as_of?: string;
+  reason?: string;
+  access: unknown;
+  default_contest?: number;
+  default_compare?: number;
+  contests: unknown[];
+  contest?: unknown;
+  compare?: unknown;
+  across: unknown;
+  default_group?: string;
+  groups: unknown[];
+  players: unknown[];
+  _metadata: unknown;
+}
+
+export type DFSSlatesOwnershipResponse = DfsSlateOwnershipResponse;
+
+export interface DFSSlatesProjectionsParams {
+  source?: string;
+  position?: string;
+  format?: string;
+  enrich?: string;
+  mode?: string;
+  projection_id?: number;
+}
+
+export interface DfsSlateProjectionsResponse {
+  projection_status: string;
+  slate: unknown;
+  source?: unknown;
+  computed: unknown;
+  player_stats?: unknown[];
+  teams?: unknown[];
+  projections?: unknown[];
+  _metadata?: unknown;
+}
+
+export type DFSSlatesProjectionsResponse = DfsSlateProjectionsResponse;
+
+export interface DFSSlatesPropsParams {
+  format?: string;
+}
+
+export interface DfsSlatePropsResponse {
+  slate_id: number;
+  props: unknown[];
+}
+
+export type DFSSlatesPropsResponse = DfsSlatePropsResponse;
+
+export interface DFSSlatesSeasonsParams {
+  sport?: string;
+  league_id?: number;
+}
+
+export interface DfsSlateSeasonsResponse {
+  sport: string;
+  league_id: number;
+  earliest_date?: string;
+  latest_date?: string;
+  total_slates: number;
+  seasons: unknown[];
+}
+
+export type DFSSlatesSeasonsResponse = DfsSlateSeasonsResponse;
+
+export interface DFSSlatesStacksParams {
+  format?: string;
+}
+
+export interface DfsSlateStacksResponse {
+  total_stacks: number;
+  stacks: unknown[];
+}
+
+export type DFSSlatesStacksResponse = DfsSlateStacksResponse;
 
 export class DFSSlatesResource {
   constructor(private readonly opts: ResolvedStatApiOptions) {}
 
   async list(params?: DFSSlatesListParams): Promise<DFSSlatesListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<DFSSlatesListResponse, 'quota'>>(this.opts, `/api/v1/dfs/slates${qs}`);
+    const r = await fetchJson<Omit<DFSSlatesListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/dfs/slates${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -55,10 +266,482 @@ export class DFSSlatesResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: DFSSlatesListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as DFSSlatesListParams);
+      const page: DFSSlatesListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as DFSSlatesListParams);
       for (const row of page.slates) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;
     }
+  }
+
+  /**
+   * Projected captain and FLEX ownership by contest, the biggest prize pool first (lobby), and by contest group
+   *
+   * How the learned per-contest ownership of STAT_API_LATEST changes from contest to contest on
+   * one slate.
+   *
+   * The lobby (Frank 2026-10-01): `contests` lists every contest of the slate with learned rows,
+   * the biggest prize pool first (then the largest `max_entries`, then the lowest id). The tool
+   * opens on the biggest pool (`default_contest`) and compares each value with the biggest cash
+   * game (`default_compare`, the same order among cash contests). `contest` holds the values of
+   * `?contest=` (default: `default_contest`), `compare` those of `?compare=` (default:
+   * `default_compare`), and `across` the values of contests side by side, in lobby order: with
+   * DFS access the 5 biggest GPP contests and the 5 biggest cash games (the page's three
+   * filters), without it the free contests. An id that is not a contest of the slate answers
+   * 400.
+   *
+   * The groups stay. The slate's contests fall into groups by kind (cash vs GPP as the operator
+   * labels them: contest_type 1 is cash, every other type GPP; the model's name rule only for a
+   * contest without a type), by entry type inside GPP (single_entry:
+   * 1 entry per user, else multi_entry) and by size tier of `max_entries` (2, 3-100, 101-1k,
+   * 1k-10k, 10k-100k, 100k+). Qualifiers and cancelled contests are left out, and so is a
+   * contest without learned rows. Each group shows the stored values of ONE real contest, its
+   * representative: a paid contest first (entry fee above 0), then the largest field
+   * (`max_entries`), then the most entries, then the largest prize pool, then the lowest id.
+   * Empty groups are not sent.
+   *
+   * Captain (DraftKings CPT, FanDuel MVP) and FLEX are separate projections: a player's captain
+   * row holds his captain share and his FLEX row the rest. Each player shows, per group, both
+   * values, their total, the captain rate (captain / total) and his captain and FLEX ranks in
+   * the group, plus the spread of each slot across the groups. Per slot: salary, projected
+   * points and points per $1,000 from the slate's STAT_API_LATEST projections.
+   *
+   * Boost seats (Frank 2026-10-23): FanDuel's old single-game format (NBA 2023-25) sells four
+   * seats per player, MVP (2x), STAR (1.5x), PRO (1.2x) and FLEX. There `captain` is the MVP
+   * seat, `flex` the FLEX seat, and `seats` lists every seat with its share; the total is the
+   * sum of the four. The CSV names the share columns mvp_pct, star_pct, pro_pct and flex_pct.
+   * On any other slate `seats` is empty and the CSV is unchanged.
+   *
+   * Only persisted learned rows are served (`stats.ownership_model` set,
+   * `_metadata.contest_ownership = persisted`), never STAT_API (2.1) and never a read-time
+   * calibration. A slate without them answers 200 with empty `contests`, `groups` and
+   * `players` and a `reason`.
+   *
+   * Access (Frank 2026-10-01, about 22:30Z: "top 5 largest contest types on the left, they
+   * only have access to top 10 ownership of players for single game formats"; Frank
+   * 2026-10-02: "add in the biggest 5 contests for both all | cash | gpp - there should be 10
+   * for both DK and FD"; then "make it 5 records throughout the entire system"): with DFS
+   * access (Pro or the DFS add-on) every contest, every player, the groups and the full CSV.
+   * Without it (no key, the trial key, a Free key) the free contests only: the 5 biggest prize
+   * pools of the slate, of any kind (fewer on a slate with fewer). `contests` lists only them,
+   * `groups` is empty, each player's `by_group` is empty and his spreads are null. `contest` or `compare` on another contest of the slate
+   * answers 200 with `locked` true, no player and no position total. On a pre-game single-game
+   * slate (DraftKings Showdown, FanDuel single game; never an in-game format) such a caller sees
+   * the featured players: the 5 players with the highest total ownership in any free contest
+   * (`access.plan = featured`). On a full-game classic slate (Frank 2026-10-23: "for larger
+   * classic contests show top 10 and top 5 for single slates") the 10 players with the highest
+   * total ownership in any free contest (`access.plan = preview`, `x-preview-exempt:
+   * classic-ownership`). On any other slate the first 5 players (`access.plan = preview`).
+   * Every other list of such an answer holds at most 5 records, the record cap of every
+   * non-paid read. One exception (Frank 2026-10-19): the single-game slate of a TNF or MNF game
+   * (an NFL game on a Monday, Wednesday or Thursday, ET) is free in full to every caller, every
+   * contest, every player and the CSV (`access.plan = primetime`, `x-preview-exempt:
+   * primetime-ownership`).
+   * The free CSV (Frank 2026-10-24: "include the fpts, min, ownership in the NBA/NFL for top 10
+   * and allow people to download the top 10"): `format=csv&csv=players` answers every caller
+   * with the players his plan lists in the open contest (`contest`, else `default_contest`),
+   * the most-owned first: both slots' salary, projected points, points per $1,000, floor and
+   * ceiling, the projected minutes and the ownership. A contest the plan does not open gives
+   * the header line only. The full CSV (`csv=groups`, `csv=contests`) needs DFS access, except
+   * on a TNF or MNF game's single-game slate. Each player of an NBA slate carries
+   * `projected_minutes`; on an NFL slate it is null.
+   * A gated answer names the plan in `_metadata` (`required_tier`, `message`,
+   * `total_actual_records`) and in the `x-required-plan` and `x-preview-rows` headers.
+   * Position totals always cover every player of an open contest.
+   *
+   * **Expected contest lineups (`mode=lineups`).** Pass `mode=percentage` (default; `mode=ownership`
+   * alias accepted) for the aggregated player ownership board, or `mode=lineups` to return the expected
+   * full valid lineups for the selected contest (`contest`, defaulting to the slate's biggest
+   * prize pool non-qualifier non-cancelled contest). The array length equals `min(contest_entries, 50000)`
+   * (`scaled_to_cap=true` when the contest exceeds 50,000 entries), and every returned lineup satisfies
+   * the slate's slot, salary cap, team, and matchup rules. JSON responses include `ownership` realized from
+   * the generated field (`ownership_pct` in Classic; `slot_ownership` + `total_ownership_pct` across
+   * slots like `CPT`/`FLEX` or `MVP`/`STAR`/`PRO`/`UTIL` in Showdown and Single-Game) alongside
+   * `slot_name` and `ownership_pct` on every `roster` seat. Supports `format=json` (default) and
+   * `format=csv` (optionally `csv=lineups`). Requires DFS access for the full lineup array across all
+   * slates; callers without DFS access receive 5 preview lineups and top 5 preview ownership rows with `_metadata`.
+   *
+   */
+  async contest_ownership(
+    slate_id: number,
+    params?: DFSSlatesContestOwnershipParams,
+  ): Promise<DFSSlatesContestOwnershipResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSSlatesContestOwnershipResponse>(
+        this.opts,
+        `/api/v1/dfs/slates/${encodeURIComponent(String(slate_id))}/contest-ownership${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * Projected and actual player ownership of up to 20 contests of one slate
+   *
+   * Projected and actual player ownership of up to 20 contests of one slate, in one call.
+   *
+   * Send the contests in `contest`, a comma-separated list of dfs.contests ids of the slate (1 to 20
+   * distinct ids, 400 above 20 and for an id that is not a contest of the slate with learned rows).
+   * Without `contest` the answer holds the contests of the Ownership page's grid: the 5 biggest GPP and
+   * the 5 biggest cash games.
+   *
+   * Each entry of `contests` is the board's contest view (`captain_pct`, `flex_pct`, `total_pct`,
+   * ranks) in percent. After the slate is final it also carries the actual ownership of the field
+   * (`actual_captain_pct`, `actual_flex_pct`, `actual_total_pct`, `actual_status`), so one call compares
+   * the projection with the result for every contest. The unit is percent, as on the board.
+   * GET /api/v1/dfs/contests/{contest_id}/ownership sends a fraction.
+   *
+   * **Access** (Frank 2026-11-08). DFS access reads every contest and every player. Any other caller
+   * reads the 5 biggest prize pools of the slate, GPP in practice, with the 10 most-owned players on a
+   * classic slate (5 on any other), and their actual ownership once the slate is final. A contest the
+   * caller cannot read is not an entry of `contests`: its id is in `_metadata.unavailable_contests`,
+   * and `_metadata.required_tier` and `message` name the plan that opens it. Standings and lineups of
+   * a contest stay Pro (GET /api/v1/dfs/contests/{contest_id}/standings).
+   *
+   * `format=csv` sends one row per contest and player with the same values.
+   *
+   */
+  async contests_ownership(
+    slate_id: number,
+    params?: DFSSlatesContestsOwnershipParams,
+  ): Promise<DFSSlatesContestsOwnershipResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSSlatesContestsOwnershipResponse>(
+        this.opts,
+        `/api/v1/dfs/slates/${encodeURIComponent(String(slate_id))}/contests/ownership${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * Official injury designations and practice participation of a slate
+   *
+   * Official injury report designations and operator status codes for an NFL slate.
+   */
+  async injuries(
+    slate_id: number,
+    params?: DFSSlatesInjuriesParams,
+  ): Promise<DFSSlatesInjuriesResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSSlatesInjuriesResponse>(
+        this.opts,
+        `/api/v1/dfs/slates/${encodeURIComponent(String(slate_id))}/injuries${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * Official injury designations and practice participation of a slate, as a file (format csv or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async injuriesFile(
+    slate_id: number,
+    params: Omit<DFSSlatesInjuriesParams, 'format'> & { format: 'csv' | 'json' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/slates/${encodeURIComponent(String(slate_id))}/injuries${qs}`,
+    );
+  }
+
+  /**
+   * Vegas spreads, totals, moneylines, and implied team totals of a slate
+   *
+   * Pre-game spreads, totals, moneylines, and implied team totals for the games of an NFL slate.
+   */
+  async lines(slate_id: number, params?: DFSSlatesLinesParams): Promise<DFSSlatesLinesResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSSlatesLinesResponse>(
+        this.opts,
+        `/api/v1/dfs/slates/${encodeURIComponent(String(slate_id))}/lines${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * Vegas spreads, totals, moneylines, and implied team totals of a slate, as a file (format csv or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async linesFile(
+    slate_id: number,
+    params: Omit<DFSSlatesLinesParams, 'format'> & { format: 'csv' | 'json' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/slates/${encodeURIComponent(String(slate_id))}/lines${qs}`,
+    );
+  }
+
+  /**
+   * Projected slate ownership board across the lobby and contest groups
+   *
+   * Canonical slate ownership route returning the learned per-contest and per-group ownership board
+   * of STAT_API_LATEST for the slate (`apps/stat-api/server/api/src/custom/dfs/contest_ownership_board.rs`).
+   * Identical contract and wire shape to `/api/v1/dfs/slates/{slate_id}/contest-ownership`.
+   *
+   * **Expected contest lineups (`mode=lineups`).** Pass `mode=percentage` (default; `mode=ownership`
+   * alias accepted) for the aggregated player ownership board, or `mode=lineups` to return the expected
+   * full valid lineups for the selected contest (`contest`, defaulting to the slate's biggest
+   * prize pool non-qualifier non-cancelled contest). The array length equals `min(contest_entries, 50000)`
+   * (`scaled_to_cap=true` when the contest exceeds 50,000 entries), and every returned lineup satisfies
+   * the slate's slot, salary cap, team, and matchup rules. JSON responses include `ownership` realized from
+   * the generated field (`ownership_pct` in Classic; `slot_ownership` + `total_ownership_pct` across
+   * slots like `CPT`/`FLEX` or `MVP`/`STAR`/`PRO`/`UTIL` in Showdown and Single-Game) alongside
+   * `slot_name` and `ownership_pct` on every `roster` seat. Supports `format=json` (default) and
+   * `format=csv` (optionally `csv=lineups`). Requires DFS access for the full lineup array across all
+   * slates; callers without DFS access receive 5 preview lineups and top 5 preview ownership rows with `_metadata`.
+   *
+   */
+  async ownership(
+    slate_id: number,
+    params?: DFSSlatesOwnershipParams,
+  ): Promise<DFSSlatesOwnershipResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSSlatesOwnershipResponse>(
+        this.opts,
+        `/api/v1/dfs/slates/${encodeURIComponent(String(slate_id))}/ownership${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * Projected slate ownership board across the lobby and contest groups, as a file (format csv or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async ownershipFile(
+    slate_id: number,
+    params: Omit<DFSSlatesOwnershipParams, 'format'> & { format: 'csv' | 'json' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/slates/${encodeURIComponent(String(slate_id))}/ownership${qs}`,
+    );
+  }
+
+  /**
+   * DFS slate player projections, distributions, and betting props
+   *
+   * Returns the player projections of a DFS slate: fantasy point components and counting stats,
+   * simulated quantile distributions (p05 through p95), tournament ownership projections with
+   * volatility bounds, Vegas betting prop anchors, and play profile upside/safety metrics.
+   *
+   * One route for every league: the slate names its league (`slate.league`), and you never pass
+   * it. NFL, NBA and NHL slates are projected, for DraftKings Classic and Showdown and FanDuel
+   * Classic. Each player's projection is scored with the slate's own scoring rules, and on a
+   * Showdown or single-game slate the captain (CPT, MVP) multiplier is already applied: each seat
+   * is its own row. An NBA row carries the shared identity and points fields and the fields marked
+   * "NBA only" (minutes, usage rate, the stat line, double-double and triple-double chances,
+   * chance_5x and chance_6x); it never carries an NFL-only field. NBA ownership is projected per
+   * contest segment, so an NBA slate row has `ownership: null`; read it on
+   * /dfs/contests/{contest_id}/projections. Our NBA projections start with the regular season: a
+   * game's first projection appears on game day, once its betting line and roster are in; it
+   * updates whenever the line or a player's status changes, and it locks at tip. chance_Nx is the
+   * share of the seat's points distribution at or above N x salary / 1000, read from the 99
+   * percentiles of the seat's points and interpolated linearly inside the 1-point step that holds
+   * the threshold; outside p01..p99 it answers the bound 0.99 or 0.01 with `chance_Nx_bound`.
+   *
+   * An NHL row mirrors an NBA row: it carries the shared identity and points fields, every field
+   * it shares with NBA under NBA's name (status, seat_multiplier, chance_5x, chance_6x, the
+   * minutes, which are the projected time on ice, play_probability, start_probability, blk, the
+   * ownership columns and profile_id) and the fields marked "NHL only" (the stat line of a skater
+   * or a goalie, the chance of each threshold bonus, the engine's position, the lineup unit and
+   * injury tag, the relief chance, the power-play and short-handed minutes); it never carries an
+   * NFL-only or NBA-only field. Each NHL seat is scored with the operator's NHL scoring table
+   * (goals, assists, shots, blocks, the power-play and short-handed terms, the goalie's win,
+   * saves, goals against, shutout and overtime loss, the hat trick and the threshold bonuses),
+   * from the engine's simulated stat lines. Our NHL engine projects no ownership: an NHL row has
+   * `ownership: null`, and its ownership columns and profile_id are null. NHL projections start
+   * with the regular season, appear on game day once the betting line and the lineup reading are
+   * in, update on every input change and lock at puck drop.
+   *
+   * The player rows come in one of three formats. The default (no `format`) sends them nested,
+   * in `projections`. `format=flat` sends them flat, in `player_stats`. `format=csv` returns the
+   * flat rows as CSV (text/csv): one column per `player_stats` field, then one column per
+   * `enrich` tag. `enrich` joins related data onto each player row, the same tags as on
+   * /dfs/slate_players.
+   *
+   * `projection_status` says whether the slate's format has projections. In-game formats
+   * (DraftKings In-Game Showdown, FanDuel 2nd-half and 4th-quarter single game) have none by
+   * decision: they answer 200 with `projection_status: none_by_design` and empty arrays. A slate
+   * with no player pool answers 200 with `projection_status: no_player_pool` and empty arrays.
+   * An NBA or NHL slate without a projection yet answers 200 with `not_projected_yet`, a past NBA
+   * or NHL slate whose games started before our engine projected them 200 with `not_projected`,
+   * and a slate of a league our engines do not project (MLB, golf) 200 with `league_not_projected`. Any
+   * other NFL slate whose format has no projection source answers 404.
+   *
+   */
+  async projections(
+    slate_id: number,
+    params?: DFSSlatesProjectionsParams,
+  ): Promise<DFSSlatesProjectionsResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSSlatesProjectionsResponse>(
+        this.opts,
+        `/api/v1/dfs/slates/${encodeURIComponent(String(slate_id))}/projections${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * DFS slate player projections, distributions, and betting props, as a file (format csv or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async projectionsFile(
+    slate_id: number,
+    params: Omit<DFSSlatesProjectionsParams, 'format'> & { format: 'csv' | 'json' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/slates/${encodeURIComponent(String(slate_id))}/projections${qs}`,
+    );
+  }
+
+  /**
+   * Consensus pre-game player betting props of a slate
+   *
+   * Pre-game player prop lines and odds for the players of an NFL slate.
+   */
+  async props(slate_id: number, params?: DFSSlatesPropsParams): Promise<DFSSlatesPropsResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSSlatesPropsResponse>(
+        this.opts,
+        `/api/v1/dfs/slates/${encodeURIComponent(String(slate_id))}/props${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * Consensus pre-game player betting props of a slate, as a file (format csv or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async propsFile(
+    slate_id: number,
+    params: Omit<DFSSlatesPropsParams, 'format'> & { format: 'csv' | 'json' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/slates/${encodeURIComponent(String(slate_id))}/props${qs}`,
+    );
+  }
+
+  /**
+   * DFS contest slate seasons and schedule manifest
+   *
+   * Returns dynamic available seasons, weeks, and date bounds for DFS contest slates.
+   * NFL weeks are regular-season schedule windows in US Eastern time: week N runs
+   * from the day after week N-1's last game to week N's last game day. The windows
+   * are disjoint, so each slate belongs to exactly one week (the week of its lock
+   * date); preseason and postseason slates belong to none. To list one week's slates,
+   * pass the week's start_date and end_date to /api/v1/dfs/slates as
+   * date__between=start_date,end_date.
+   *
+   */
+  async seasons(params?: DFSSlatesSeasonsParams): Promise<DFSSlatesSeasonsResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (await fetchJson<DFSSlatesSeasonsResponse>(this.opts, `/api/v1/dfs/slates/seasons${qs}`))
+      .data;
+  }
+
+  /**
+   * Multi-player stack projections and ownership of an NFL slate
+   *
+   * Multi-player stack projections and ownership for an NFL slate.
+   */
+  async stacks(slate_id: number, params?: DFSSlatesStacksParams): Promise<DFSSlatesStacksResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSSlatesStacksResponse>(
+        this.opts,
+        `/api/v1/dfs/slates/${encodeURIComponent(String(slate_id))}/stacks${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * Multi-player stack projections and ownership of an NFL slate, as a file (format csv or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async stacksFile(
+    slate_id: number,
+    params: Omit<DFSSlatesStacksParams, 'format'> & { format: 'csv' | 'json' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/slates/${encodeURIComponent(String(slate_id))}/stacks${qs}`,
+    );
+  }
+  /** Build or late-swap lineups synchronously via fast projection optimization. */
+  async optimizerLineups(
+    slateId: number,
+    request?: OptimizerLineupsRequest,
+  ): Promise<OptimizerLineupsResponse> {
+    return callOptimizerLineups(this.opts, slateId, request);
+  }
+
+  /** Build or late-swap lineups via fast projection optimization and return DraftKings/FanDuel CSV. */
+  async optimizerLineupsCsv(slateId: number, request?: OptimizerLineupsRequest): Promise<string> {
+    return callOptimizerLineupsCsv(this.opts, slateId, request);
+  }
+
+  /** Run Monte Carlo game/contest simulation lineups (supports `wait: true` Prefer:wait or 202 auto-poll). */
+  async simLineups(
+    slateId: number,
+    request?: SimLineupsRequest,
+    opts?: SimRequestOptions,
+  ): Promise<SimLineupsResponse> {
+    return callSimLineups(this.opts, slateId, request, opts);
+  }
+
+  /** Run Monte Carlo SIM lineups and return DraftKings/FanDuel upload CSV. */
+  async simLineupsCsv(
+    slateId: number,
+    request?: SimLineupsRequest,
+    opts?: SimRequestOptions,
+  ): Promise<string> {
+    return callSimLineupsCsv(this.opts, slateId, request, opts);
+  }
+
+  /** Queue an async SIM lineups job (`Prefer: respond-async`) and return its `202 Accepted` handle. */
+  async simLineupsStart(
+    slateId: number,
+    request?: SimLineupsRequest,
+  ): Promise<SimJobStatusResponse> {
+    return callSimLineupsStart(this.opts, slateId, request);
+  }
+
+  /** Poll an async SIM job once via `GET /api/v1/dfs/slates/{slate_id}/sim/jobs/{job_id}`. */
+  async simJob(slateId: number, jobId: string): Promise<SimJobPollResult> {
+    return callSimJob(this.opts, slateId, jobId);
+  }
+
+  /** Sub-50ms in-memory portfolio re-selection from a cached `pool_id`. */
+  async simSelectPool(
+    slateId: number,
+    request: PortfolioSelectRequest,
+  ): Promise<PortfolioSelectResponse> {
+    return callSimSelectPool(this.opts, slateId, request);
+  }
+
+  /** Conditional live SIM late swap over submitted entries (JSON or CSV). */
+  async simLateSwap(
+    slateId: number,
+    request: LateSwapRequest,
+    opts?: SimRequestOptions,
+  ): Promise<LateSwapResponse> {
+    return callSimLateSwap(this.opts, slateId, request, opts);
   }
 }

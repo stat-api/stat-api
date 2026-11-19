@@ -21,23 +21,22 @@ type NBAGamePlayerStat struct {
 	TeamID                       int64    `json:"team_id"`
 	AbnormalExitClock            int      `json:"abnormal_exit_clock"`
 	AbnormalExitPeriod           int      `json:"abnormal_exit_period"`
-	AlleyOops                    int      `json:"alley_oops"`
-	AndOnes                      int      `json:"and_ones"`
+	AlleyOops                    *int     `json:"alley_oops"`
+	AndOnes                      *int     `json:"and_ones"`
 	AssistPercentage             *float64 `json:"assist_percentage"`
 	AssistRatio                  *float64 `json:"assist_ratio"`
 	AssistToTurnover             *float64 `json:"assist_to_turnover"`
 	Assists                      int      `json:"assists"`
 	AvgDribblesPerTouch          *float64 `json:"avg_dribbles_per_touch"`
 	AvgSecondsPerTouch           *float64 `json:"avg_seconds_per_touch"`
-	BackcourtViolations          int      `json:"backcourt_violations"`
+	BackcourtViolations          *int     `json:"backcourt_violations"`
 	BallsStolen                  *int     `json:"balls_stolen"`
-	BasketInterferenceViolations int      `json:"basket_interference_violations"`
+	BasketInterferenceViolations *int     `json:"basket_interference_violations"`
 	Blocks                       int      `json:"blocks"`
 	BoxOuts                      *int     `json:"box_outs"`
-	CarryingPalmingViolations    int      `json:"carrying_palming_violations"`
-	ChallengesRequested          int      `json:"challenges_requested"`
+	CarryingPalmingViolations    *int     `json:"carrying_palming_violations"`
+	ChallengesRequested          *int     `json:"challenges_requested"`
 	ChargesTaken                 *int     `json:"charges_taken"`
-	ClearPathFouls               int      `json:"clear_path_fouls"`
 	Comment                      *string  `json:"comment"`
 	CompetitiveMinutes           float64  `json:"competitive_minutes"`
 	Contests                     *int     `json:"contests"`
@@ -46,23 +45,21 @@ type NBAGamePlayerStat struct {
 	DefensiveRebounds            int      `json:"defensive_rebounds"`
 	Deflections                  *int     `json:"deflections"`
 	DoubleDoubles                int      `json:"double_doubles"`
-	DoubleDribbleViolations      int      `json:"double_dribble_violations"`
+	DoubleDribbleViolations      *int     `json:"double_dribble_violations"`
 	Drives                       *int     `json:"drives"`
-	Dunks                        int      `json:"dunks"`
+	Dunks                        *int     `json:"dunks"`
 	EffectiveFieldGoalPercentage *float64 `json:"effective_field_goal_percentage"`
-	Ejections                    int      `json:"ejections"`
+	Ejections                    *int     `json:"ejections"`
 	ElbowTouches                 *int     `json:"elbow_touches"`
 	EstimatedDefensiveRating     *float64 `json:"estimated_defensive_rating"`
 	EstimatedNetRating           *float64 `json:"estimated_net_rating"`
 	EstimatedOffensiveRating     *float64 `json:"estimated_offensive_rating"`
 	EstimatedPace                *float64 `json:"estimated_pace"`
 	EstimatedUsagePercentage     *float64 `json:"estimated_usage_percentage"`
-	FastBreakPts                 int      `json:"fast_break_pts"`
+	FastBreakPts                 *int     `json:"fast_break_pts"`
 	FieldGoalPercentage          *float64 `json:"field_goal_percentage"`
 	FieldGoalsAttempted          int      `json:"field_goals_attempted"`
 	FieldGoalsMade               int      `json:"field_goals_made"`
-	FlagrantFoulsType1           int      `json:"flagrant_fouls_type_1"`
-	FlagrantFoulsType2           int      `json:"flagrant_fouls_type_2"`
 	FoulTroubleSeverity          int      `json:"foul_trouble_severity"`
 	Fouls                        int      `json:"fouls"`
 	FoulsDrawn                   int      `json:"fouls_drawn"`
@@ -72,17 +69,17 @@ type NBAGamePlayerStat struct {
 	FrontCourtTouches            *int     `json:"front_court_touches"`
 	GameDate                     int      `json:"game_date"`
 	GarbageTimeMinutes           float64  `json:"garbage_time_minutes"`
-	GoaltendingViolations        int      `json:"goaltending_violations"`
+	GoaltendingViolations        *int     `json:"goaltending_violations"`
 	HockeyAssists                *int     `json:"hockey_assists"`
-	JumpBallsLost                int      `json:"jump_balls_lost"`
-	JumpBallsWon                 int      `json:"jump_balls_won"`
-	LaneViolations               int      `json:"lane_violations"`
-	Layups                       int      `json:"layups"`
+	JumpBallsLost                *int     `json:"jump_balls_lost"`
+	JumpBallsWon                 *int     `json:"jump_balls_won"`
+	LaneViolations               *int     `json:"lane_violations"`
+	Layups                       *int     `json:"layups"`
 	LooseBallsRecovered          *int     `json:"loose_balls_recovered"`
 	Minutes                      float64  `json:"minutes"`
 	MinutesDeviationPct          float64  `json:"minutes_deviation_pct"`
 	NetRating                    *float64 `json:"net_rating"`
-	OffensiveFouls               int      `json:"offensive_fouls"`
+	OffensiveFouls               *int     `json:"offensive_fouls"`
 	OffensiveRating              *float64 `json:"offensive_rating"`
 	OffensiveReboundPercentage   *float64 `json:"offensive_rebound_percentage"`
 	OffensiveRebounds            int      `json:"offensive_rebounds"`
@@ -101,7 +98,7 @@ type NBAGamePlayerStat struct {
 	PtsPerPaintTouch             *float64 `json:"pts_per_paint_touch"`
 	PtsPerPostTouch              *float64 `json:"pts_per_post_touch"`
 	PtsPerTouch                  *float64 `json:"pts_per_touch"`
-	PutBacks                     int      `json:"put_backs"`
+	PutBacks                     *int     `json:"put_backs"`
 	ReboundPercentage            *float64 `json:"rebound_percentage"`
 	Rebounds                     int      `json:"rebounds"`
 	RoleAnomalousGame            bool     `json:"role_anomalous_game"`
@@ -110,22 +107,22 @@ type NBAGamePlayerStat struct {
 	RotationContext              *string  `json:"rotation_context"`
 	RotationContextConfidence    float64  `json:"rotation_context_confidence"`
 	ScreenAssists                *int     `json:"screen_assists"`
-	SecondChancePts              int      `json:"second_chance_pts"`
-	ShotClockViolations          int      `json:"shot_clock_violations"`
+	SecondChancePts              *int     `json:"second_chance_pts"`
+	ShotClockViolations          *int     `json:"shot_clock_violations"`
 	ShotContestedCount           *int     `json:"shot_contested_count"`
 	ShotsBlocked                 *int     `json:"shots_blocked"`
 	StartPosition                *string  `json:"start_position"`
 	Steals                       int      `json:"steals"`
-	SubstitutionsIn              int      `json:"substitutions_in"`
-	SubstitutionsOut             int      `json:"substitutions_out"`
-	TechnicalFouls               int      `json:"technical_fouls"`
+	SubstitutionsIn              *int     `json:"substitutions_in"`
+	SubstitutionsOut             *int     `json:"substitutions_out"`
+	TechnicalFouls               *int     `json:"technical_fouls"`
 	ThreePointPercentage         *float64 `json:"three_point_percentage"`
 	ThreePointersAttempted       int      `json:"three_pointers_attempted"`
 	ThreePointersMade            int      `json:"three_pointers_made"`
 	TimeOfPossession             *float64 `json:"time_of_possession"`
-	TimeoutsCalled               int      `json:"timeouts_called"`
+	TimeoutsCalled               *int     `json:"timeouts_called"`
 	Touches                      *int     `json:"touches"`
-	TravelingViolations          int      `json:"traveling_violations"`
+	TravelingViolations          *int     `json:"traveling_violations"`
 	TripleDoubles                int      `json:"triple_doubles"`
 	TrueShootingPercentage       *float64 `json:"true_shooting_percentage"`
 	TurnoverRatio                *float64 `json:"turnover_ratio"`

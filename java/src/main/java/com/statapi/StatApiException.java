@@ -43,6 +43,8 @@ public class StatApiException extends RuntimeException {
     /** Map an HTTP status onto the matching typed exception subclass. */
     public static StatApiException forStatus(int status, JsonValue body, String path) {
         switch (status) {
+            case 202:
+                return new NotReadyException(status, body, path);
             case 400:
                 return new ValidationException(status, body, path);
             case 401:

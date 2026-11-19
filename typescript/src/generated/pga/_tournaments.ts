@@ -2,14 +2,18 @@
 //
 // SDK resource for pga.tournaments (public API).
 // Source: schema/api/groups/public.yml + schema/model/golf/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface PGATournament {
   id: number;
   league_id?: string | null;
   season_id?: number | null;
   tour_id?: number | null;
-  tournament_id: number;
   canceled: boolean;
   city?: string | null;
   country?: string | null;
@@ -40,6 +44,8 @@ export interface PGATournamentsListResponse {
   tournaments: PGATournament[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -49,7 +55,10 @@ export class PGATournamentsResource {
 
   async list(params?: PGATournamentsListParams): Promise<PGATournamentsListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<PGATournamentsListResponse, 'quota'>>(this.opts, `/api/v1/pga/tournaments${qs}`);
+    const r = await fetchJson<Omit<PGATournamentsListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/pga/tournaments${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -67,7 +76,10 @@ export class PGATournamentsResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: PGATournamentsListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as PGATournamentsListParams);
+      const page: PGATournamentsListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as PGATournamentsListParams);
       for (const row of page.tournaments) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

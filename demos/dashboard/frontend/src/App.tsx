@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
+import styles from './App.module.css';
 import type { GameCard } from './lib/contract';
 import { LEAGUES } from './lib/contract';
 import { formatAgo } from './lib/format';
 import { useSnapshot } from './lib/useSnapshot';
-import { Scoreboard } from './panels/Scoreboard';
 import { GameDetail } from './panels/GameDetail';
 import { MarketPulse } from './panels/MarketPulse';
 import { QuotaFooter } from './panels/QuotaFooter';
-import styles from './App.module.css';
+import { Scoreboard } from './panels/Scoreboard';
 
 const CONNECTION_LABEL = {
   fixture: 'demo data',
@@ -19,8 +19,14 @@ const CONNECTION_LABEL = {
 export function App() {
   const { snapshot, connection } = useSnapshot();
 
-  const allGames = useMemo(() => LEAGUES.flatMap((league) => snapshot.leagues[league].games), [snapshot]);
-  const detailGames = useMemo(() => allGames.filter((game) => game.detail !== undefined), [allGames]);
+  const allGames = useMemo(
+    () => LEAGUES.flatMap((league) => snapshot.leagues[league].games),
+    [snapshot],
+  );
+  const detailGames = useMemo(
+    () => allGames.filter((game) => game.detail !== undefined),
+    [allGames],
+  );
 
   const [selectedId, setSelectedId] = useState<string | null>(() => detailGames[0]?.id ?? null);
   const selected: GameCard | null =
@@ -57,7 +63,9 @@ export function App() {
               <MarketPulse game={selected} />
             </>
           ) : (
-            <div className={styles.rightEmpty}>Select a game to see line movement and market pulse.</div>
+            <div className={styles.rightEmpty}>
+              Select a game to see line movement and market pulse.
+            </div>
           )}
         </div>
       </main>

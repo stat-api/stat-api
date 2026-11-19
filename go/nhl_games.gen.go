@@ -30,8 +30,6 @@ type NHLGame struct {
 	AwayTeamScorePeriod3  *int    `json:"away_team_score_period3"`
 	AwayTeamSeriesWins    *int    `json:"away_team_series_wins"`
 	Channel               *string `json:"channel"`
-	DateTime              string  `json:"date_time"`
-	DateTimeUtc           *string `json:"date_time_utc"`
 	Day                   int     `json:"day"`
 	GameTime              string  `json:"game_time"`
 	HomeTeamScore         *int    `json:"home_team_score"`

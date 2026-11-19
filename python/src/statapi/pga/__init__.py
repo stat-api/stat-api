@@ -9,14 +9,14 @@ from ._seasons import PGASeasonsResource
 from ._operator_player_lookups import PGAOperatorPlayerLookupsResource
 from ._tournaments import PGATournamentsResource
 from ._player_season_stats import PGAPlayerSeasonStatsResource
+from ._player_rounds import PGAPlayerRoundsResource
 from ._course_hole_stats import PGACourseHoleStatsResource
 from ._leaderboards import PGALeaderboardsResource
-from ._player_holes import PGAPlayerHolesResource
 from ._player_news import PGAPlayerNewsResource
-from ._player_rounds import PGAPlayerRoundsResource
 from ._player_shots import PGAPlayerShotsResource
 from ._tournament_odds import PGATournamentOddsResource
 from ._tournament_rounds import PGATournamentRoundsResource
+from ._player_holes import PGAPlayerHolesResource
 
 __all__ = [
     "PGAPlayersResource",
@@ -26,12 +26,12 @@ __all__ = [
     "PGAOperatorPlayerLookupsResource",
     "PGATournamentsResource",
     "PGAPlayerSeasonStatsResource",
+    "PGAPlayerRoundsResource",
     "PGACourseHoleStatsResource",
     "PGALeaderboardsResource",
-    "PGAPlayerHolesResource",
     "PGAPlayerNewsResource",
-    "PGAPlayerRoundsResource",
     "PGAPlayerShotsResource",
     "PGATournamentOddsResource",
     "PGATournamentRoundsResource",
+    "PGAPlayerHolesResource",
 ]

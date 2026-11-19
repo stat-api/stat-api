@@ -1,6 +1,6 @@
-import type { GameCard, MarketPulsePoint, WpSource } from '../lib/contract';
 import type { LineSeries } from '../components/LineChart';
 import { LineChart } from '../components/LineChart';
+import type { GameCard, MarketPulsePoint, WpSource } from '../lib/contract';
 import { formatAgo, formatClock, formatPercent } from '../lib/format';
 import styles from './MarketPulse.module.css';
 
@@ -52,7 +52,10 @@ export function MarketPulse({ game }: MarketPulseProps) {
               const latest = points[points.length - 1]!;
               return (
                 <div key={source} className={styles.sourceRow}>
-                  <span className={styles.swatch} style={{ backgroundColor: SOURCE_META[source].color }} />
+                  <span
+                    className={styles.swatch}
+                    style={{ backgroundColor: SOURCE_META[source].color }}
+                  />
                   <span className={styles.sourceLabel}>{SOURCE_META[source].label}</span>
                   <span className={styles.sourceValue}>{formatPercent(latest.homeWinProb)}</span>
                   <span className={styles.freshness}>updated {formatAgo(latest.t)}</span>

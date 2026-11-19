@@ -13,7 +13,7 @@
     "build:frontend": "cd frontend && bun install && bun run build"
   },
   "dependencies": {
-    "@stat-api/client": "^0.1.0",
+    "@stat-api/client": "^0.2.0",
     "hono": "^4.6.14"
   },
   "devDependencies": {

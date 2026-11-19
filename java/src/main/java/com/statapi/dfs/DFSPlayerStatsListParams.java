@@ -9,8 +9,74 @@ import java.util.Map;
 
 public final class DFSPlayerStatsListParams {
 
+    private Long slateId;
+    private Long operatorSlateId;
+    private Long playerId;
+    private Long gameId;
+    private String slateDate;
+    private Long teamId;
+    private String scoringFormat;
+    private String position;
+    private Long operatorId;
+    private String operator;
+    private Long leagueId;
     private Long limit;
     private Long fromId;
+
+    public DFSPlayerStatsListParams slateId(Long slateId) {
+        this.slateId = slateId;
+        return this;
+    }
+
+    public DFSPlayerStatsListParams operatorSlateId(Long operatorSlateId) {
+        this.operatorSlateId = operatorSlateId;
+        return this;
+    }
+
+    public DFSPlayerStatsListParams playerId(Long playerId) {
+        this.playerId = playerId;
+        return this;
+    }
+
+    public DFSPlayerStatsListParams gameId(Long gameId) {
+        this.gameId = gameId;
+        return this;
+    }
+
+    public DFSPlayerStatsListParams slateDate(String slateDate) {
+        this.slateDate = slateDate;
+        return this;
+    }
+
+    public DFSPlayerStatsListParams teamId(Long teamId) {
+        this.teamId = teamId;
+        return this;
+    }
+
+    public DFSPlayerStatsListParams scoringFormat(String scoringFormat) {
+        this.scoringFormat = scoringFormat;
+        return this;
+    }
+
+    public DFSPlayerStatsListParams position(String position) {
+        this.position = position;
+        return this;
+    }
+
+    public DFSPlayerStatsListParams operatorId(Long operatorId) {
+        this.operatorId = operatorId;
+        return this;
+    }
+
+    public DFSPlayerStatsListParams operator(String operator) {
+        this.operator = operator;
+        return this;
+    }
+
+    public DFSPlayerStatsListParams leagueId(Long leagueId) {
+        this.leagueId = leagueId;
+        return this;
+    }
 
     public DFSPlayerStatsListParams limit(Long limit) {
         this.limit = limit;
@@ -24,6 +90,39 @@ public final class DFSPlayerStatsListParams {
 
     public Map<String, String> toQuery() {
         Map<String, String> query = new LinkedHashMap<>();
+        if (slateId != null) {
+            query.put("slate_id", String.valueOf(slateId));
+        }
+        if (operatorSlateId != null) {
+            query.put("operator_slate_id", String.valueOf(operatorSlateId));
+        }
+        if (playerId != null) {
+            query.put("player_id", String.valueOf(playerId));
+        }
+        if (gameId != null) {
+            query.put("game_id", String.valueOf(gameId));
+        }
+        if (slateDate != null) {
+            query.put("slate_date", String.valueOf(slateDate));
+        }
+        if (teamId != null) {
+            query.put("team_id", String.valueOf(teamId));
+        }
+        if (scoringFormat != null) {
+            query.put("scoring_format", String.valueOf(scoringFormat));
+        }
+        if (position != null) {
+            query.put("position", String.valueOf(position));
+        }
+        if (operatorId != null) {
+            query.put("operator_id", String.valueOf(operatorId));
+        }
+        if (operator != null) {
+            query.put("operator", String.valueOf(operator));
+        }
+        if (leagueId != null) {
+            query.put("league_id", String.valueOf(leagueId));
+        }
         if (limit != null) {
             query.put("limit", String.valueOf(limit));
         }

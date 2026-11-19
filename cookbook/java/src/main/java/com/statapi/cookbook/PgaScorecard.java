@@ -1,5 +1,5 @@
 // Build a PGA golfer's scorecard
-// Generated from schema/api/examples/scorecard.yml — do not edit.
+// Generated from schema/api/examples/golf-scorecard.yml — do not edit.
 package com.statapi.cookbook;
 
 import com.statapi.StatApi;

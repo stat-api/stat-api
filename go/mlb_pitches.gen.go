@@ -76,6 +76,7 @@ type MLBPitch struct {
 	SpinDirection        *float64 `json:"spin_direction"`
 	SpinRate             *float64 `json:"spin_rate"`
 	SprayAngle           *float64 `json:"spray_angle"`
+	StartTime            *string  `json:"start_time"`
 	StatcastQualityScore *float64 `json:"statcast_quality_score"`
 	Strike               bool     `json:"strike"`
 	StrikeZoneBottom     *float64 `json:"strike_zone_bottom"`

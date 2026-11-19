@@ -2,67 +2,61 @@
 
 package statapi
 
+import "context"
+
 // Version is the lockstep SDK version, mirrored from sdks/VERSION. The
 // hand-written transport advertises it in the User-Agent.
-const Version = "0.1.0"
+const Version = "0.3.0"
 
 // services holds the per-league resource accessors promoted onto Client
 // (client.NBA.Players.List(...)).
 type services struct {
-	DFS        dfsResources
-	Kalshi     kalshiResources
-	MLB        mlbResources
-	NBA        nbaResources
-	NFL        nflResources
-	NHL        nhlResources
-	PGA        pgaResources
-	Polymarket polymarketResources
-	Reference  referenceResources
+	DFS       dfsResources
+	MLB       mlbResources
+	NBA       nbaResources
+	NFL       nflResources
+	NHL       nhlResources
+	PGA       pgaResources
+	Reference referenceResources
+	Sim       simResources
 }
 
 type dfsResources struct {
-	Slates                         *DFSSlatesService
-	ContestUserLineupPlayerEntries *DFSContestUserLineupPlayerEntriesService
-	ContestUsers                   *DFSContestUsersService
-	GameStats                      *DFSGameStatsService
-	PlayerStats                    *DFSPlayerStatsService
-	SlatePlayerProjections         *DFSSlatePlayerProjectionsService
-	SlateProjectionSources         *DFSSlateProjectionSourcesService
-	SlateSettings                  *DFSSlateSettingsService
-	TeamStats                      *DFSTeamStatsService
-	Contests                       *DFSContestsService
-	SlateGames                     *DFSSlateGamesService
-	SlatePlayers                   *DFSSlatePlayersService
-	ContestUserLineups             *DFSContestUserLineupsService
-}
-
-type kalshiResources struct {
-	Series          *KalshiSeriesService
-	MarketStatuses  *KalshiMarketStatusesService
-	Events          *KalshiEventsService
-	Markets         *KalshiMarketsService
-	Candles         *KalshiCandlesService
-	MarketSnapshots *KalshiMarketSnapshotsService
-	PublicTrades    *KalshiPublicTradesService
+	SlateSettings       *DFSSlateSettingsService
+	ContestUsers        *DFSContestUsersService
+	Slates              *DFSSlatesService
+	Contests            *DFSContestsService
+	SlateGames          *DFSSlateGamesService
+	GameStats           *DFSGameStatsService
+	PlayerStats         *DFSPlayerStatsService
+	TeamStats           *DFSTeamStatsService
+	ContestPayoutShapes *DFSContestPayoutShapesService
+	SlatePlayers        *DFSSlatePlayersService
 }
 
 type mlbResources struct {
 	Seasons                   *MLBSeasonsService
 	Venues                    *MLBVenuesService
+	Broadcasters              *MLBBroadcastersService
 	Umpires                   *MLBUmpiresService
 	Teams                     *MLBTeamsService
 	ParkFactors               *MLBParkFactorsService
 	SeasonRunEnvironments     *MLBSeasonRunEnvironmentsService
 	VenueDimensions           *MLBVenueDimensionsService
 	WobaWeights               *MLBWobaWeightsService
-	Games                     *MLBGamesService
 	Players                   *MLBPlayersService
-	Broadcasters              *MLBBroadcastersService
 	OperatorTeamLookups       *MLBOperatorTeamLookupsService
 	Playoffs                  *MLBPlayoffsService
 	SeasonTeamStats           *MLBSeasonTeamStatsService
 	SeriesOdds                *MLBSeriesOddsService
+	Games                     *MLBGamesService
+	OperatorPlayerLookups     *MLBOperatorPlayerLookupsService
+	PlayerAwards              *MLBPlayerAwardsService
+	PlayerInjuries            *MLBPlayerInjuriesService
+	SeasonPlayerStats         *MLBSeasonPlayerStatsService
+	TeamPlayerRosters         *MLBTeamPlayerRostersService
 	Innings                   *MLBInningsService
+	TeamStartingLineups       *MLBTeamStartingLineupsService
 	GameAltLines              *MLBGameAltLinesService
 	GameBroadcasters          *MLBGameBroadcastersService
 	GameLines                 *MLBGameLinesService
@@ -73,76 +67,81 @@ type mlbResources struct {
 	GameTeamRosters           *MLBGameTeamRostersService
 	GameTeamStats             *MLBGameTeamStatsService
 	GameUmpires               *MLBGameUmpiresService
-	OperatorPlayerLookups     *MLBOperatorPlayerLookupsService
-	Pitches                   *MLBPitchesService
-	PlayerAwards              *MLBPlayerAwardsService
-	PlayerInjuries            *MLBPlayerInjuriesService
+	GameWeathers              *MLBGameWeathersService
 	PlayerNews                *MLBPlayerNewsService
-	SeasonPlayerStats         *MLBSeasonPlayerStatsService
-	TeamPlayerRosters         *MLBTeamPlayerRostersService
-	TeamStartingLineupBatters *MLBTeamStartingLineupBattersService
-	TeamStartingLineups       *MLBTeamStartingLineupsService
-	VenueWeathers             *MLBVenueWeathersService
+	TeamNews                  *MLBTeamNewsService
 	AtBats                    *MLBAtBatsService
+	TeamStartingLineupBatters *MLBTeamStartingLineupBattersService
+	Pitches                   *MLBPitchesService
 	PlayByPlays               *MLBPlayByPlaysService
 }
 
 type nbaResources struct {
+	client                *Client
 	Seasons               *NBASeasonsService
 	Stadiums              *NBAStadiumsService
-	Referees              *NBARefereesService
+	Broadcasters          *NBABroadcastersService
 	CoachingStaffs        *NBACoachingStaffsService
+	Referees              *NBARefereesService
 	Teams                 *NBATeamsService
 	Games                 *NBAGamesService
 	Players               *NBAPlayersService
-	Broadcasters          *NBABroadcastersService
 	OperatorTeamLookups   *NBAOperatorTeamLookupsService
 	Playoffs              *NBAPlayoffsService
 	SeasonTeamStats       *NBASeasonTeamStatsService
 	TeamCoachingStaffs    *NBATeamCoachingStaffsService
 	TeamStandings         *NBATeamStandingsService
+	GamePossessions       *NBAGamePossessionsService
 	GameBroadcasters      *NBAGameBroadcastersService
 	GameLines             *NBAGameLinesService
 	GamePeriodLines       *NBAGamePeriodLinesService
 	GamePlayerProps       *NBAGamePlayerPropsService
 	GamePlayerStats       *NBAGamePlayerStatsService
-	GamePossessions       *NBAGamePossessionsService
 	GameReferees          *NBAGameRefereesService
 	GameTeamLineupStints  *NBAGameTeamLineupStintsService
 	GameTeamRosters       *NBAGameTeamRostersService
 	GameTeamStats         *NBAGameTeamStatsService
 	OperatorPlayerLookups *NBAOperatorPlayerLookupsService
-	PlayByPlays           *NBAPlayByPlaysService
 	PlayerNews            *NBAPlayerNewsService
+	ProjectedPlayerStats  *NBAProjectedPlayerStatsService
+	ProjectedTeamStats    *NBAProjectedTeamStatsService
 	SeasonPlayerStats     *NBASeasonPlayerStatsService
 	TeamDepthCharts       *NBATeamDepthChartsService
 	TeamGameContexts      *NBATeamGameContextsService
+	TeamNews              *NBATeamNewsService
+	PlayByPlays           *NBAPlayByPlaysService
+}
+
+// Weeks lists available NBA weeks, matchup summaries, and FreeGameID (6029936).
+func (r *nbaResources) Weeks(ctx context.Context, params *NBAWeeksParams) (*NBASimWeeksResponse, error) {
+	return r.client.Sim.NBA.Weeks(ctx, params)
 }
 
 type nflResources struct {
+	client                     *Client
 	Seasons                    *NFLSeasonsService
 	Stadiums                   *NFLStadiumsService
 	Referees                   *NFLRefereesService
 	Teams                      *NFLTeamsService
-	Players                    *NFLPlayersService
 	Games                      *NFLGamesService
+	Players                    *NFLPlayersService
 	CoachingStaffTenures       *NFLCoachingStaffTenuresService
 	CoachingStaffs             *NFLCoachingStaffsService
-	DepthChartSnapshots        *NFLDepthChartSnapshotsService
 	OperatorTeamLookups        *NFLOperatorTeamLookupsService
 	Playoffs                   *NFLPlayoffsService
 	SeasonTeamStats            *NFLSeasonTeamStatsService
+	GameDrives                 *NFLGameDrivesService
+	CoachSchemeTendencies      *NFLCoachSchemeTendenciesService
 	CombineResults             *NFLCombineResultsService
-	DepthChartEntries          *NFLDepthChartEntriesService
 	DepthCharts                *NFLDepthChartsService
 	DraftPicks                 *NFLDraftPicksService
-	GameDrives                 *NFLGameDrivesService
 	GameLines                  *NFLGameLinesService
+	GamePlayerAdvancedStats    *NFLGamePlayerAdvancedStatsService
 	GamePlayerFirstdownStats   *NFLGamePlayerFirstdownStatsService
 	GamePlayerNgsPassings      *NFLGamePlayerNgsPassingsService
 	GamePlayerNgsReceivings    *NFLGamePlayerNgsReceivingsService
 	GamePlayerNgsRushings      *NFLGamePlayerNgsRushingsService
-	GamePlayerPfrAdvstats      *NFLGamePlayerPfrAdvstatsService
+	GamePlayerProps            *NFLGamePlayerPropsService
 	GamePlayerRedzoneStats     *NFLGamePlayerRedzoneStatsService
 	GamePlayerStats            *NFLGamePlayerStatsService
 	GamePlayerThirddownStats   *NFLGamePlayerThirddownStatsService
@@ -153,40 +152,65 @@ type nflResources struct {
 	GameWeathers               *NFLGameWeathersService
 	Injuries                   *NFLInjuriesService
 	OperatorPlayerLookups      *NFLOperatorPlayerLookupsService
-	PlayByPlays                *NFLPlayByPlaysService
 	PlayParticipations         *NFLPlayParticipationsService
 	PlayerContracts            *NFLPlayerContractsService
 	PlayerNews                 *NFLPlayerNewsService
+	ProjectedPlayerSnaps       *NFLProjectedPlayerSnapsService
+	ProjectedTeamSnaps         *NFLProjectedTeamSnapsService
 	SeasonPlayerFirstdownStats *NFLSeasonPlayerFirstdownStatsService
 	SeasonPlayerRedzoneStats   *NFLSeasonPlayerRedzoneStatsService
 	SeasonPlayerStats          *NFLSeasonPlayerStatsService
 	SeasonPlayerThirddownStats *NFLSeasonPlayerThirddownStatsService
+	TeamNews                   *NFLTeamNewsService
 	TeamPlayerRosters          *NFLTeamPlayerRostersService
+	PlayByPlays                *NFLPlayByPlaysService
+}
+
+// Weeks lists available NFL weeks, matchup summaries, and FreeGameID (43418).
+func (r *nflResources) Weeks(ctx context.Context, params *NFLWeeksParams) (*NFLWeeksResponse, error) {
+	return r.client.Sim.NFL.Weeks(ctx, params)
 }
 
 type nhlResources struct {
-	Seasons               *NHLSeasonsService
-	Arenas                *NHLArenasService
-	Teams                 *NHLTeamsService
-	Players               *NHLPlayersService
-	Games                 *NHLGamesService
-	LineCombinations      *NHLLineCombinationsService
-	OperatorTeamLookups   *NHLOperatorTeamLookupsService
-	PlayoffSeries         *NHLPlayoffSeriesService
-	SeasonTeamStats       *NHLSeasonTeamStatsService
-	Standings             *NHLStandingsService
-	DraftPicks            *NHLDraftPicksService
-	GameOdds              *NHLGameOddsService
-	GamePlayerStats       *NHLGamePlayerStatsService
-	GameTeamStats         *NHLGameTeamStatsService
-	GoalieDepthCharts     *NHLGoalieDepthChartsService
-	OperatorPlayerLookups *NHLOperatorPlayerLookupsService
-	Penalties             *NHLPenaltiesService
-	Periods               *NHLPeriodsService
-	PlayerInjuries        *NHLPlayerInjuriesService
-	PlayerNews            *NHLPlayerNewsService
-	ScoringPlays          *NHLScoringPlaysService
-	SeasonPlayerStats     *NHLSeasonPlayerStatsService
+	Seasons                    *NHLSeasonsService
+	Arenas                     *NHLArenasService
+	Broadcasters               *NHLBroadcastersService
+	CoachingStaffs             *NHLCoachingStaffsService
+	Referees                   *NHLRefereesService
+	Teams                      *NHLTeamsService
+	Games                      *NHLGamesService
+	Players                    *NHLPlayersService
+	LineCombinations           *NHLLineCombinationsService
+	OperatorTeamLookups        *NHLOperatorTeamLookupsService
+	PlayoffSeries              *NHLPlayoffSeriesService
+	SeasonTeamStats            *NHLSeasonTeamStatsService
+	Standings                  *NHLStandingsService
+	TeamCoachingStaffs         *NHLTeamCoachingStaffsService
+	TeamStandings              *NHLTeamStandingsService
+	GameBroadcasters           *NHLGameBroadcastersService
+	GameLines                  *NHLGameLinesService
+	GamePeriodLines            *NHLGamePeriodLinesService
+	GamePlayerProps            *NHLGamePlayerPropsService
+	GamePlayerStats            *NHLGamePlayerStatsService
+	GameReferees               *NHLGameRefereesService
+	GameShifts                 *NHLGameShiftsService
+	GameTeamRosters            *NHLGameTeamRostersService
+	GameTeamStats              *NHLGameTeamStatsService
+	GoalieDepthCharts          *NHLGoalieDepthChartsService
+	OperatorGameFantasyStats   *NHLOperatorGameFantasyStatsService
+	OperatorPlayerFantasyStats *NHLOperatorPlayerFantasyStatsService
+	OperatorPlayerLookups      *NHLOperatorPlayerLookupsService
+	OperatorTeamFantasyStats   *NHLOperatorTeamFantasyStatsService
+	Penalties                  *NHLPenaltiesService
+	Periods                    *NHLPeriodsService
+	PlayByPlays                *NHLPlayByPlaysService
+	PlayerNews                 *NHLPlayerNewsService
+	ProjectedPlayerStats       *NHLProjectedPlayerStatsService
+	ProjectedTeamStats         *NHLProjectedTeamStatsService
+	ScoringPlays               *NHLScoringPlaysService
+	SeasonPlayerStats          *NHLSeasonPlayerStatsService
+	TeamGameContexts           *NHLTeamGameContextsService
+	TeamNews                   *NHLTeamNewsService
 }
 
 type pgaResources struct {
@@ -197,72 +221,60 @@ type pgaResources struct {
 	OperatorPlayerLookups *PGAOperatorPlayerLookupsService
 	Tournaments           *PGATournamentsService
 	PlayerSeasonStats     *PGAPlayerSeasonStatsService
+	PlayerRounds          *PGAPlayerRoundsService
 	CourseHoleStats       *PGACourseHoleStatsService
 	Leaderboards          *PGALeaderboardsService
-	PlayerHoles           *PGAPlayerHolesService
 	PlayerNews            *PGAPlayerNewsService
-	PlayerRounds          *PGAPlayerRoundsService
 	PlayerShots           *PGAPlayerShotsService
 	TournamentOdds        *PGATournamentOddsService
 	TournamentRounds      *PGATournamentRoundsService
-}
-
-type polymarketResources struct {
-	Events             *PolymarketEventsService
-	Sports             *PolymarketSportsService
-	Tokens             *PolymarketTokensService
-	Markets            *PolymarketMarketsService
-	Candles            *PolymarketCandlesService
-	MarketSnapshots    *PolymarketMarketSnapshotsService
-	OrderBookSnapshots *PolymarketOrderBookSnapshotsService
-	PriceHistories     *PolymarketPriceHistoriesService
-	PublicTrades       *PolymarketPublicTradesService
-	TokenSnapshots     *PolymarketTokenSnapshotsService
+	PlayerHoles           *PGAPlayerHolesService
 }
 
 type referenceResources struct {
 	Operators *ReferenceOperatorsService
 }
 
+type simResources struct {
+	NFL *SimNFLService
+	NBA *SimNBAService
+}
+
 // wireServices allocates every per-table service, called once from client
 // construction.
 func (c *Client) wireServices() {
-	c.DFS.Slates = &DFSSlatesService{client: c}
-	c.DFS.ContestUserLineupPlayerEntries = &DFSContestUserLineupPlayerEntriesService{client: c}
-	c.DFS.ContestUsers = &DFSContestUsersService{client: c}
-	c.DFS.GameStats = &DFSGameStatsService{client: c}
-	c.DFS.PlayerStats = &DFSPlayerStatsService{client: c}
-	c.DFS.SlatePlayerProjections = &DFSSlatePlayerProjectionsService{client: c}
-	c.DFS.SlateProjectionSources = &DFSSlateProjectionSourcesService{client: c}
 	c.DFS.SlateSettings = &DFSSlateSettingsService{client: c}
-	c.DFS.TeamStats = &DFSTeamStatsService{client: c}
+	c.DFS.ContestUsers = &DFSContestUsersService{client: c}
+	c.DFS.Slates = &DFSSlatesService{client: c}
 	c.DFS.Contests = &DFSContestsService{client: c}
 	c.DFS.SlateGames = &DFSSlateGamesService{client: c}
+	c.DFS.GameStats = &DFSGameStatsService{client: c}
+	c.DFS.PlayerStats = &DFSPlayerStatsService{client: c}
+	c.DFS.TeamStats = &DFSTeamStatsService{client: c}
+	c.DFS.ContestPayoutShapes = &DFSContestPayoutShapesService{client: c}
 	c.DFS.SlatePlayers = &DFSSlatePlayersService{client: c}
-	c.DFS.ContestUserLineups = &DFSContestUserLineupsService{client: c}
-	c.Kalshi.Series = &KalshiSeriesService{client: c}
-	c.Kalshi.MarketStatuses = &KalshiMarketStatusesService{client: c}
-	c.Kalshi.Events = &KalshiEventsService{client: c}
-	c.Kalshi.Markets = &KalshiMarketsService{client: c}
-	c.Kalshi.Candles = &KalshiCandlesService{client: c}
-	c.Kalshi.MarketSnapshots = &KalshiMarketSnapshotsService{client: c}
-	c.Kalshi.PublicTrades = &KalshiPublicTradesService{client: c}
 	c.MLB.Seasons = &MLBSeasonsService{client: c}
 	c.MLB.Venues = &MLBVenuesService{client: c}
+	c.MLB.Broadcasters = &MLBBroadcastersService{client: c}
 	c.MLB.Umpires = &MLBUmpiresService{client: c}
 	c.MLB.Teams = &MLBTeamsService{client: c}
 	c.MLB.ParkFactors = &MLBParkFactorsService{client: c}
 	c.MLB.SeasonRunEnvironments = &MLBSeasonRunEnvironmentsService{client: c}
 	c.MLB.VenueDimensions = &MLBVenueDimensionsService{client: c}
 	c.MLB.WobaWeights = &MLBWobaWeightsService{client: c}
-	c.MLB.Games = &MLBGamesService{client: c}
 	c.MLB.Players = &MLBPlayersService{client: c}
-	c.MLB.Broadcasters = &MLBBroadcastersService{client: c}
 	c.MLB.OperatorTeamLookups = &MLBOperatorTeamLookupsService{client: c}
 	c.MLB.Playoffs = &MLBPlayoffsService{client: c}
 	c.MLB.SeasonTeamStats = &MLBSeasonTeamStatsService{client: c}
 	c.MLB.SeriesOdds = &MLBSeriesOddsService{client: c}
+	c.MLB.Games = &MLBGamesService{client: c}
+	c.MLB.OperatorPlayerLookups = &MLBOperatorPlayerLookupsService{client: c}
+	c.MLB.PlayerAwards = &MLBPlayerAwardsService{client: c}
+	c.MLB.PlayerInjuries = &MLBPlayerInjuriesService{client: c}
+	c.MLB.SeasonPlayerStats = &MLBSeasonPlayerStatsService{client: c}
+	c.MLB.TeamPlayerRosters = &MLBTeamPlayerRostersService{client: c}
 	c.MLB.Innings = &MLBInningsService{client: c}
+	c.MLB.TeamStartingLineups = &MLBTeamStartingLineupsService{client: c}
 	c.MLB.GameAltLines = &MLBGameAltLinesService{client: c}
 	c.MLB.GameBroadcasters = &MLBGameBroadcastersService{client: c}
 	c.MLB.GameLines = &MLBGameLinesService{client: c}
@@ -273,70 +285,70 @@ func (c *Client) wireServices() {
 	c.MLB.GameTeamRosters = &MLBGameTeamRostersService{client: c}
 	c.MLB.GameTeamStats = &MLBGameTeamStatsService{client: c}
 	c.MLB.GameUmpires = &MLBGameUmpiresService{client: c}
-	c.MLB.OperatorPlayerLookups = &MLBOperatorPlayerLookupsService{client: c}
-	c.MLB.Pitches = &MLBPitchesService{client: c}
-	c.MLB.PlayerAwards = &MLBPlayerAwardsService{client: c}
-	c.MLB.PlayerInjuries = &MLBPlayerInjuriesService{client: c}
+	c.MLB.GameWeathers = &MLBGameWeathersService{client: c}
 	c.MLB.PlayerNews = &MLBPlayerNewsService{client: c}
-	c.MLB.SeasonPlayerStats = &MLBSeasonPlayerStatsService{client: c}
-	c.MLB.TeamPlayerRosters = &MLBTeamPlayerRostersService{client: c}
-	c.MLB.TeamStartingLineupBatters = &MLBTeamStartingLineupBattersService{client: c}
-	c.MLB.TeamStartingLineups = &MLBTeamStartingLineupsService{client: c}
-	c.MLB.VenueWeathers = &MLBVenueWeathersService{client: c}
+	c.MLB.TeamNews = &MLBTeamNewsService{client: c}
 	c.MLB.AtBats = &MLBAtBatsService{client: c}
+	c.MLB.TeamStartingLineupBatters = &MLBTeamStartingLineupBattersService{client: c}
+	c.MLB.Pitches = &MLBPitchesService{client: c}
 	c.MLB.PlayByPlays = &MLBPlayByPlaysService{client: c}
+	c.NBA.client = c
 	c.NBA.Seasons = &NBASeasonsService{client: c}
 	c.NBA.Stadiums = &NBAStadiumsService{client: c}
-	c.NBA.Referees = &NBARefereesService{client: c}
+	c.NBA.Broadcasters = &NBABroadcastersService{client: c}
 	c.NBA.CoachingStaffs = &NBACoachingStaffsService{client: c}
+	c.NBA.Referees = &NBARefereesService{client: c}
 	c.NBA.Teams = &NBATeamsService{client: c}
 	c.NBA.Games = &NBAGamesService{client: c}
 	c.NBA.Players = &NBAPlayersService{client: c}
-	c.NBA.Broadcasters = &NBABroadcastersService{client: c}
 	c.NBA.OperatorTeamLookups = &NBAOperatorTeamLookupsService{client: c}
 	c.NBA.Playoffs = &NBAPlayoffsService{client: c}
 	c.NBA.SeasonTeamStats = &NBASeasonTeamStatsService{client: c}
 	c.NBA.TeamCoachingStaffs = &NBATeamCoachingStaffsService{client: c}
 	c.NBA.TeamStandings = &NBATeamStandingsService{client: c}
+	c.NBA.GamePossessions = &NBAGamePossessionsService{client: c}
 	c.NBA.GameBroadcasters = &NBAGameBroadcastersService{client: c}
 	c.NBA.GameLines = &NBAGameLinesService{client: c}
 	c.NBA.GamePeriodLines = &NBAGamePeriodLinesService{client: c}
 	c.NBA.GamePlayerProps = &NBAGamePlayerPropsService{client: c}
 	c.NBA.GamePlayerStats = &NBAGamePlayerStatsService{client: c}
-	c.NBA.GamePossessions = &NBAGamePossessionsService{client: c}
 	c.NBA.GameReferees = &NBAGameRefereesService{client: c}
 	c.NBA.GameTeamLineupStints = &NBAGameTeamLineupStintsService{client: c}
 	c.NBA.GameTeamRosters = &NBAGameTeamRostersService{client: c}
 	c.NBA.GameTeamStats = &NBAGameTeamStatsService{client: c}
 	c.NBA.OperatorPlayerLookups = &NBAOperatorPlayerLookupsService{client: c}
-	c.NBA.PlayByPlays = &NBAPlayByPlaysService{client: c}
 	c.NBA.PlayerNews = &NBAPlayerNewsService{client: c}
+	c.NBA.ProjectedPlayerStats = &NBAProjectedPlayerStatsService{client: c}
+	c.NBA.ProjectedTeamStats = &NBAProjectedTeamStatsService{client: c}
 	c.NBA.SeasonPlayerStats = &NBASeasonPlayerStatsService{client: c}
 	c.NBA.TeamDepthCharts = &NBATeamDepthChartsService{client: c}
 	c.NBA.TeamGameContexts = &NBATeamGameContextsService{client: c}
+	c.NBA.TeamNews = &NBATeamNewsService{client: c}
+	c.NBA.PlayByPlays = &NBAPlayByPlaysService{client: c}
+	c.NFL.client = c
 	c.NFL.Seasons = &NFLSeasonsService{client: c}
 	c.NFL.Stadiums = &NFLStadiumsService{client: c}
 	c.NFL.Referees = &NFLRefereesService{client: c}
 	c.NFL.Teams = &NFLTeamsService{client: c}
-	c.NFL.Players = &NFLPlayersService{client: c}
 	c.NFL.Games = &NFLGamesService{client: c}
+	c.NFL.Players = &NFLPlayersService{client: c}
 	c.NFL.CoachingStaffTenures = &NFLCoachingStaffTenuresService{client: c}
 	c.NFL.CoachingStaffs = &NFLCoachingStaffsService{client: c}
-	c.NFL.DepthChartSnapshots = &NFLDepthChartSnapshotsService{client: c}
 	c.NFL.OperatorTeamLookups = &NFLOperatorTeamLookupsService{client: c}
 	c.NFL.Playoffs = &NFLPlayoffsService{client: c}
 	c.NFL.SeasonTeamStats = &NFLSeasonTeamStatsService{client: c}
+	c.NFL.GameDrives = &NFLGameDrivesService{client: c}
+	c.NFL.CoachSchemeTendencies = &NFLCoachSchemeTendenciesService{client: c}
 	c.NFL.CombineResults = &NFLCombineResultsService{client: c}
-	c.NFL.DepthChartEntries = &NFLDepthChartEntriesService{client: c}
 	c.NFL.DepthCharts = &NFLDepthChartsService{client: c}
 	c.NFL.DraftPicks = &NFLDraftPicksService{client: c}
-	c.NFL.GameDrives = &NFLGameDrivesService{client: c}
 	c.NFL.GameLines = &NFLGameLinesService{client: c}
+	c.NFL.GamePlayerAdvancedStats = &NFLGamePlayerAdvancedStatsService{client: c}
 	c.NFL.GamePlayerFirstdownStats = &NFLGamePlayerFirstdownStatsService{client: c}
 	c.NFL.GamePlayerNgsPassings = &NFLGamePlayerNgsPassingsService{client: c}
 	c.NFL.GamePlayerNgsReceivings = &NFLGamePlayerNgsReceivingsService{client: c}
 	c.NFL.GamePlayerNgsRushings = &NFLGamePlayerNgsRushingsService{client: c}
-	c.NFL.GamePlayerPfrAdvstats = &NFLGamePlayerPfrAdvstatsService{client: c}
+	c.NFL.GamePlayerProps = &NFLGamePlayerPropsService{client: c}
 	c.NFL.GamePlayerRedzoneStats = &NFLGamePlayerRedzoneStatsService{client: c}
 	c.NFL.GamePlayerStats = &NFLGamePlayerStatsService{client: c}
 	c.NFL.GamePlayerThirddownStats = &NFLGamePlayerThirddownStatsService{client: c}
@@ -347,37 +359,57 @@ func (c *Client) wireServices() {
 	c.NFL.GameWeathers = &NFLGameWeathersService{client: c}
 	c.NFL.Injuries = &NFLInjuriesService{client: c}
 	c.NFL.OperatorPlayerLookups = &NFLOperatorPlayerLookupsService{client: c}
-	c.NFL.PlayByPlays = &NFLPlayByPlaysService{client: c}
 	c.NFL.PlayParticipations = &NFLPlayParticipationsService{client: c}
 	c.NFL.PlayerContracts = &NFLPlayerContractsService{client: c}
 	c.NFL.PlayerNews = &NFLPlayerNewsService{client: c}
+	c.NFL.ProjectedPlayerSnaps = &NFLProjectedPlayerSnapsService{client: c}
+	c.NFL.ProjectedTeamSnaps = &NFLProjectedTeamSnapsService{client: c}
 	c.NFL.SeasonPlayerFirstdownStats = &NFLSeasonPlayerFirstdownStatsService{client: c}
 	c.NFL.SeasonPlayerRedzoneStats = &NFLSeasonPlayerRedzoneStatsService{client: c}
 	c.NFL.SeasonPlayerStats = &NFLSeasonPlayerStatsService{client: c}
 	c.NFL.SeasonPlayerThirddownStats = &NFLSeasonPlayerThirddownStatsService{client: c}
+	c.NFL.TeamNews = &NFLTeamNewsService{client: c}
 	c.NFL.TeamPlayerRosters = &NFLTeamPlayerRostersService{client: c}
+	c.NFL.PlayByPlays = &NFLPlayByPlaysService{client: c}
 	c.NHL.Seasons = &NHLSeasonsService{client: c}
 	c.NHL.Arenas = &NHLArenasService{client: c}
+	c.NHL.Broadcasters = &NHLBroadcastersService{client: c}
+	c.NHL.CoachingStaffs = &NHLCoachingStaffsService{client: c}
+	c.NHL.Referees = &NHLRefereesService{client: c}
 	c.NHL.Teams = &NHLTeamsService{client: c}
-	c.NHL.Players = &NHLPlayersService{client: c}
 	c.NHL.Games = &NHLGamesService{client: c}
+	c.NHL.Players = &NHLPlayersService{client: c}
 	c.NHL.LineCombinations = &NHLLineCombinationsService{client: c}
 	c.NHL.OperatorTeamLookups = &NHLOperatorTeamLookupsService{client: c}
 	c.NHL.PlayoffSeries = &NHLPlayoffSeriesService{client: c}
 	c.NHL.SeasonTeamStats = &NHLSeasonTeamStatsService{client: c}
 	c.NHL.Standings = &NHLStandingsService{client: c}
-	c.NHL.DraftPicks = &NHLDraftPicksService{client: c}
-	c.NHL.GameOdds = &NHLGameOddsService{client: c}
+	c.NHL.TeamCoachingStaffs = &NHLTeamCoachingStaffsService{client: c}
+	c.NHL.TeamStandings = &NHLTeamStandingsService{client: c}
+	c.NHL.GameBroadcasters = &NHLGameBroadcastersService{client: c}
+	c.NHL.GameLines = &NHLGameLinesService{client: c}
+	c.NHL.GamePeriodLines = &NHLGamePeriodLinesService{client: c}
+	c.NHL.GamePlayerProps = &NHLGamePlayerPropsService{client: c}
 	c.NHL.GamePlayerStats = &NHLGamePlayerStatsService{client: c}
+	c.NHL.GameReferees = &NHLGameRefereesService{client: c}
+	c.NHL.GameShifts = &NHLGameShiftsService{client: c}
+	c.NHL.GameTeamRosters = &NHLGameTeamRostersService{client: c}
 	c.NHL.GameTeamStats = &NHLGameTeamStatsService{client: c}
 	c.NHL.GoalieDepthCharts = &NHLGoalieDepthChartsService{client: c}
+	c.NHL.OperatorGameFantasyStats = &NHLOperatorGameFantasyStatsService{client: c}
+	c.NHL.OperatorPlayerFantasyStats = &NHLOperatorPlayerFantasyStatsService{client: c}
 	c.NHL.OperatorPlayerLookups = &NHLOperatorPlayerLookupsService{client: c}
+	c.NHL.OperatorTeamFantasyStats = &NHLOperatorTeamFantasyStatsService{client: c}
 	c.NHL.Penalties = &NHLPenaltiesService{client: c}
 	c.NHL.Periods = &NHLPeriodsService{client: c}
-	c.NHL.PlayerInjuries = &NHLPlayerInjuriesService{client: c}
+	c.NHL.PlayByPlays = &NHLPlayByPlaysService{client: c}
 	c.NHL.PlayerNews = &NHLPlayerNewsService{client: c}
+	c.NHL.ProjectedPlayerStats = &NHLProjectedPlayerStatsService{client: c}
+	c.NHL.ProjectedTeamStats = &NHLProjectedTeamStatsService{client: c}
 	c.NHL.ScoringPlays = &NHLScoringPlaysService{client: c}
 	c.NHL.SeasonPlayerStats = &NHLSeasonPlayerStatsService{client: c}
+	c.NHL.TeamGameContexts = &NHLTeamGameContextsService{client: c}
+	c.NHL.TeamNews = &NHLTeamNewsService{client: c}
 	c.PGA.Players = &PGAPlayersService{client: c}
 	c.PGA.Tours = &PGAToursService{client: c}
 	c.PGA.Courses = &PGACoursesService{client: c}
@@ -385,23 +417,15 @@ func (c *Client) wireServices() {
 	c.PGA.OperatorPlayerLookups = &PGAOperatorPlayerLookupsService{client: c}
 	c.PGA.Tournaments = &PGATournamentsService{client: c}
 	c.PGA.PlayerSeasonStats = &PGAPlayerSeasonStatsService{client: c}
+	c.PGA.PlayerRounds = &PGAPlayerRoundsService{client: c}
 	c.PGA.CourseHoleStats = &PGACourseHoleStatsService{client: c}
 	c.PGA.Leaderboards = &PGALeaderboardsService{client: c}
-	c.PGA.PlayerHoles = &PGAPlayerHolesService{client: c}
 	c.PGA.PlayerNews = &PGAPlayerNewsService{client: c}
-	c.PGA.PlayerRounds = &PGAPlayerRoundsService{client: c}
 	c.PGA.PlayerShots = &PGAPlayerShotsService{client: c}
 	c.PGA.TournamentOdds = &PGATournamentOddsService{client: c}
 	c.PGA.TournamentRounds = &PGATournamentRoundsService{client: c}
-	c.Polymarket.Events = &PolymarketEventsService{client: c}
-	c.Polymarket.Sports = &PolymarketSportsService{client: c}
-	c.Polymarket.Tokens = &PolymarketTokensService{client: c}
-	c.Polymarket.Markets = &PolymarketMarketsService{client: c}
-	c.Polymarket.Candles = &PolymarketCandlesService{client: c}
-	c.Polymarket.MarketSnapshots = &PolymarketMarketSnapshotsService{client: c}
-	c.Polymarket.OrderBookSnapshots = &PolymarketOrderBookSnapshotsService{client: c}
-	c.Polymarket.PriceHistories = &PolymarketPriceHistoriesService{client: c}
-	c.Polymarket.PublicTrades = &PolymarketPublicTradesService{client: c}
-	c.Polymarket.TokenSnapshots = &PolymarketTokenSnapshotsService{client: c}
+	c.PGA.PlayerHoles = &PGAPlayerHolesService{client: c}
 	c.Reference.Operators = &ReferenceOperatorsService{client: c}
+	c.Sim.NFL = &SimNFLService{client: c}
+	c.Sim.NBA = &SimNBAService{client: c}
 }

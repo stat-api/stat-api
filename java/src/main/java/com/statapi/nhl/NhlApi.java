@@ -9,50 +9,84 @@ public final class NhlApi {
 
     private final NHLSeasonsResource seasons;
     private final NHLArenasResource arenas;
+    private final NHLBroadcastersResource broadcasters;
+    private final NHLCoachingStaffsResource coachingStaffs;
+    private final NHLRefereesResource referees;
     private final NHLTeamsResource teams;
-    private final NHLPlayersResource players;
     private final NHLGamesResource games;
+    private final NHLPlayersResource players;
     private final NHLLineCombinationsResource lineCombinations;
     private final NHLOperatorTeamLookupsResource operatorTeamLookups;
     private final NHLPlayoffSeriesResource playoffSeries;
     private final NHLSeasonTeamStatsResource seasonTeamStats;
     private final NHLStandingsResource standings;
-    private final NHLDraftPicksResource draftPicks;
-    private final NHLGameOddsResource gameOdds;
+    private final NHLTeamCoachingStaffsResource teamCoachingStaffs;
+    private final NHLTeamStandingsResource teamStandings;
+    private final NHLGameBroadcastersResource gameBroadcasters;
+    private final NHLGameLinesResource gameLines;
+    private final NHLGamePeriodLinesResource gamePeriodLines;
+    private final NHLGamePlayerPropsResource gamePlayerProps;
     private final NHLGamePlayerStatsResource gamePlayerStats;
+    private final NHLGameRefereesResource gameReferees;
+    private final NHLGameShiftsResource gameShifts;
+    private final NHLGameTeamRostersResource gameTeamRosters;
     private final NHLGameTeamStatsResource gameTeamStats;
     private final NHLGoalieDepthChartsResource goalieDepthCharts;
+    private final NHLOperatorGameFantasyStatsResource operatorGameFantasyStats;
+    private final NHLOperatorPlayerFantasyStatsResource operatorPlayerFantasyStats;
     private final NHLOperatorPlayerLookupsResource operatorPlayerLookups;
+    private final NHLOperatorTeamFantasyStatsResource operatorTeamFantasyStats;
     private final NHLPenaltiesResource penalties;
     private final NHLPeriodsResource periods;
-    private final NHLPlayerInjuriesResource playerInjuries;
+    private final NHLPlayByPlaysResource playByPlays;
     private final NHLPlayerNewsResource playerNews;
+    private final NHLProjectedPlayerStatsResource projectedPlayerStats;
+    private final NHLProjectedTeamStatsResource projectedTeamStats;
     private final NHLScoringPlaysResource scoringPlays;
     private final NHLSeasonPlayerStatsResource seasonPlayerStats;
+    private final NHLTeamGameContextsResource teamGameContexts;
+    private final NHLTeamNewsResource teamNews;
 
     public NhlApi(Http http) {
         this.seasons = new NHLSeasonsResource(http);
         this.arenas = new NHLArenasResource(http);
+        this.broadcasters = new NHLBroadcastersResource(http);
+        this.coachingStaffs = new NHLCoachingStaffsResource(http);
+        this.referees = new NHLRefereesResource(http);
         this.teams = new NHLTeamsResource(http);
-        this.players = new NHLPlayersResource(http);
         this.games = new NHLGamesResource(http);
+        this.players = new NHLPlayersResource(http);
         this.lineCombinations = new NHLLineCombinationsResource(http);
         this.operatorTeamLookups = new NHLOperatorTeamLookupsResource(http);
         this.playoffSeries = new NHLPlayoffSeriesResource(http);
         this.seasonTeamStats = new NHLSeasonTeamStatsResource(http);
         this.standings = new NHLStandingsResource(http);
-        this.draftPicks = new NHLDraftPicksResource(http);
-        this.gameOdds = new NHLGameOddsResource(http);
+        this.teamCoachingStaffs = new NHLTeamCoachingStaffsResource(http);
+        this.teamStandings = new NHLTeamStandingsResource(http);
+        this.gameBroadcasters = new NHLGameBroadcastersResource(http);
+        this.gameLines = new NHLGameLinesResource(http);
+        this.gamePeriodLines = new NHLGamePeriodLinesResource(http);
+        this.gamePlayerProps = new NHLGamePlayerPropsResource(http);
         this.gamePlayerStats = new NHLGamePlayerStatsResource(http);
+        this.gameReferees = new NHLGameRefereesResource(http);
+        this.gameShifts = new NHLGameShiftsResource(http);
+        this.gameTeamRosters = new NHLGameTeamRostersResource(http);
         this.gameTeamStats = new NHLGameTeamStatsResource(http);
         this.goalieDepthCharts = new NHLGoalieDepthChartsResource(http);
+        this.operatorGameFantasyStats = new NHLOperatorGameFantasyStatsResource(http);
+        this.operatorPlayerFantasyStats = new NHLOperatorPlayerFantasyStatsResource(http);
         this.operatorPlayerLookups = new NHLOperatorPlayerLookupsResource(http);
+        this.operatorTeamFantasyStats = new NHLOperatorTeamFantasyStatsResource(http);
         this.penalties = new NHLPenaltiesResource(http);
         this.periods = new NHLPeriodsResource(http);
-        this.playerInjuries = new NHLPlayerInjuriesResource(http);
+        this.playByPlays = new NHLPlayByPlaysResource(http);
         this.playerNews = new NHLPlayerNewsResource(http);
+        this.projectedPlayerStats = new NHLProjectedPlayerStatsResource(http);
+        this.projectedTeamStats = new NHLProjectedTeamStatsResource(http);
         this.scoringPlays = new NHLScoringPlaysResource(http);
         this.seasonPlayerStats = new NHLSeasonPlayerStatsResource(http);
+        this.teamGameContexts = new NHLTeamGameContextsResource(http);
+        this.teamNews = new NHLTeamNewsResource(http);
     }
 
     public NHLSeasonsResource seasons() {
@@ -63,16 +97,28 @@ public final class NhlApi {
         return arenas;
     }
 
+    public NHLBroadcastersResource broadcasters() {
+        return broadcasters;
+    }
+
+    public NHLCoachingStaffsResource coachingStaffs() {
+        return coachingStaffs;
+    }
+
+    public NHLRefereesResource referees() {
+        return referees;
+    }
+
     public NHLTeamsResource teams() {
         return teams;
     }
 
-    public NHLPlayersResource players() {
-        return players;
-    }
-
     public NHLGamesResource games() {
         return games;
+    }
+
+    public NHLPlayersResource players() {
+        return players;
     }
 
     public NHLLineCombinationsResource lineCombinations() {
@@ -95,16 +141,44 @@ public final class NhlApi {
         return standings;
     }
 
-    public NHLDraftPicksResource draftPicks() {
-        return draftPicks;
+    public NHLTeamCoachingStaffsResource teamCoachingStaffs() {
+        return teamCoachingStaffs;
     }
 
-    public NHLGameOddsResource gameOdds() {
-        return gameOdds;
+    public NHLTeamStandingsResource teamStandings() {
+        return teamStandings;
+    }
+
+    public NHLGameBroadcastersResource gameBroadcasters() {
+        return gameBroadcasters;
+    }
+
+    public NHLGameLinesResource gameLines() {
+        return gameLines;
+    }
+
+    public NHLGamePeriodLinesResource gamePeriodLines() {
+        return gamePeriodLines;
+    }
+
+    public NHLGamePlayerPropsResource gamePlayerProps() {
+        return gamePlayerProps;
     }
 
     public NHLGamePlayerStatsResource gamePlayerStats() {
         return gamePlayerStats;
+    }
+
+    public NHLGameRefereesResource gameReferees() {
+        return gameReferees;
+    }
+
+    public NHLGameShiftsResource gameShifts() {
+        return gameShifts;
+    }
+
+    public NHLGameTeamRostersResource gameTeamRosters() {
+        return gameTeamRosters;
     }
 
     public NHLGameTeamStatsResource gameTeamStats() {
@@ -115,8 +189,20 @@ public final class NhlApi {
         return goalieDepthCharts;
     }
 
+    public NHLOperatorGameFantasyStatsResource operatorGameFantasyStats() {
+        return operatorGameFantasyStats;
+    }
+
+    public NHLOperatorPlayerFantasyStatsResource operatorPlayerFantasyStats() {
+        return operatorPlayerFantasyStats;
+    }
+
     public NHLOperatorPlayerLookupsResource operatorPlayerLookups() {
         return operatorPlayerLookups;
+    }
+
+    public NHLOperatorTeamFantasyStatsResource operatorTeamFantasyStats() {
+        return operatorTeamFantasyStats;
     }
 
     public NHLPenaltiesResource penalties() {
@@ -127,12 +213,20 @@ public final class NhlApi {
         return periods;
     }
 
-    public NHLPlayerInjuriesResource playerInjuries() {
-        return playerInjuries;
+    public NHLPlayByPlaysResource playByPlays() {
+        return playByPlays;
     }
 
     public NHLPlayerNewsResource playerNews() {
         return playerNews;
+    }
+
+    public NHLProjectedPlayerStatsResource projectedPlayerStats() {
+        return projectedPlayerStats;
+    }
+
+    public NHLProjectedTeamStatsResource projectedTeamStats() {
+        return projectedTeamStats;
     }
 
     public NHLScoringPlaysResource scoringPlays() {
@@ -141,5 +235,13 @@ public final class NhlApi {
 
     public NHLSeasonPlayerStatsResource seasonPlayerStats() {
         return seasonPlayerStats;
+    }
+
+    public NHLTeamGameContextsResource teamGameContexts() {
+        return teamGameContexts;
+    }
+
+    public NHLTeamNewsResource teamNews() {
+        return teamNews;
     }
 }

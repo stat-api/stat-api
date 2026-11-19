@@ -2,32 +2,26 @@
 #
 # Resource barrel for the dfs league (public API).
 
-from ._slates import DFSSlatesResource
-from ._contest_user_lineup_player_entries import DFSContestUserLineupPlayerEntriesResource
-from ._contest_users import DFSContestUsersResource
-from ._game_stats import DFSGameStatsResource
-from ._player_stats import DFSPlayerStatsResource
-from ._slate_player_projections import DFSSlatePlayerProjectionsResource
-from ._slate_projection_sources import DFSSlateProjectionSourcesResource
 from ._slate_settings import DFSSlateSettingsResource
-from ._team_stats import DFSTeamStatsResource
+from ._contest_users import DFSContestUsersResource
+from ._slates import DFSSlatesResource
 from ._contests import DFSContestsResource
 from ._slate_games import DFSSlateGamesResource
+from ._game_stats import DFSGameStatsResource
+from ._player_stats import DFSPlayerStatsResource
+from ._team_stats import DFSTeamStatsResource
+from ._contest_payout_shapes import DFSContestPayoutShapesResource
 from ._slate_players import DFSSlatePlayersResource
-from ._contest_user_lineups import DFSContestUserLineupsResource
 
 __all__ = [
-    "DFSSlatesResource",
-    "DFSContestUserLineupPlayerEntriesResource",
-    "DFSContestUsersResource",
-    "DFSGameStatsResource",
-    "DFSPlayerStatsResource",
-    "DFSSlatePlayerProjectionsResource",
-    "DFSSlateProjectionSourcesResource",
     "DFSSlateSettingsResource",
-    "DFSTeamStatsResource",
+    "DFSContestUsersResource",
+    "DFSSlatesResource",
     "DFSContestsResource",
     "DFSSlateGamesResource",
+    "DFSGameStatsResource",
+    "DFSPlayerStatsResource",
+    "DFSTeamStatsResource",
+    "DFSContestPayoutShapesResource",
     "DFSSlatePlayersResource",
-    "DFSContestUserLineupsResource",
 ]

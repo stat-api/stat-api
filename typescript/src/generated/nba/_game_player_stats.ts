@@ -2,7 +2,12 @@
 //
 // SDK resource for nba.game_player_stats (public API).
 // Source: schema/api/groups/public.yml + schema/model/nba/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NBAGamePlayerStat {
   id: number;
@@ -11,23 +16,22 @@ export interface NBAGamePlayerStat {
   team_id: number;
   abnormal_exit_clock: number;
   abnormal_exit_period: number;
-  alley_oops: number;
-  and_ones: number;
+  alley_oops?: number | null;
+  and_ones?: number | null;
   assist_percentage?: number | null;
   assist_ratio?: number | null;
   assist_to_turnover?: number | null;
   assists: number;
   avg_dribbles_per_touch?: number | null;
   avg_seconds_per_touch?: number | null;
-  backcourt_violations: number;
+  backcourt_violations?: number | null;
   balls_stolen?: number | null;
-  basket_interference_violations: number;
+  basket_interference_violations?: number | null;
   blocks: number;
   box_outs?: number | null;
-  carrying_palming_violations: number;
-  challenges_requested: number;
+  carrying_palming_violations?: number | null;
+  challenges_requested?: number | null;
   charges_taken?: number | null;
-  clear_path_fouls: number;
   comment?: string | null;
   competitive_minutes: number;
   contests?: number | null;
@@ -36,23 +40,21 @@ export interface NBAGamePlayerStat {
   defensive_rebounds: number;
   deflections?: number | null;
   double_doubles: number;
-  double_dribble_violations: number;
+  double_dribble_violations?: number | null;
   drives?: number | null;
-  dunks: number;
+  dunks?: number | null;
   effective_field_goal_percentage?: number | null;
-  ejections: number;
+  ejections?: number | null;
   elbow_touches?: number | null;
   estimated_defensive_rating?: number | null;
   estimated_net_rating?: number | null;
   estimated_offensive_rating?: number | null;
   estimated_pace?: number | null;
   estimated_usage_percentage?: number | null;
-  fast_break_pts: number;
+  fast_break_pts?: number | null;
   field_goal_percentage?: number | null;
   field_goals_attempted: number;
   field_goals_made: number;
-  flagrant_fouls_type_1: number;
-  flagrant_fouls_type_2: number;
   foul_trouble_severity: number;
   fouls: number;
   fouls_drawn: number;
@@ -62,17 +64,17 @@ export interface NBAGamePlayerStat {
   front_court_touches?: number | null;
   game_date: number;
   garbage_time_minutes: number;
-  goaltending_violations: number;
+  goaltending_violations?: number | null;
   hockey_assists?: number | null;
-  jump_balls_lost: number;
-  jump_balls_won: number;
-  lane_violations: number;
-  layups: number;
+  jump_balls_lost?: number | null;
+  jump_balls_won?: number | null;
+  lane_violations?: number | null;
+  layups?: number | null;
   loose_balls_recovered?: number | null;
   minutes: number;
   minutes_deviation_pct: number;
   net_rating?: number | null;
-  offensive_fouls: number;
+  offensive_fouls?: number | null;
   offensive_rating?: number | null;
   offensive_rebound_percentage?: number | null;
   offensive_rebounds: number;
@@ -91,7 +93,7 @@ export interface NBAGamePlayerStat {
   pts_per_paint_touch?: number | null;
   pts_per_post_touch?: number | null;
   pts_per_touch?: number | null;
-  put_backs: number;
+  put_backs?: number | null;
   rebound_percentage?: number | null;
   rebounds: number;
   role_anomalous_game: boolean;
@@ -100,22 +102,22 @@ export interface NBAGamePlayerStat {
   rotation_context?: string | null;
   rotation_context_confidence: number;
   screen_assists?: number | null;
-  second_chance_pts: number;
-  shot_clock_violations: number;
+  second_chance_pts?: number | null;
+  shot_clock_violations?: number | null;
   shot_contested_count?: number | null;
   shots_blocked?: number | null;
   start_position?: string | null;
   steals: number;
-  substitutions_in: number;
-  substitutions_out: number;
-  technical_fouls: number;
+  substitutions_in?: number | null;
+  substitutions_out?: number | null;
+  technical_fouls?: number | null;
   three_point_percentage?: number | null;
   three_pointers_attempted: number;
   three_pointers_made: number;
   time_of_possession?: number | null;
-  timeouts_called: number;
+  timeouts_called?: number | null;
   touches?: number | null;
-  traveling_violations: number;
+  traveling_violations?: number | null;
   triple_doubles: number;
   true_shooting_percentage?: number | null;
   turnover_ratio?: number | null;
@@ -128,6 +130,9 @@ export interface NBAGamePlayerStatsListParams {
   player_id?: number;
   team_id?: number;
   game_date?: number;
+  game_date__gte?: number;
+  game_date__lte?: number;
+  game_date__between?: string;
   limit?: number;
   from_id?: number;
 }
@@ -136,6 +141,8 @@ export interface NBAGamePlayerStatsListResponse {
   game_player_stats: NBAGamePlayerStat[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -145,12 +152,16 @@ export class NBAGamePlayerStatsResource {
 
   async list(params?: NBAGamePlayerStatsListParams): Promise<NBAGamePlayerStatsListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NBAGamePlayerStatsListResponse, 'quota'>>(this.opts, `/api/v1/nba/game_player_stats${qs}`);
+    const r = await fetchJson<Omit<NBAGamePlayerStatsListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nba/game_player_stats${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
   async get(id: number): Promise<NBAGamePlayerStat> {
-    return (await fetchJson<NBAGamePlayerStat>(this.opts, `/api/v1/nba/game_player_stats/${id}`)).data;
+    return (await fetchJson<NBAGamePlayerStat>(this.opts, `/api/v1/nba/game_player_stats/${id}`))
+      .data;
   }
   async *iter(params?: NBAGamePlayerStatsListParams): AsyncGenerator<NBAGamePlayerStat> {
     // Always walk with from_id (starting at 0): from_id forces the server's
@@ -163,7 +174,10 @@ export class NBAGamePlayerStatsResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NBAGamePlayerStatsListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NBAGamePlayerStatsListParams);
+      const page: NBAGamePlayerStatsListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NBAGamePlayerStatsListParams);
       for (const row of page.game_player_stats) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

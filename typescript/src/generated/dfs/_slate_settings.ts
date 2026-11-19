@@ -2,20 +2,30 @@
 //
 // SDK resource for dfs.slate_settings (public API).
 // Source: schema/api/groups/public.yml + schema/model/dfs/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface DFSSlateSetting {
   id: number;
   league_id: number;
   operator_id: number;
+  operator_setting_id?: string | null;
   contest_type: number;
   game_style?: string | null;
   game_type: number;
   name: string;
+  scoring?: Record<string, unknown> | null;
   settings: Record<string, unknown>;
+  valid_from?: string | null;
 }
 
 export interface DFSSlateSettingsListParams {
+  operator_id?: number;
+  operator?: string | number;
   limit?: number;
   from_id?: number;
 }
@@ -24,6 +34,8 @@ export interface DFSSlateSettingsListResponse {
   slate_settings: DFSSlateSetting[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -33,7 +45,10 @@ export class DFSSlateSettingsResource {
 
   async list(params?: DFSSlateSettingsListParams): Promise<DFSSlateSettingsListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<DFSSlateSettingsListResponse, 'quota'>>(this.opts, `/api/v1/dfs/slate_settings${qs}`);
+    const r = await fetchJson<Omit<DFSSlateSettingsListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/dfs/slate_settings${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -51,7 +66,10 @@ export class DFSSlateSettingsResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: DFSSlateSettingsListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as DFSSlateSettingsListParams);
+      const page: DFSSlateSettingsListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as DFSSlateSettingsListParams);
       for (const row of page.slate_settings) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

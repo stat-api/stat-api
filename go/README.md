@@ -85,6 +85,17 @@ if err != nil {
 GET requests retry transient network failures and 5xx responses twice; 4xx
 (including 429) never retry.
 
+## NFL sim (beta)
+
+The Go client has the core calls of the NFL play-by-play simulator. Game 43418 (2026 Week 1 DEN @ KC) is free. Other games need a Pro or Elite plan, or the DFS add-on.
+
+- `client.NFL.Weeks(ctx, &statapi.NFLWeeksParams{...})`
+- `client.Sim.NFL.Run(ctx, &statapi.NFLSimPublicRunRequest{...})`
+
+The tutorial has 5 recipes. Each one runs on the free game and prints real output. Start with [Run your first NFL game simulation](../cookbook/go/nfl-sim-summary/main.go), or read the whole tutorial at https://stat-api.com/docs/cookbook/sim/.
+
+The API reference: https://stat-api.com/docs/api/sim/
+
 ## Quota
 
 Every list `Page` carries the monthly record quota parsed from the

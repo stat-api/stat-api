@@ -13,6 +13,7 @@ Some errors carry extra fields — `400` includes the accepted filter sets,
 
 | Status | SDK error type | Meaning |
 | --- | --- | --- |
+| `202` | `NotReadyError` | Accepted but not ready (a contest's lineups are queued to load). Holds no data: the body has `status`, `message`, `retry_after_seconds`, `estimated_ready_at`. Wait, then ask again. |
 | `400` | `ValidationError` | Request rejected — unknown filter, bad value, or a missing required filter set (body lists `accepted` combinations). |
 | `401` | `AuthenticationError` | API key missing, malformed, or revoked. |
 | `402` | `PlanRequiredError` | Endpoint or row set requires a higher plan. |
@@ -44,6 +45,8 @@ try {
 
 - **GETs retry twice** on network failures, timeouts, and `5xx` — jittered
   backoff of ~250ms, then ~1s.
+- **`202` is never retried** — the data is queued, not failed. The SDK raises
+  `NotReadyError` (Java: `NotReadyException`) and you decide when to ask again.
 - **`4xx` is never retried** — including `429`: the quota is monthly, a retry
   cannot succeed, so it fails loud instead of burning requests.
 - Default request timeout is 30s, constructor-overridable.

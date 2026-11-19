@@ -22,15 +22,11 @@ PGAPlayerNew = TypedDict(
         "categories": str | None,
         "content": str | None,
         "news_time": str,
-        "original_source": str | None,
-        "original_source_url": str | None,
         "priority": int,
         "situational_impact": dict[str, Any] | None,
-        "source": str | None,
         "terms_of_use": str | None,
         "title": str,
         "updated_time": str | None,
-        "url": str | None,
     },
 )
 

@@ -6,7 +6,7 @@ package com.statapi.nfl;
 
 import com.statapi.JsonValue;
 
-// 372 columns overflow a record's canonical-constructor
+// 371 columns overflow a record's canonical-constructor
 // argument-slot limit, so this binds field-by-field from JSON while preserving
 // the identical camelCase accessor surface (row.fieldName()).
 public final class NFLPlayByPlay {
@@ -40,7 +40,6 @@ public final class NFLPlayByPlay {
     private final String lateralRusherPlayerId;
     private final String lateralSackPlayerId;
     private final String nflApiId;
-    private final String nflverseGameId;
     private final String oldGameId;
     private final String ownKickoffRecoveryPlayerId;
     private final String passDefense1PlayerId;
@@ -414,7 +413,6 @@ public final class NFLPlayByPlay {
         this.lateralRusherPlayerId = json.get("lateral_rusher_player_id").asString();
         this.lateralSackPlayerId = json.get("lateral_sack_player_id").asString();
         this.nflApiId = json.get("nfl_api_id").asString();
-        this.nflverseGameId = json.get("nflverse_game_id").asString();
         this.oldGameId = json.get("old_game_id").asString();
         this.ownKickoffRecoveryPlayerId = json.get("own_kickoff_recovery_player_id").asString();
         this.passDefense1PlayerId = json.get("pass_defense_1_player_id").asString();
@@ -877,10 +875,6 @@ public final class NFLPlayByPlay {
 
     public String nflApiId() {
         return nflApiId;
-    }
-
-    public String nflverseGameId() {
-        return nflverseGameId;
     }
 
     public String oldGameId() {

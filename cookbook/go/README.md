@@ -1,6 +1,6 @@
 # Go cookbook
 
-Examples for [`github.com/stat-api/stat-api/go`](https://pkg.go.dev/github.com/stat-api/stat-api/go) (v0.1.0).
+Examples for [`github.com/stat-api/stat-api/go`](https://pkg.go.dev/github.com/stat-api/stat-api/go) (v0.3.0).
 
 ## Run
 
@@ -11,3 +11,7 @@ go run ./nba-hello-stat-api
 ```
 
 Each example is its own `main` package in a subdirectory.
+
+## NFL sim tutorial (beta)
+
+The 5 recipes of the NFL sim tutorial are in this folder, for example `nfl-sim-summary/main.go`. Read [the tutorial](../nfl-sim/README.md) first.

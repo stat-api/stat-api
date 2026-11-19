@@ -15,30 +15,32 @@ import (
 
 // NBAGameTeamRoster is a row from nba.game_team_rosters.
 type NBAGameTeamRoster struct {
-	ID                  int64   `json:"id"`
-	GameID              int64   `json:"game_id"`
-	PlayerID            int64   `json:"player_id"`
-	TeamID              int64   `json:"team_id"`
-	Comment             *string `json:"comment"`
-	Confirmed           *bool   `json:"confirmed"`
-	Day                 int     `json:"day"`
-	InjuryStatus        *string `json:"injury_status"`
-	Position            *string `json:"position"`
-	PreGameConfirmed    *bool   `json:"pre_game_confirmed"`
-	PreGameInjuryStatus *string `json:"pre_game_injury_status"`
-	PreGameStarter      *bool   `json:"pre_game_starter"`
-	PreGameStatus       *int    `json:"pre_game_status"`
-	Starter             *bool   `json:"starter"`
-	Status              *int    `json:"status"`
+	ID            int64   `json:"id"`
+	GameID        int64   `json:"game_id"`
+	PlayerID      int64   `json:"player_id"`
+	TeamID        int64   `json:"team_id"`
+	Comment       *string `json:"comment"`
+	Confirmed     *bool   `json:"confirmed"`
+	DepthOrder    *int    `json:"depth_order"`
+	DepthPosition *string `json:"depth_position"`
+	InjuryStatus  *string `json:"injury_status"`
+	Position      *string `json:"position"`
+	Starter       *bool   `json:"starter"`
+	Status        *int    `json:"status"`
 }
 
 // NBAGameTeamRostersListParams are the query parameters for listing nba.game_team_rosters.
 type NBAGameTeamRostersListParams struct {
-	GameID   *int64
-	TeamID   *int64
-	PlayerID *int64
-	Limit    *int
-	FromID   *int64
+	GameID       *int64
+	TeamID       *int64
+	PlayerID     *int64
+	Position     *string
+	Status       *int
+	InjuryStatus *string
+	DepthOrder   *int
+	Mode         *string
+	Limit        *int
+	FromID       *int64
 }
 
 func (p *NBAGameTeamRostersListParams) values() url.Values {
@@ -54,6 +56,21 @@ func (p *NBAGameTeamRostersListParams) values() url.Values {
 	}
 	if p.PlayerID != nil {
 		v.Set("player_id", strconv.FormatInt(*p.PlayerID, 10))
+	}
+	if p.Position != nil {
+		v.Set("position", *p.Position)
+	}
+	if p.Status != nil {
+		v.Set("status", strconv.Itoa(*p.Status))
+	}
+	if p.InjuryStatus != nil {
+		v.Set("injury_status", *p.InjuryStatus)
+	}
+	if p.DepthOrder != nil {
+		v.Set("depth_order", strconv.Itoa(*p.DepthOrder))
+	}
+	if p.Mode != nil {
+		v.Set("mode", *p.Mode)
 	}
 	if p.Limit != nil {
 		v.Set("limit", strconv.Itoa(*p.Limit))

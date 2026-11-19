@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-from typing import TypedDict
+from typing import Any, TypedDict
 
 from ..page import Page
 from ..transport import HttpTransport
@@ -16,15 +16,37 @@ DFSContest = TypedDict(
     {
         "id": int,
         "external_id": int,
+        "game_type_id": int | None,
+        "operator_external_id": str | None,
+        "operator_id": int,
         "slate_id": int,
+        "attributes": dict[str, Any] | None,
+        "complete_file": bool,
+        "contest_state": str | None,
         "contest_type": int,
         "entry_count": int,
         "entry_fee": int,
+        "file_lineups": int | None,
+        "file_sampled": bool | None,
+        "first_prize": int | None,
+        "first_seen_at": str | None,
+        "game_count": int,
         "guaranteed": bool,
+        "last_seen_at": str | None,
+        "lineups_status": str,
         "max_entries": int,
         "max_entries_per_user": int,
         "name": str,
+        "paid_places": int | None,
+        "partial_lineups_count": int | None,
+        "payout_type": int | None,
+        "player_count": int,
         "prize_pool": int,
+        "qualifier": bool,
+        "slate_status": str | None,
+        "start_time": str | None,
+        "state": str,
+        "status": str | None,
     },
 )
 
@@ -35,9 +57,18 @@ class DFSContestsResource:
     def __init__(self, transport: HttpTransport) -> None:
         self._transport = transport
 
-    def list(self, *, slate_id: int | None = None, limit: int | None = None, from_id: int | None = None) -> Page[DFSContest]:
+    def list(self, *, slate_id: int | None = None, operator_slate_id: int | None = None, operator_id: int | None = None, operator: str | int | None = None, status: str | None = None, slate_status: str | None = None, lineups_status: str | None = None, has_lineups: str | None = None, partial_lineups_count: int | None = None, complete_file: bool | None = None, limit: int | None = None, from_id: int | None = None) -> Page[DFSContest]:
         body, quota = self._transport.request(self._PATH, {
             "slate_id": slate_id,
+            "operator_slate_id": operator_slate_id,
+            "operator_id": operator_id,
+            "operator": operator,
+            "status": status,
+            "slate_status": slate_status,
+            "lineups_status": lineups_status,
+            "has_lineups": has_lineups,
+            "partial_lineups_count": partial_lineups_count,
+            "complete_file": complete_file,
             "limit": limit,
             "from_id": from_id,
         })
@@ -54,13 +85,13 @@ class DFSContestsResource:
         row: DFSContest = body
         return row
 
-    def iter(self, *, slate_id: int | None = None, limit: int | None = None) -> Iterator[DFSContest]:
+    def iter(self, *, slate_id: int | None = None, operator_slate_id: int | None = None, operator_id: int | None = None, operator: str | int | None = None, status: str | None = None, slate_status: str | None = None, lineups_status: str | None = None, has_lineups: str | None = None, partial_lineups_count: int | None = None, complete_file: bool | None = None, limit: int | None = None) -> Iterator[DFSContest]:
         # Always walk with from_id (starting at 0): from_id forces the server's
         # ascending keyset order. Without it, DESC-default tables re-yield page
         # 1 and under-walk. Iteration is therefore always oldest-first.
         from_id: int | None = 0
         while True:
-            page = self.list(slate_id=slate_id, limit=limit, from_id=from_id)
+            page = self.list(slate_id=slate_id, operator_slate_id=operator_slate_id, operator_id=operator_id, operator=operator, status=status, slate_status=slate_status, lineups_status=lineups_status, has_lineups=has_lineups, partial_lineups_count=partial_lineups_count, complete_file=complete_file, limit=limit, from_id=from_id)
             for row in page.rows:
                 yield row
             if page.next_from_id is None:

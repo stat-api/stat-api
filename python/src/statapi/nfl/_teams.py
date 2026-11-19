@@ -23,7 +23,6 @@ NFLTeam = TypedDict(
         "conference": str,
         "division": str,
         "full_name": str,
-        "logo_url": str | None,
         "name": str,
         "primary_color": str | None,
         "secondary_color": str | None,

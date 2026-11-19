@@ -2,7 +2,12 @@
 //
 // SDK resource for nhl.playoff_series (public API).
 // Source: schema/api/groups/public.yml + schema/model/nhl/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NHLPlayoffSery {
   id: number;
@@ -34,6 +39,8 @@ export interface NHLPlayoffSeriesListResponse {
   playoff_series: NHLPlayoffSery[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -43,7 +50,10 @@ export class NHLPlayoffSeriesResource {
 
   async list(params?: NHLPlayoffSeriesListParams): Promise<NHLPlayoffSeriesListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NHLPlayoffSeriesListResponse, 'quota'>>(this.opts, `/api/v1/nhl/playoff_series${qs}`);
+    const r = await fetchJson<Omit<NHLPlayoffSeriesListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nhl/playoff_series${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -61,7 +71,10 @@ export class NHLPlayoffSeriesResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NHLPlayoffSeriesListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NHLPlayoffSeriesListParams);
+      const page: NHLPlayoffSeriesListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NHLPlayoffSeriesListParams);
       for (const row of page.playoff_series) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

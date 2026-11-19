@@ -16,7 +16,7 @@
 // Each tier updates its slice of per-game detail and recomposes the affected
 // league into the store, which emits an SSE patch only if something changed.
 import { QuotaExceededError } from '@stat-api/client';
-
+import type { Config } from './config.ts';
 import type {
   BookLines,
   BoxLine,
@@ -27,10 +27,12 @@ import type {
   MarketPulsePoint,
   Quota,
 } from './contract.ts';
-import type { Config } from './config.ts';
 import type { StatApiClient } from './sdk.ts';
-import type { SnapshotStore } from './snapshot.ts';
 import { isInSeason, isInWindow, todayEtYyyymmdd } from './season.ts';
+import type { SnapshotStore } from './snapshot.ts';
+import { fetchBox, RosterCache } from './sources/boxscore.ts';
+import { kalshiSource } from './sources/kalshi.ts';
+import { fetchLines, fetchOperatorMap, type OperatorMap } from './sources/lines.ts';
 import {
   fetchLastFinalSlate,
   fetchScoreboard,
@@ -39,10 +41,7 @@ import {
   type ScoredGame,
   type TeamMap,
 } from './sources/scoreboard.ts';
-import { fetchLines, fetchOperatorMap, type OperatorMap } from './sources/lines.ts';
-import { fetchBox, RosterCache } from './sources/boxscore.ts';
 import { sportsbookImpliedPulse } from './sources/wp-source.ts';
-import { kalshiSource } from './sources/kalshi.ts';
 
 export interface PollerDeps {
   readonly api: StatApiClient;
@@ -114,10 +113,10 @@ export class Poller {
     await this.pollOnce();
     const c = this.config.cadences;
     this.tiers = [
-      { baseMs: c.scoreboardMs, run: n => this.runScoreboardCycle(n), handle: null },
-      { baseMs: c.linesMs, run: n => this.runLinesCycle(n), handle: null },
-      { baseMs: c.boxMs, run: n => this.runBoxCycle(n), handle: null },
-      { baseMs: c.kalshiMs, run: n => this.runKalshiCycle(n), handle: null },
+      { baseMs: c.scoreboardMs, run: (n) => this.runScoreboardCycle(n), handle: null },
+      { baseMs: c.linesMs, run: (n) => this.runLinesCycle(n), handle: null },
+      { baseMs: c.boxMs, run: (n) => this.runBoxCycle(n), handle: null },
+      { baseMs: c.kalshiMs, run: (n) => this.runKalshiCycle(n), handle: null },
     ];
     for (const tier of this.tiers) this.scheduleNext(tier);
   }
@@ -317,13 +316,8 @@ export class Poller {
   private inWindowGames(league: League, now: Date): ScoredGame[] {
     const board = this.board.get(league);
     if (!board || board.status === 'offseason') return [];
-    return board.games.filter(g =>
-      isInWindow(
-        new Date(g.card.startTime),
-        g.card.status,
-        now,
-        this.config.windowLeadMinutes,
-      ),
+    return board.games.filter((g) =>
+      isInWindow(new Date(g.card.startTime), g.card.status, now, this.config.windowLeadMinutes),
     );
   }
 
@@ -341,7 +335,7 @@ export class Poller {
   private recomposeLeague(league: League): void {
     const board = this.board.get(league);
     if (!board) return;
-    const games: GameCard[] = board.games.map(g => {
+    const games: GameCard[] = board.games.map((g) => {
       const detail = this.details.get(g.card.id);
       if (!detail || isEmptyDetail(detail)) return g.card;
       return { ...g.card, detail: toGameDetail(detail) };

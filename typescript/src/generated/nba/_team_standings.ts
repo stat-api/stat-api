@@ -2,7 +2,12 @@
 //
 // SDK resource for nba.team_standings (public API).
 // Source: schema/api/groups/public.yml + schema/model/nba/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NBATeamStanding {
   id: number;
@@ -32,6 +37,9 @@ export interface NBATeamStandingsListParams {
   season_id?: number;
   team_id?: number;
   day?: number;
+  day__gte?: number;
+  day__lte?: number;
+  day__between?: string;
   limit?: number;
   from_id?: number;
 }
@@ -40,6 +48,8 @@ export interface NBATeamStandingsListResponse {
   team_standings: NBATeamStanding[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -49,7 +59,10 @@ export class NBATeamStandingsResource {
 
   async list(params?: NBATeamStandingsListParams): Promise<NBATeamStandingsListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NBATeamStandingsListResponse, 'quota'>>(this.opts, `/api/v1/nba/team_standings${qs}`);
+    const r = await fetchJson<Omit<NBATeamStandingsListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nba/team_standings${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -67,7 +80,10 @@ export class NBATeamStandingsResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NBATeamStandingsListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NBATeamStandingsListParams);
+      const page: NBATeamStandingsListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NBATeamStandingsListParams);
       for (const row of page.team_standings) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

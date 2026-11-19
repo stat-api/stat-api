@@ -8,7 +8,8 @@ import com.statapi.JsonValue;
 
 public record NFLPlayerNew(
     Long id,
-    String externalId,
+    Long gameId,
+    Long opponentTeamId,
     Long playerId,
     Long teamId,
     Boolean aiProcessed,
@@ -17,18 +18,20 @@ public record NFLPlayerNew(
     String category,
     String content,
     String description,
-    String link,
+    String firstReportedAt,
     String newsTime,
     Integer priority,
     JsonValue situationalImpact,
-    String source,
-    String title
+    String statusEnum,
+    String title,
+    String urgency
 ) {
 
     public static NFLPlayerNew fromJson(JsonValue json) {
         return new NFLPlayerNew(
             json.get("id").asLong(),
-            json.get("external_id").asString(),
+            json.get("game_id").asLong(),
+            json.get("opponent_team_id").asLong(),
             json.get("player_id").asLong(),
             json.get("team_id").asLong(),
             json.get("ai_processed").asBoolean(),
@@ -37,12 +40,13 @@ public record NFLPlayerNew(
             json.get("category").asString(),
             json.get("content").asString(),
             json.get("description").asString(),
-            json.get("link").asString(),
+            json.get("first_reported_at").asString(),
             json.get("news_time").asString(),
             json.get("priority").asInt(),
             json.get("situational_impact"),
-            json.get("source").asString(),
-            json.get("title").asString()
+            json.get("status_enum").asString(),
+            json.get("title").asString(),
+            json.get("urgency").asString()
         );
     }
 }

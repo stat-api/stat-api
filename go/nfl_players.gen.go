@@ -17,7 +17,7 @@ import (
 type NFLPlayer struct {
 	ID               int64   `json:"id"`
 	GsisID           string  `json:"gsis_id"`
-	LeaguePlayerID   string  `json:"league_player_id"`
+	LeaguePlayerID   *string `json:"league_player_id"`
 	TeamID           *int64  `json:"team_id"`
 	BirthCity        *string `json:"birth_city"`
 	BirthCountry     *string `json:"birth_country"`

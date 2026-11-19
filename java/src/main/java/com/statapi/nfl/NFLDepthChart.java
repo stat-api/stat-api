@@ -8,7 +8,6 @@ import com.statapi.JsonValue;
 
 public record NFLDepthChart(
     Long id,
-    String eliasId,
     Long gameId,
     Long playerId,
     Long seasonId,
@@ -27,7 +26,6 @@ public record NFLDepthChart(
     public static NFLDepthChart fromJson(JsonValue json) {
         return new NFLDepthChart(
             json.get("id").asLong(),
-            json.get("elias_id").asString(),
             json.get("game_id").asLong(),
             json.get("player_id").asLong(),
             json.get("season_id").asLong(),

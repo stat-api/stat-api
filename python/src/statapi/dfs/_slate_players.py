@@ -24,12 +24,12 @@ DFSSlatePlayer = TypedDict(
         "team_id": int | None,
         "avg_points": float | None,
         "display_name": str | None,
+        "eligible_positions": str | None,
         "first_name": str | None,
         "injury_details": str | None,
         "injury_status": str | None,
         "last_name": str | None,
         "position": str,
-        "roster_position": str,
         "salary": int,
     },
 )
@@ -41,9 +41,15 @@ class DFSSlatePlayersResource:
     def __init__(self, transport: HttpTransport) -> None:
         self._transport = transport
 
-    def list(self, *, slate_id: int | None = None, limit: int | None = None, from_id: int | None = None) -> Page[DFSSlatePlayer]:
+    def list(self, *, slate_id: int | None = None, operator_slate_id: int | None = None, operator_id: str | int | None = None, operator: str | int | None = None, position: str | None = None, team_id: int | None = None, mode: str | None = None, limit: int | None = None, from_id: int | None = None) -> Page[DFSSlatePlayer]:
         body, quota = self._transport.request(self._PATH, {
             "slate_id": slate_id,
+            "operator_slate_id": operator_slate_id,
+            "operator_id": operator_id,
+            "operator": operator,
+            "position": position,
+            "team_id": team_id,
+            "mode": mode,
             "limit": limit,
             "from_id": from_id,
         })
@@ -55,18 +61,18 @@ class DFSSlatePlayersResource:
             quota=quota,
         )
 
-    def get(self, id: int) -> DFSSlatePlayer:
-        body, _ = self._transport.request(f"{self._PATH}/{id}")
+    def get(self, id: int, *, mode: str | None = None) -> DFSSlatePlayer:
+        body, _ = self._transport.request(f"{self._PATH}/{id}", {"mode": mode})
         row: DFSSlatePlayer = body
         return row
 
-    def iter(self, *, slate_id: int | None = None, limit: int | None = None) -> Iterator[DFSSlatePlayer]:
+    def iter(self, *, slate_id: int | None = None, operator_slate_id: int | None = None, operator_id: str | int | None = None, operator: str | int | None = None, position: str | None = None, team_id: int | None = None, mode: str | None = None, limit: int | None = None) -> Iterator[DFSSlatePlayer]:
         # Always walk with from_id (starting at 0): from_id forces the server's
         # ascending keyset order. Without it, DESC-default tables re-yield page
         # 1 and under-walk. Iteration is therefore always oldest-first.
         from_id: int | None = 0
         while True:
-            page = self.list(slate_id=slate_id, limit=limit, from_id=from_id)
+            page = self.list(slate_id=slate_id, operator_slate_id=operator_slate_id, operator_id=operator_id, operator=operator, position=position, team_id=team_id, mode=mode, limit=limit, from_id=from_id)
             for row in page.rows:
                 yield row
             if page.next_from_id is None:

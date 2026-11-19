@@ -2,24 +2,63 @@
 //
 // SDK resource for dfs.contests (public API).
 // Source: schema/api/groups/public.yml + schema/model/dfs/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  type FileResult,
+  fetchFile,
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface DFSContest {
   id: number;
   external_id: number;
+  game_type_id?: number | null;
+  operator_external_id?: string | null;
+  operator_id: number;
   slate_id: number;
+  attributes?: Record<string, unknown> | null;
+  complete_file: boolean;
+  contest_state?: string | null;
   contest_type: number;
   entry_count: number;
   entry_fee: number;
+  file_lineups?: number | null;
+  file_sampled?: boolean | null;
+  first_prize?: number | null;
+  first_seen_at?: string | null;
+  game_count: number;
   guaranteed: boolean;
+  last_seen_at?: string | null;
+  lineups_status: string;
   max_entries: number;
   max_entries_per_user: number;
   name: string;
+  paid_places?: number | null;
+  partial_lineups_count?: number | null;
+  payout_type?: number | null;
+  player_count: number;
   prize_pool: number;
+  qualifier: boolean;
+  slate_status?: string | null;
+  start_time?: string | null;
+  state: string;
+  status?: string | null;
 }
 
 export interface DFSContestsListParams {
   slate_id?: number;
+  operator_slate_id?: number;
+  operator_id?: number;
+  operator?: string | number;
+  status?: string;
+  slate_status?: string;
+  lineups_status?: string;
+  has_lineups?: string;
+  partial_lineups_count?: number;
+  partial_lineups_count__lte?: number;
+  complete_file?: boolean;
   limit?: number;
   from_id?: number;
 }
@@ -28,16 +67,257 @@ export interface DFSContestsListResponse {
   contests: DFSContest[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
+
+export interface DFSContestsBundleParams {
+  sport: string;
+  operator: string;
+  season: number;
+  game_type: string;
+  contest_type?: string;
+  period: string;
+  format?: string;
+}
+
+export interface DfsContestBundleRefusal {
+  error: string;
+  message: string;
+  status: number;
+  cost?: number;
+  records_left?: number;
+}
+
+export type DFSContestsBundleResponse = DfsContestBundleRefusal;
+
+export interface DFSContestsBundlesParams {
+  sport: string;
+  operator: string;
+  season: number;
+  game_type: string;
+  contest_type?: string;
+}
+
+export interface DfsContestBundleList {
+  sport: string;
+  operator: string;
+  season: number;
+  game_type: string;
+  contest_type: string;
+  contests: number;
+  lineups: number;
+  zip_bytes_estimate: number;
+  records_left?: number;
+  periods: unknown[];
+}
+
+export type DFSContestsBundlesResponse = DfsContestBundleList;
+
+export interface DFSContestsDownloadParams {
+  format?: string;
+  enrich?: string;
+  sampled_only?: boolean;
+}
+
+export interface DfsContestDownloadResponse {
+  contest: unknown;
+  player_pool: unknown[];
+  lineups: unknown[];
+}
+
+export type DFSContestsDownloadResponse = DfsContestDownloadResponse;
+
+export interface DFSContestsDownloadByOperatorParams {
+  format?: string;
+  enrich?: string;
+  sampled_only?: boolean;
+}
+
+export type DFSContestsDownloadByOperatorResponse = DfsContestDownloadResponse;
+
+export interface DFSContestsGetByOperatorParams {
+  // (no params)
+}
+
+export type DFSContestsGetByOperatorResponse = DFSContest;
+
+export interface DFSContestsMarqueeParams {
+  league: string;
+  season?: number;
+  week?: number;
+  from?: string;
+  to?: string;
+}
+
+export interface DfsMarqueeResponse {
+  league: string;
+  today: string;
+  season?: number;
+  week?: number;
+  from: string;
+  to: string;
+  free_rows: number;
+  marquee: unknown[];
+}
+
+export type DFSContestsMarqueeResponse = DfsMarqueeResponse;
+
+export interface DFSContestsOwnershipParams {
+  mode?: string;
+  format?: string;
+  slot?: string;
+  position?: string;
+  min_ownership?: string;
+}
+
+export interface DfsContestOwnershipResponse {
+  contest: unknown;
+  ownership: unknown[];
+  reason?: string;
+  _metadata?: unknown;
+}
+
+export type DFSContestsOwnershipResponse = DfsContestOwnershipResponse;
+
+export interface DFSContestsOwnershipByOperatorParams {
+  mode?: string;
+  format?: string;
+  slot?: string;
+  position?: string;
+  min_ownership?: string;
+}
+
+export type DFSContestsOwnershipByOperatorResponse = DfsContestOwnershipResponse;
+
+export interface DFSContestsPayoutsParams {
+  format?: string;
+}
+
+export interface DfsContestPayoutsResponse {
+  contest_id: number;
+  entry_count: number;
+  paid_places: number;
+  payouts: unknown[];
+}
+
+export type DFSContestsPayoutsResponse = DfsContestPayoutsResponse;
+
+export interface DFSContestsPayoutsByOperatorParams {
+  format?: string;
+}
+
+export type DFSContestsPayoutsByOperatorResponse = DfsContestPayoutsResponse;
+
+export interface DFSContestsProjectionsParams {
+  position?: string;
+  format?: string;
+  enrich?: string;
+  projection_id?: number;
+}
+
+export interface DfsContestProjectionsResponse {
+  projection_status: string;
+  contest: unknown;
+  contest_profile?: unknown;
+  slate: unknown;
+  source?: unknown;
+  player_stats?: unknown[];
+  computed: unknown;
+  teams?: unknown[];
+  projections?: unknown[];
+  _metadata?: unknown;
+}
+
+export type DFSContestsProjectionsResponse = DfsContestProjectionsResponse;
+
+export interface DFSContestsProjectionsByOperatorParams {
+  position?: string;
+  format?: string;
+  enrich?: string;
+  projection_id?: number;
+}
+
+export type DFSContestsProjectionsByOperatorResponse = DfsContestProjectionsResponse;
+
+export interface DFSContestsStacksParams {
+  format?: string;
+}
+
+export interface DfsContestStacksResponse {
+  total_stacks: number;
+  stacks: unknown[];
+}
+
+export type DFSContestsStacksResponse = DfsContestStacksResponse;
+
+export interface DFSContestsStandingsParams {
+  limit?: number;
+  format?: string;
+  from_row?: number;
+  user?: string;
+  rank?: number;
+}
+
+export interface DfsContestStandingsResponse {
+  contest: unknown;
+  field?: unknown;
+  standings: unknown[];
+  from_row: number;
+  returned: number;
+  access: unknown;
+  _metadata?: unknown;
+}
+
+export type DFSContestsStandingsResponse = DfsContestStandingsResponse;
+
+export interface DFSContestsStandingsByOperatorParams {
+  limit?: number;
+  format?: string;
+  from_row?: number;
+  user?: string;
+  rank?: number;
+}
+
+export type DFSContestsStandingsByOperatorResponse = DfsContestStandingsResponse;
+
+export interface DFSContestsUserLineupsParams {
+  format?: string;
+  table?: string;
+}
+
+export interface DfsContestUserLineupsResponse {
+  contest: unknown;
+  field?: unknown;
+  user: unknown;
+  exposure: unknown[];
+  lineups: unknown[];
+  seats: unknown[];
+  access: unknown;
+  analysis?: unknown;
+  _metadata?: unknown;
+}
+
+export type DFSContestsUserLineupsResponse = DfsContestUserLineupsResponse;
+
+export interface DFSContestsUserLineupsByOperatorParams {
+  format?: string;
+  table?: string;
+}
+
+export type DFSContestsUserLineupsByOperatorResponse = DfsContestUserLineupsResponse;
 
 export class DFSContestsResource {
   constructor(private readonly opts: ResolvedStatApiOptions) {}
 
   async list(params?: DFSContestsListParams): Promise<DFSContestsListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<DFSContestsListResponse, 'quota'>>(this.opts, `/api/v1/dfs/contests${qs}`);
+    const r = await fetchJson<Omit<DFSContestsListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/dfs/contests${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -55,10 +335,709 @@ export class DFSContestsResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: DFSContestsListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as DFSContestsListParams);
+      const page: DFSContestsListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as DFSContestsListParams);
       for (const row of page.contests) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;
     }
+  }
+
+  /**
+   * One ZIP of every full contest file of one period of a season
+   *
+   * One ZIP file of every contest of one period (a `period` of `GET /api/v1/dfs/contest-bundles`) that has its
+   * full lineup file, for one sport, operator, season, slate format and contest type. The file is
+   * `<sport>-<operator>-<season>-<game_type>[-<contest_type>]-<period>.zip` (weeks with two digits:
+   * `nfl-draftkings-2026-classic-week-09.zip`). It holds:
+   *
+   * - `contests.csv`: one row per contest: `contest_id`, `external_id`, `name`, `date`, `slate_id`, `slate`,
+   *   `contest_type` (GPP or Cash), `entry_fee` and `prize_pool` (dollars), `entries`, `lineups` and `file`.
+   * - `<date>/contest-<external_id>-lineups.csv` for each contest: byte for byte the answer of
+   *   `GET /api/v1/dfs/contests/{contest_id}/download?format=csv&enrich=dfs.player_stats` to a caller with DFS
+   *   access.
+   * - `missing.csv`, only when a contest's file could not be read while the ZIP was built: its ids and the
+   *   reason. Such a contest costs no record.
+   *
+   * **Access**: Pro, Elite or the DFS add-on. Any other caller gets `402` and no file.
+   *
+   * **Cost**: 1 record per lineup, as the single download. Before the file starts, the API compares the
+   * lineups of the period with the records left this month: when they are more, the answer is `429`
+   * (`quota_too_small`, with `cost` and `records_left`) and no file. Download a shorter period or one contest
+   * type instead. The headers `x-bundle-contests` and `x-bundle-lineups` give the counts of the file.
+   *
+   * **Size and time**: about 75 bytes of ZIP per NFL lineup (each seat holds the player's box score) and about
+   * 50 for the other sports. A DraftKings NFL classic week (2026 week 9: 3,239 contests, 2,547,934 lineups) is
+   * 191 MB and takes about 30 seconds. The file streams while it builds.
+   *
+   */
+  async bundle(params: DFSContestsBundleParams): Promise<DFSContestsBundleResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSContestsBundleResponse>(
+        this.opts,
+        `/api/v1/dfs/contest-bundles/download${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * One ZIP of every full contest file of one period of a season, as a file (format zip): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async bundleFile(
+    params: Omit<DFSContestsBundleParams, 'format'> & { format: 'zip' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(this.opts, `/api/v1/dfs/contest-bundles/download${qs}`);
+  }
+
+  /**
+   * The periods of a season with the counts of their full contest files
+   *
+   * The periods of one season of one sport, operator and slate format, each with the contests that have their
+   * full lineup file, the lineups those files hold, and the size of the period's ZIP. The ZIP of a period is
+   * `GET /api/v1/dfs/contest-bundles/download`.
+   *
+   * **Periods**: NFL: the regular-season weeks (`week-1` to `week-18`, the weeks of `/dfs/slates/seasons`) and
+   * `postseason` (the 45 days after the last week). NBA, MLB and NHL: the months of the calendar year
+   * (`2026-01` to `2026-12`). Every period of the calendar is listed, also one without a file.
+   *
+   * **A full file** holds every entry and every seat of its contest: the rule of `complete_file` on
+   * `/dfs/contests`. A contest whose games still run has no full file yet, so a period that ends today or later
+   * has `in_progress: true`.
+   *
+   * **Cost**: this list costs no record. The download of a period costs 1 record per lineup, the `lineups` of
+   * its row.
+   *
+   */
+  async bundles(params: DFSContestsBundlesParams): Promise<DFSContestsBundlesResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSContestsBundlesResponse>(this.opts, `/api/v1/dfs/contest-bundles${qs}`)
+    ).data;
+  }
+
+  /**
+   * Download full contest lineups (CSV or JSON)
+   *
+   * Streams or renders full contest lineups including complete player pool,
+   * ownership metrics, exact seat selections, and fantasy points.
+   * Supports on-the-fly CSV generation (?format=csv) or streamable gzipped JSON (?format=json).
+   *
+   * **ZIP (`?format=zip`)**: the CSV in a ZIP file, `contest-<id>-lineups.zip`, whose one entry is
+   * `contest-<id>-lineups.csv`, byte for byte the answer of `?format=csv` to the same caller. It costs the same
+   * records (1 per lineup). A caller without DFS access gets the CSV preview in the ZIP: the first 5 lineups and
+   * the line that says how to get the rest. A 202 stays JSON.
+   *
+   * **Live contests (DraftKings)**: from the first game start of a contest's slate until its final file is
+   * loaded, the lineups come from a live file, read at each game start, every minute for the next 30 minutes,
+   * then every 15 minutes while the games run. Such an answer carries `contest.live` (`read_at`: when the file was read; `kickoff_at`: the latest game
+   * start it covers). Ranks and entry points are as of `read_at`. A seat whose player's game has not started is
+   * hidden: its id is 0 in `lineups[].slots`, `lineups[].hidden_slots` names its slot, and the CSV cell reads
+   * `LOCKED`. Player points, payouts and ownership are null (empty in the CSV) until the final file. The final
+   * file replaces the live one once DraftKings marks the contest Completed.
+   *
+   * **Fantasy points are the operator's settled points**: each player's `fpts` is the value the operator's own
+   * contest results file gave when the contest settled, so ranks and payouts follow it. The league can correct a
+   * box score after that (a rebound or a shot moved to another player), and `/api/v1/{league}/game_player_stats`
+   * then holds the corrected box. The two can differ by such a correction: 2022-10-18, contest 135211, LeBron
+   * James settled at 61.00 points (14 rebounds); the league later gave him 15 rebounds, which scores 62.25.
+   *
+   * **CSV Lineup Slot Format**:
+   * Each lineup roster cell is formatted with player metadata and slot-specific ownership:
+   * `"<Player Name> (id: <export_id>, salary: <salary>, fpts: <fpts>, own: <slot_own>%)"`
+   * - **Showdown / Single Game**: Captain/MVP slot displays Captain ownership (`cpt_field_pct`); FLEX slots display Flex ownership (`flex_field_pct`).
+   * - **Several multiplied slots** (FanDuel NBA MVP/STAR/PRO, MLB MVP/STAR): each multiplied slot displays the share of lineups that hold the player in that slot, and the UTIL slots display the share that hold him in a UTIL seat. A cell shows the points of the player's row for its slot.
+   * - **Classic Multi-Game**: All slots display tournament field ownership (`field_pct`).
+   * - Each cell shows the id, salary and points of the player's `player_pool` row for that slot (the CPT/MVP row on the first seat of a single-game lineup).
+   * - A value the data does not hold is left out: an unresolved player's cell reads `"(id: <export_id>, own: <slot_own>%)"`.
+   * - A removed-player seat (the operator took the player off the slate after users drafted him) reads `"<operator's name> (id: <negative capsule-local id>, fpts: <operator's table points>, own: <slot_own>%, canonical_player_id: <our player id>, is_removed: true)"`: no salary and no upload id.
+   * - A shared-name seat (the operator's own player pool gives the name to two players of one position, and its contest file names no id) reads `"<operator's name> (id: <negative capsule-local id>, fpts: <operator's table points>, own: <slot_own>%, is_shared_name: true)"`: no player id of any kind, no salary and no upload id.
+   *
+   * **CSV Stat Enrichment (`enrich=dfs.player_stats`)**:
+   * When enriched with `dfs.player_stats`, non-zero boxscore counting stats are nested directly inside each slot cell:
+   * `"<Player Name> (id: <export_id>, salary: <salary>, fpts: <fpts>, own: <slot_own>%, dfs.player_stats: [<stat_1>: <val_1>, ...])"`
+   *
+   * *Example (Showdown Enriched Lineup)*:
+   * `"Patrick Mahomes (id: 112411-57439, salary: 15000, fpts: 45.15, own: 1.97%, dfs.player_stats: [passing_yds: 245, passing_tds: 1, rushing_yds: 43, rushing_tds: 1])","Josh Allen (id: 112411-62239, salary: 17000, fpts: 21.38, own: 2.12%, dfs.player_stats: [passing_yds: 237, passing_tds: 2, rushing_yds: 39, fumbles_recovered: 3])"`
+   *
+   * **202 Accepted (the lineup file is not loaded yet)**: A caller with a paid plan (not a trial key) who asks for a DraftKings contest that has started and has no lineup file gets `202` and no lineups, and the API queues a load of the file. A 202 costs no record. It carries `Retry-After` (seconds) and `Cache-Control: no-store`, and its body is JSON whatever `format` asks for:
+   *
+   * `{"status": "queued", "message": "The lineups of contest 196420231 are not loaded yet. A request to load them is queued. Expect them by the time in estimated_ready_at. Call again in 120 seconds.", "contest_id": 29647259, "external_id": 196420231, "requested_at": "2026-10-12T02:26:11Z", "estimated_ready_at": "2026-10-12T02:42:00Z", "retry_after_seconds": 120, "entry_count": 340}`
+   *
+   * `status` is `queued` (the loader will load the file; `estimated_ready_at` is the time to expect it) or `waiting_for_contest` (the contest has not finished; `estimated_ready_at` is then null). Call again after `retry_after_seconds`.
+   *
+   * A caller on a free plan, on a trial key or with no key never gets a 202: it keeps the answer it had before (a 200 with no lineups, or the preview).
+   *
+   * A contest that will never have a file answers `404` (`lineups_not_collected`: the loader does not collect lineups for this contest), `410` (`lineups_file_gone`: DraftKings no longer serves the file) or `503` (`lineups_not_loaded`: the loader gave up and support is informed), each in the usual error body.
+   *
+   * **A contest without lineups (DraftKings), `_metadata`**: while a contest has neither its final file nor a live file, every answer without lineups carries a `_metadata` object that says why and what the caller can do: the 202 above, and the 200 with no lineups of a caller without a paid plan, of a trial key, or of a contest that has not started. A CSV answer ends with its `message` as one quoted line. `lineups_state` is `not_started` (no game of its slate has started: DraftKings shows no lineups before the start), `waiting_for_live` (a game started and the contest goes live: its live file loads within about 2 minutes), `waiting_for_final` (it does not go live: it loads when DraftKings marks it Completed), `loading_final` (DraftKings marked it Completed: the final file loads within minutes) or `not_collected` (our DraftKings loads do not take this contest). `message` says the same in one paragraph, with the times in ET. `goes_live` is true for one of its slate's live contests (the biggest contests, which hold 90% of the slate's prize money), false for a contest that loads only at the end, and null when not known. `first_game_at`, `next_game_at` and `last_game_at` are the game starts of its slate, `expected_live_at` when its live lineups are expected (null when it does not go live), all ISO 8601 UTC. `retry_after_seconds` says when to call again (null when a call before the end does not help). `what_you_can_do` lists the steps in words: when to call again, the route that lists the slate's contests with lineups now (`has_lineups=true`), and for a free plan the plan that serves every lineup.
+   *
+   */
+  async download(
+    contest_id: number,
+    params?: DFSContestsDownloadParams,
+  ): Promise<DFSContestsDownloadResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSContestsDownloadResponse>(
+        this.opts,
+        `/api/v1/dfs/contests/${encodeURIComponent(String(contest_id))}/download${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * Download full contest lineups (CSV or JSON), as a file (format csv or zip or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async downloadFile(
+    contest_id: number,
+    params: Omit<DFSContestsDownloadParams, 'format'> & { format: 'csv' | 'zip' | 'json' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/contests/${encodeURIComponent(String(contest_id))}/download${qs}`,
+    );
+  }
+
+  /**
+   * Download full contest lineups (CSV or JSON), by the operator's contest id
+   *
+   * Same answer as GET /api/v1/dfs/contests/{contest_id}/download, for the contest id that the operator shows (DraftKings or FanDuel) instead of ours. Everything on that route holds here: the query parameters, the formats, the access rules, the errors and the response. The answer carries the header x-contest-id with our contest id.
+   */
+  async download_by_operator(
+    operator: string,
+    contest_id: string,
+    params?: DFSContestsDownloadByOperatorParams,
+  ): Promise<DFSContestsDownloadByOperatorResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSContestsDownloadByOperatorResponse>(
+        this.opts,
+        `/api/v1/dfs/${encodeURIComponent(String(operator))}/contests/${encodeURIComponent(String(contest_id))}/download${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * Download full contest lineups (CSV or JSON), by the operator's contest id, as a file (format csv or zip or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async download_by_operatorFile(
+    operator: string,
+    contest_id: string,
+    params: Omit<DFSContestsDownloadByOperatorParams, 'format'> & {
+      format: 'csv' | 'zip' | 'json';
+    },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/${encodeURIComponent(String(operator))}/contests/${encodeURIComponent(String(contest_id))}/download${qs}`,
+    );
+  }
+
+  /**
+   * One contest, by the operator's contest id
+   *
+   * The same row as GET /api/v1/dfs/contests/{id}, for the contest id that the operator shows (DraftKings or
+   * FanDuel) instead of ours. The row holds our id in `id` and the slate in `slate_id`. The answer carries the
+   * header x-contest-id with our contest id.
+   *
+   */
+  async get_by_operator(
+    operator: string,
+    contest_id: string,
+  ): Promise<DFSContestsGetByOperatorResponse> {
+    const qs = toQueryString(undefined);
+    return (
+      await fetchJson<DFSContestsGetByOperatorResponse>(
+        this.opts,
+        `/api/v1/dfs/${encodeURIComponent(String(operator))}/contests/${encodeURIComponent(String(contest_id))}${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * The marquee contests of an NFL week or of a range of NBA nights, by operator
+   *
+   * The marquee contests: the contests the site's Contest Analysis page opens with one click, as one
+   * rule picks them without looking at results (Frank 2026-10-18). Open to every caller, with or
+   * without a key.
+   *
+   * **NFL** (`league=nfl`, `season`, `week`; without them the current week): per operator the
+   * week's main-slate contest (DraftKings: the Millionaire with the most entries; FanDuel: the
+   * Sunday Million with the most entries; else the guaranteed contest with the biggest prize pool),
+   * and each primetime night's DraftKings single-game contest (the guaranteed contest with the
+   * biggest prize pool), `tnf` for a Wednesday or Thursday night and `mnf` for a Monday night.
+   *
+   * **NBA** (`league=nba`, `from`, `to`, at most 14 nights; without them the current Monday to
+   * Sunday week in US Eastern time): each night, per operator (DraftKings, FanDuel), the guaranteed
+   * contest with an entry fee of $25 or less with the biggest prize pool, then the most entries (a
+   * slate with no such contest: the same order over every fee), on the operator's main classic
+   * slate. Satellites and qualifiers never count.
+   *
+   * **Results.** The rule names a contest before lock, so an item can be listed with
+   * `results_open` false: show its `lock`. Once the contest's lineup file exists, the first
+   * `free_rows` (100) entries of its standings, and the lineups of every user with an entry in
+   * them, are open to everyone in GET /api/v1/dfs/contests/{contest_id}/standings and
+   * /users/{username}/lineups. Every entry needs DFS access. A contest of the archive (NFL before
+   * 2026, NBA before 2026-10-20, the preseason included) is named with `free` false.
+   *
+   * Money is in cents, as stored: divide `prize_pool_cents` and `entry_fee_cents` by 100.
+   *
+   */
+  async marquee(params: DFSContestsMarqueeParams): Promise<DFSContestsMarqueeResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (await fetchJson<DFSContestsMarqueeResponse>(this.opts, `/api/v1/dfs/marquee${qs}`))
+      .data;
+  }
+
+  /**
+   * Actual player ownership of one contest, one row per player and roster slot
+   *
+   * The ownership that the contest's own lineups show, without the lineups. One row per player
+   * and roster slot, from the lineup file of this contest only. The answer never reads another
+   * contest and never falls back to the slate.
+   *
+   * **Slots.** A classic contest has no slot: `slot` is null and the row holds the share of
+   * lineups with the player in any seat. A single-game contest has one row per player and seat
+   * kind: `CPT` (DraftKings captain) or `MVP` (FanDuel), and `FLEX`. The `CPT` or `MVP` rows
+   * sum to 1.0 and the `FLEX` rows to the number of FLEX seats of the format (5 on DraftKings
+   * Showdown), each less the share of seats for which the lineup file names no player (a
+   * placeholder seat of the operator's file): a FLEX sum can read 4.82 to 4.98.
+   * `position` is the natural position of the player on every row. `total_ownership`
+   * is the player's share in any slot.
+   *
+   * **Basis.** `actual_ownership` is `lineups / lineups_used` as a ratio from 0 to 1 with 4
+   * decimals (0.2213 is 22.13%). `lineups_used` is the number of lineups the ownership was
+   * computed from and `entry_count` is the entry count the operator lists, so a customer sees
+   * whether the capture is complete. A player in no lineup has no row.
+   *
+   * **Records.** On a plan that meters routes (Pro, Elite) one call costs 1 record for every 100
+   * lineups of the contest (`lineups_used`), at least 5 records, whatever the number of rows it
+   * returns and whatever the filters. A contest with 30 lineups costs 5 records, one with 190,357
+   * lineups costs 1,904, and the largest (about 950,000 lineups) costs 9,496. An empty answer
+   * costs 1 record, the minimum of every metered request. A caller without DFS access (no key,
+   * a Free or Starter key) reads 5 rows and is charged for the rows it gets. A marquee contest
+   * (GET /api/v1/dfs/marquee) is open in full: its ownership is one row per player, not per entry.
+   *
+   * **Reading the values.** `actual_ownership` has 4 decimals. A player held by 1 of 190,357
+   * lineups reads 0.0000 with `lineups` = 1, so use `lineups / lineups_used` or filter on
+   * `lineups`. `position` is the operator's token: DST on DraftKings, D on FanDuel. The `slot`
+   * filter takes CPT on DraftKings, MVP on FanDuel and FLEX on both single-game formats. A
+   * classic contest has no slot, so `slot=FLEX` returns no row there.
+   *
+   * **Empty answer.** The answer is 200 with no rows and a `reason`. `contest_not_final`: the
+   * contest is not final. `no_lineups`: the lineup file of the contest holds no lineup.
+   * `league_not_computed`: the actual ownership of the contest's league is not computed (golf;
+   * NFL, NBA, MLB and NHL are). `lineups_expired`: the operator does not serve the lineup file of
+   * this contest, and we hold none. This does not change, and a recompute cannot fix it.
+   * `actuals_not_recomputed`: the ownership of the contest is not yet
+   * computed from its lineup file. An in-game contest (second half, fourth quarter, in-game
+   * Showdown) is served like any other contest.
+   *
+   * **Expected contest lineups (`mode=lineups`).** Pass `mode=percentage` (default; `mode=ownership`
+   * alias accepted) for post-contest actual player ownership, or `mode=lineups` to return the expected
+   * full valid lineups for the contest (works both pre-lock and final). Returns
+   * `min(contest_entries, 50000)` valid lineups in `format=json` (default) or `format=csv`. JSON
+   * responses include `ownership` realized from the generated field (`ownership_pct` in Classic;
+   * `slot_ownership` + `total_ownership_pct` across slots like `CPT`/`FLEX` or `MVP`/`STAR`/`PRO`/`UTIL`
+   * in Showdown and Single-Game) alongside `slot_name` and `ownership_pct` on every `roster` seat.
+   * Requires DFS access for the full lineup array; callers without DFS access receive 5 preview lineups
+   * and top 5 preview ownership rows with `_metadata` (`total_actual_records`) and pay 5 metered records.
+   *
+   */
+  async ownership(
+    contest_id: number,
+    params?: DFSContestsOwnershipParams,
+  ): Promise<DFSContestsOwnershipResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSContestsOwnershipResponse>(
+        this.opts,
+        `/api/v1/dfs/contests/${encodeURIComponent(String(contest_id))}/ownership${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * Actual player ownership of one contest, one row per player and roster slot, as a file (format csv or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async ownershipFile(
+    contest_id: number,
+    params: Omit<DFSContestsOwnershipParams, 'format'> & { format: 'csv' | 'json' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/contests/${encodeURIComponent(String(contest_id))}/ownership${qs}`,
+    );
+  }
+
+  /**
+   * Actual player ownership of one contest, one row per player and roster slot, by the operator's contest id
+   *
+   * Same answer as GET /api/v1/dfs/contests/{contest_id}/ownership, for the contest id that the operator shows (DraftKings or FanDuel) instead of ours. Everything on that route holds here: the query parameters, the formats, the access rules, the errors and the response. The answer carries the header x-contest-id with our contest id.
+   */
+  async ownership_by_operator(
+    operator: string,
+    contest_id: string,
+    params?: DFSContestsOwnershipByOperatorParams,
+  ): Promise<DFSContestsOwnershipByOperatorResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSContestsOwnershipByOperatorResponse>(
+        this.opts,
+        `/api/v1/dfs/${encodeURIComponent(String(operator))}/contests/${encodeURIComponent(String(contest_id))}/ownership${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * Actual player ownership of one contest, one row per player and roster slot, by the operator's contest id, as a file (format csv or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async ownership_by_operatorFile(
+    operator: string,
+    contest_id: string,
+    params: Omit<DFSContestsOwnershipByOperatorParams, 'format'> & { format: 'csv' | 'json' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/${encodeURIComponent(String(operator))}/contests/${encodeURIComponent(String(contest_id))}/ownership${qs}`,
+    );
+  }
+
+  /**
+   * The payout ladder of one contest, every tier
+   *
+   * The payout ladder of one contest: one row per range of finishing positions and prize component, in
+   * position order. Positions `min_position` to `max_position` each receive `amount` x `quantity` of
+   * `payout_kind`. A tier can pay cash and a ticket, so a range can have two rows.
+   *
+   * **Every position.** After the last paid place, one computed row (`payout_kind` "none", `amount` 0) runs to
+   * the entry count, so the ladder covers every entry. That row is not stored: it follows `entry_count`, which
+   * is the operator's final count once the contest completed. A contest in which every entry is paid has no such
+   * row.
+   *
+   * **Money is in cents.** `amount` is the cash amount, or the face value of a ticket, in cents (25000000 is
+   * $250,000). `description` names a ticket or prize as the operator serves it, and is null for plain cash.
+   *
+   * **Access.** The route costs no record. A caller without DFS access (no key, a Free or Starter key) reads the
+   * first 5 rows, and the answer carries the preview headers.
+   *
+   */
+  async payouts(
+    contest_id: number,
+    params?: DFSContestsPayoutsParams,
+  ): Promise<DFSContestsPayoutsResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSContestsPayoutsResponse>(
+        this.opts,
+        `/api/v1/dfs/contests/${encodeURIComponent(String(contest_id))}/payouts${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * The payout ladder of one contest, every tier, as a file (format csv or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async payoutsFile(
+    contest_id: number,
+    params: Omit<DFSContestsPayoutsParams, 'format'> & { format: 'csv' | 'json' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/contests/${encodeURIComponent(String(contest_id))}/payouts${qs}`,
+    );
+  }
+
+  /**
+   * The payout ladder of one contest, every tier, by the operator's contest id
+   *
+   * Same answer as GET /api/v1/dfs/contests/{contest_id}/payouts, for the contest id that the operator shows (DraftKings or FanDuel) instead of ours. Everything on that route holds here: the query parameters, the formats, the access rules, the errors and the response. The answer carries the header x-contest-id with our contest id.
+   */
+  async payouts_by_operator(
+    operator: string,
+    contest_id: string,
+    params?: DFSContestsPayoutsByOperatorParams,
+  ): Promise<DFSContestsPayoutsByOperatorResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSContestsPayoutsByOperatorResponse>(
+        this.opts,
+        `/api/v1/dfs/${encodeURIComponent(String(operator))}/contests/${encodeURIComponent(String(contest_id))}/payouts${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * The payout ladder of one contest, every tier, by the operator's contest id, as a file (format csv or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async payouts_by_operatorFile(
+    operator: string,
+    contest_id: string,
+    params: Omit<DFSContestsPayoutsByOperatorParams, 'format'> & { format: 'csv' | 'json' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/${encodeURIComponent(String(operator))}/contests/${encodeURIComponent(String(contest_id))}/payouts${qs}`,
+    );
+  }
+
+  /**
+   * Contest-calibrated player projections, payout profile, and ownership
+   *
+   * Returns player projections calibrated specifically to this contest's field size, entry fee,
+   * and payout convexity ladder (omega, tau, alpha parameters), along with crowd mixture and post-lock actuals.
+   *
+   * The player rows come in the same three formats as the slate projections: nested in
+   * `projections` (default), flat in `player_stats` (`format=flat`), or the flat rows as CSV
+   * (`format=csv`: one column per `player_stats` field, then one per `enrich` tag). A contest
+   * on an in-game slate answers 200 with `projection_status: none_by_design` and empty arrays,
+   * and one on a slate with no player pool 200 with `projection_status: no_player_pool`.
+   *
+   * One route for every league, as the slate projections. An NBA contest carries the NBA rows of
+   * its slate, each with the projected ownership of the contest's segment (the contest profile it
+   * belongs to by operator, format, kind, entries per user, size and entry fee) in `ownership`;
+   * `contest_profile` is null. A contest whose segment has no ownership yet has `ownership: null`
+   * on its rows. An NHL contest carries the NHL rows of its slate with `ownership: null` (our NHL
+   * engine projects no ownership); `contest_profile` is null. A contest of a league our engines
+   * do not project answers 200 with `projection_status: league_not_projected`.
+   *
+   */
+  async projections(
+    contest_id: number,
+    params?: DFSContestsProjectionsParams,
+  ): Promise<DFSContestsProjectionsResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSContestsProjectionsResponse>(
+        this.opts,
+        `/api/v1/dfs/contests/${encodeURIComponent(String(contest_id))}/projections${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * Contest-calibrated player projections, payout profile, and ownership, as a file (format csv or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async projectionsFile(
+    contest_id: number,
+    params: Omit<DFSContestsProjectionsParams, 'format'> & { format: 'csv' | 'json' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/contests/${encodeURIComponent(String(contest_id))}/projections${qs}`,
+    );
+  }
+
+  /**
+   * Contest-calibrated player projections, payout profile, and ownership, by the operator's contest id
+   *
+   * Same answer as GET /api/v1/dfs/contests/{contest_id}/projections, for the contest id that the operator shows (DraftKings or FanDuel) instead of ours. Everything on that route holds here: the query parameters, the formats, the access rules, the errors and the response. The answer carries the header x-contest-id with our contest id.
+   */
+  async projections_by_operator(
+    operator: string,
+    contest_id: string,
+    params?: DFSContestsProjectionsByOperatorParams,
+  ): Promise<DFSContestsProjectionsByOperatorResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSContestsProjectionsByOperatorResponse>(
+        this.opts,
+        `/api/v1/dfs/${encodeURIComponent(String(operator))}/contests/${encodeURIComponent(String(contest_id))}/projections${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * Contest-calibrated player projections, payout profile, and ownership, by the operator's contest id, as a file (format csv or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async projections_by_operatorFile(
+    operator: string,
+    contest_id: string,
+    params: Omit<DFSContestsProjectionsByOperatorParams, 'format'> & { format: 'csv' | 'json' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/${encodeURIComponent(String(operator))}/contests/${encodeURIComponent(String(contest_id))}/projections${qs}`,
+    );
+  }
+
+  /**
+   * Multi-player stack projections and ownership of an NFL contest
+   *
+   * Multi-player stack projections and ownership calibrated to an NFL contest.
+   */
+  async stacks(
+    contest_id: number,
+    params?: DFSContestsStacksParams,
+  ): Promise<DFSContestsStacksResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSContestsStacksResponse>(
+        this.opts,
+        `/api/v1/dfs/contests/${encodeURIComponent(String(contest_id))}/stacks${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * Multi-player stack projections and ownership of an NFL contest, as a file (format csv or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async stacksFile(
+    contest_id: number,
+    params: Omit<DFSContestsStacksParams, 'format'> & { format: 'csv' | 'json' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/contests/${encodeURIComponent(String(contest_id))}/stacks${qs}`,
+    );
+  }
+
+  /**
+   * Contest standings with each entrant's entry count
+   *
+   * The contest's entries in finishing order, read from its lineup file: rank, username, points, payout, and how many entries the same user played. Two entries can share a rank; `row` is the 1-based position and is unique. `field` states what the field did (roster slots, pool size, C, the field's average lineup and the 3 chalk players), the same for every caller.
+   * Access (Frank 2026-09-27, the free flagship model; Frank 2026-10-18, top 100): each marquee contest (GET /api/v1/dfs/marquee: each week's NFL flagship contest, one per operator; each primetime night's single-game flagship, the biggest-prize guaranteed DraftKings pre-game Showdown contest of a Wednesday, Thursday or Monday night; and each NBA night's guaranteed contest with the biggest prize pool at an entry fee of $25 or less on each operator's main slate), free from season 2026 (NBA: from 2026-10-20), opens its first 100 standings rows to everyone, with or without a key (`access.plan = "flagship"`): those rows, and the full drill-down (every lineup, exposure row, name and value) of every user with an entry in them; no CSV. A row past 100 needs DFS access: such an answer carries the preview envelope `_metadata`, and a user with no entry in the first 100 rows answers `access.locked = true`, with or without a key. Any other contest needs a key or a login: no key answers 401 `key_required`. With a key but without DFS access, any other contest holds the first 5 rows, and only users with an entry in those rows open in the user lineups route (`open`). Such a capped answer carries the API's preview envelope `_metadata` (required_tier, message, total_actual_records), as every capped list does; a full answer carries none. CSV needs DFS access (402 otherwise).
+   * Each row also carries `stack`, the combo of that row's own lineup (a row is one lineup entry, not one user) on a classic NFL contest: QB, then the QB's teammates as WR, TE, RB (a count in front when more than 1, as 2WR), then BB for the bring-backs (2BB), joined by `/`, as QB/WR/RB/BB. It is null when the lineup has no stack and no bring-back, when a seat's position, team or game is unknown (never a partial answer), when the row is not open for the caller, in hide mode, and on every contest that is not a classic NFL contest. The row also carries `stack_team`, the team of that lineup's QB (the team the stack belongs to, such as DAL), set exactly when `stack` is set, and `bring_back_team`, the other team of the QB's game (such as PHI), set only when `stack` has a BB part. A page draws each team's logo from them. In the CSV the last three columns are `stack`, `stack_team` and `bring_back_team`.
+   * **202 Accepted (the lineup file is not loaded yet)**: A caller with a paid plan (not a trial key) who asks for a DraftKings contest that has started and has no lineup file gets `202` and no lineups, and the API queues a load of the file. A 202 costs no record. It carries `Retry-After` (seconds) and `Cache-Control: no-store`, and its body is JSON whatever `format` asks for:
+   * `{"status": "queued", "message": "The lineups of contest 196420231 are not loaded yet. A request to load them is queued. Expect them by the time in estimated_ready_at. Call again in 120 seconds.", "contest_id": 29647259, "external_id": 196420231, "requested_at": "2026-10-12T02:26:11Z", "estimated_ready_at": "2026-10-12T02:42:00Z", "retry_after_seconds": 120, "entry_count": 340}`
+   * `status` is `queued` (the loader will load the file; `estimated_ready_at` is the time to expect it) or `waiting_for_contest` (the contest has not finished; `estimated_ready_at` is then null). Call again after `retry_after_seconds`.
+   * A caller on a free plan, on a trial key or with no key never gets a 202: it keeps the answer it had before (a 200 with no lineups, or the preview).
+   * A contest that will never have a file answers `404` (`lineups_not_collected`: the loader does not collect lineups for this contest), `410` (`lineups_file_gone`: DraftKings no longer serves the file) or `503` (`lineups_not_loaded`: the loader gave up and support is informed), each in the usual error body.
+   * **A contest without lineups (DraftKings), `_metadata`**: while a contest has neither its final file nor a live file, every answer without lineups carries a `_metadata` object that says why and what the caller can do: the 202 above, and the 200 with no lineups of a caller without a paid plan, of a trial key, or of a contest that has not started. A CSV answer ends with its `message` as one quoted line. `lineups_state` is `not_started` (no game of its slate has started: DraftKings shows no lineups before the start), `waiting_for_live` (a game started and the contest goes live: its live file loads within about 2 minutes), `waiting_for_final` (it does not go live: it loads when DraftKings marks it Completed), `loading_final` (DraftKings marked it Completed: the final file loads within minutes) or `not_collected` (our DraftKings loads do not take this contest). `message` says the same in one paragraph, with the times in ET. `goes_live` is true for one of its slate's live contests (the biggest contests, which hold 90% of the slate's prize money), false for a contest that loads only at the end, and null when not known. `first_game_at`, `next_game_at` and `last_game_at` are the game starts of its slate, `expected_live_at` when its live lineups are expected (null when it does not go live), all ISO 8601 UTC. `retry_after_seconds` says when to call again (null when a call before the end does not help). `what_you_can_do` lists the steps in words: when to call again, the route that lists the slate's contests with lineups now (`has_lineups=true`), and for a free plan the plan that serves every lineup.
+   *
+   */
+  async standings(
+    contest_id: number,
+    params?: DFSContestsStandingsParams,
+  ): Promise<DFSContestsStandingsResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSContestsStandingsResponse>(
+        this.opts,
+        `/api/v1/dfs/contests/${encodeURIComponent(String(contest_id))}/standings${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * Contest standings with each entrant's entry count, as a file (format csv or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async standingsFile(
+    contest_id: number,
+    params: Omit<DFSContestsStandingsParams, 'format'> & { format: 'csv' | 'json' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/contests/${encodeURIComponent(String(contest_id))}/standings${qs}`,
+    );
+  }
+
+  /**
+   * Contest standings with each entrant's entry count, by the operator's contest id
+   *
+   * Same answer as GET /api/v1/dfs/contests/{contest_id}/standings, for the contest id that the operator shows (DraftKings or FanDuel) instead of ours. Everything on that route holds here: the query parameters, the formats, the access rules, the errors and the response. The answer carries the header x-contest-id with our contest id.
+   */
+  async standings_by_operator(
+    operator: string,
+    contest_id: string,
+    params?: DFSContestsStandingsByOperatorParams,
+  ): Promise<DFSContestsStandingsByOperatorResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSContestsStandingsByOperatorResponse>(
+        this.opts,
+        `/api/v1/dfs/${encodeURIComponent(String(operator))}/contests/${encodeURIComponent(String(contest_id))}/standings${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * Contest standings with each entrant's entry count, by the operator's contest id, as a file (format csv or json): the bytes, the file name the
+   * answer gives and every header. A 202 throws NotReadyError, like every call.
+   */
+  async standings_by_operatorFile(
+    operator: string,
+    contest_id: string,
+    params: Omit<DFSContestsStandingsByOperatorParams, 'format'> & { format: 'csv' | 'json' },
+  ): Promise<FileResult> {
+    const qs = toQueryString(params as unknown as Record<string, unknown>);
+    return fetchFile(
+      this.opts,
+      `/api/v1/dfs/${encodeURIComponent(String(operator))}/contests/${encodeURIComponent(String(contest_id))}/standings${qs}`,
+    );
+  }
+
+  /**
+   * One entrant's lineups in a contest with exposure and edge against the field
+   *
+   * Every lineup one user entered in the contest (as a lineup list plus one seat row per slot), and the user's exposure to each player against the field's ownership: leverage = exposure_pct - field_pct, and edge = (exposure_pct - field_pct) / 100 x (fantasy_points - C), the points per lineup the player gained (+) or cost (-) the user against the field (C = field.avg_points_per_slot). Exposure counts all of the user's lineups. Rows sort chalk first, then by lineups.
+   * Access (Frank 2026-09-27, the free flagship model; Frank 2026-10-18, top 100): each marquee contest (GET /api/v1/dfs/marquee: each week's NFL flagship contest, one per operator; each primetime night's single-game flagship, the biggest-prize guaranteed DraftKings pre-game Showdown contest of a Wednesday, Thursday or Monday night; and each NBA night's guaranteed contest with the biggest prize pool at an entry fee of $25 or less on each operator's main slate), free from season 2026 (NBA: from 2026-10-20), opens its first 100 standings rows to everyone, with or without a key (`access.plan = "flagship"`): those rows, and the full drill-down (every lineup, exposure row, name and value) of every user with an entry in them; no CSV. A row past 100 needs DFS access: such an answer carries the preview envelope `_metadata`, and a user with no entry in the first 100 rows answers `access.locked = true`, with or without a key. Any other contest needs a key or a login: no key answers 401 `key_required`. With a key but without DFS access, on any other contest the drill-down opens only for users with an entry in the first 5 standings rows; any other user answers `access.locked = true` with empty `exposure`, `lineups` and `seats`. An open drill-down without DFS access holds every row in hide mode: the 3 chalk players stay clear (`chalk: true`); every other player is a response-local label (`P1`, `P2`, ...) with its position, lineup count and exposure, and no ID, name, team, salary, points, field share, leverage or edge (`hidden` lists what a row withholds; `edge_band` is sent only when at least 5 non-chalk pool players at the same position would show the same band). CSV (`table=lineups` or `table=exposure`) needs DFS access.
+   * Stack markers, on a classic NFL contest: each lineup carries its combo `stack` (as on the standings rows, as QB/WR/RB/BB) and each seat its `stack_role`: `stack` (the QB and every teammate of his team except the defense, when he has at least one) or `bring_back` (a player of the opposing team from the QB's game, with or without a stack), else null. A role follows the seat's real position, never its slot (a FLEX TE is a TE), and is sent only for a lineup whose position, team and game ids are all known (never a partial answer); it is null in hide mode and on every other contest. The lineups CSV ends with one `<slot>_stack` column per slot (`stack`, `bring_back` or empty) and the lineup's `stack` combo, `stack_team` and `bring_back_team`.
+   * Analysis: `analysis` says how the user built the lineups, worked out on the server: the stack mix by QB stack size and bring-back, the teams of the stacks, how far apart the lineups are (players two lineups share, the most-used player, how far each lineup is from its closest twin), and the range of lineup ownership and of salary used. It is null in hide mode and when the user is locked. It is JSON only: no CSV table holds it.
+   * **202 Accepted (the lineup file is not loaded yet)**: A caller with a paid plan (not a trial key) who asks for a DraftKings contest that has started and has no lineup file gets `202` and no lineups, and the API queues a load of the file. A 202 costs no record. It carries `Retry-After` (seconds) and `Cache-Control: no-store`, and its body is JSON whatever `format` asks for:
+   * `{"status": "queued", "message": "The lineups of contest 196420231 are not loaded yet. A request to load them is queued. Expect them by the time in estimated_ready_at. Call again in 120 seconds.", "contest_id": 29647259, "external_id": 196420231, "requested_at": "2026-10-12T02:26:11Z", "estimated_ready_at": "2026-10-12T02:42:00Z", "retry_after_seconds": 120, "entry_count": 340}`
+   * `status` is `queued` (the loader will load the file; `estimated_ready_at` is the time to expect it) or `waiting_for_contest` (the contest has not finished; `estimated_ready_at` is then null). Call again after `retry_after_seconds`.
+   * A caller on a free plan, on a trial key or with no key never gets a 202: it keeps the answer it had before (a 200 with no lineups, or the preview).
+   * A contest that will never have a file answers `404` (`lineups_not_collected`: the loader does not collect lineups for this contest), `410` (`lineups_file_gone`: DraftKings no longer serves the file) or `503` (`lineups_not_loaded`: the loader gave up and support is informed), each in the usual error body.
+   * The 202 carries the `_metadata` of a contest without lineups (described on the standings route).
+   *
+   */
+  async user_lineups(
+    contest_id: number,
+    username: string,
+    params?: DFSContestsUserLineupsParams,
+  ): Promise<DFSContestsUserLineupsResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSContestsUserLineupsResponse>(
+        this.opts,
+        `/api/v1/dfs/contests/${encodeURIComponent(String(contest_id))}/users/${encodeURIComponent(String(username))}/lineups${qs}`,
+      )
+    ).data;
+  }
+
+  /**
+   * One entrant's lineups in a contest with exposure and edge against the field, by the operator's contest id
+   *
+   * Same answer as GET /api/v1/dfs/contests/{contest_id}/users/{username}/lineups, for the contest id that the operator shows (DraftKings or FanDuel) instead of ours. Everything on that route holds here: the query parameters, the formats, the access rules, the errors and the response. The answer carries the header x-contest-id with our contest id.
+   */
+  async user_lineups_by_operator(
+    operator: string,
+    contest_id: string,
+    username: string,
+    params?: DFSContestsUserLineupsByOperatorParams,
+  ): Promise<DFSContestsUserLineupsByOperatorResponse> {
+    const qs = toQueryString(params as unknown as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<DFSContestsUserLineupsByOperatorResponse>(
+        this.opts,
+        `/api/v1/dfs/${encodeURIComponent(String(operator))}/contests/${encodeURIComponent(String(contest_id))}/users/${encodeURIComponent(String(username))}/lineups${qs}`,
+      )
+    ).data;
   }
 }

@@ -28,6 +28,7 @@ type NFLGameLine struct {
 	MoneylineAway     *int     `json:"moneyline_away"`
 	MoneylineHome     *int     `json:"moneyline_home"`
 	OverOdds          *int     `json:"over_odds"`
+	Source            string   `json:"source"`
 	Spread            *float64 `json:"spread"`
 	SpreadAwayOdds    *int     `json:"spread_away_odds"`
 	SpreadHomeOdds    *int     `json:"spread_home_odds"`

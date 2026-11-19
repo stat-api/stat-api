@@ -2,7 +2,12 @@
 //
 // SDK resource for nba.playoffs (public API).
 // Source: schema/api/groups/public.yml + schema/model/nba/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NBAPlayoff {
   id: number;
@@ -28,6 +33,8 @@ export interface NBAPlayoffsListResponse {
   playoffs: NBAPlayoff[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -37,7 +44,10 @@ export class NBAPlayoffsResource {
 
   async list(params?: NBAPlayoffsListParams): Promise<NBAPlayoffsListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NBAPlayoffsListResponse, 'quota'>>(this.opts, `/api/v1/nba/playoffs${qs}`);
+    const r = await fetchJson<Omit<NBAPlayoffsListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nba/playoffs${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -55,7 +65,10 @@ export class NBAPlayoffsResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NBAPlayoffsListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NBAPlayoffsListParams);
+      const page: NBAPlayoffsListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NBAPlayoffsListParams);
       for (const row of page.playoffs) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

@@ -17,7 +17,6 @@ import (
 type NFLCombineResult struct {
 	ID        int64    `json:"id"`
 	CfbID     *string  `json:"cfb_id"`
-	PfrID     *string  `json:"pfr_id"`
 	PlayerID  int64    `json:"player_id"`
 	TeamID    *int64   `json:"team_id"`
 	Bench     *int     `json:"bench"`

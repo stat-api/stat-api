@@ -1,27 +1,28 @@
 // Build an NFL box score
 // Generated from schema/api/examples/box-score.yml — do not edit.
 
-import { StatApi, type NFLGamePlayerStat } from '@stat-api/client'
+import { type NFLGamePlayerStat, StatApi } from '@stat-api/client';
 
-const api = new StatApi() // reads STAT_API_KEY from the environment
+const api = new StatApi(); // reads STAT_API_KEY from the environment
 
 // Resolve the current season
-const season = (await api.nfl.seasons.list({ limit: 200 })).seasons
-  .reduce((cur, s) => (s.start_year > cur.start_year ? s : cur)).id
+const season = (await api.nfl.seasons.list({ limit: 200 })).seasons.reduce((cur, s) =>
+  s.start_year > cur.start_year ? s : cur,
+).start_year;
 
 // Find a game
-const games = (await api.nfl.games.list({ season_id: season, limit: 1 })).games
+const games = (await api.nfl.games.list({ season_id: season, limit: 1 })).games;
 
 // Pull per-player stats for that game
-const stats = (await api.nfl.game_player_stats.list({ game_id: games[0].id })).game_player_stats
+const stats = (await api.nfl.game_player_stats.list({ game_id: games[0].id })).game_player_stats;
 
 // Split the stat lines into the two teams
-const by_team = new Map<number, NFLGamePlayerStat[]>()
+const by_team = new Map<number, NFLGamePlayerStat[]>();
 for (const row of stats) {
-  const bucket = by_team.get(row.team_id) ?? []
-  bucket.push(row)
-  by_team.set(row.team_id, bucket)
+  const bucket = by_team.get(row.team_id) ?? [];
+  bucket.push(row);
+  by_team.set(row.team_id, bucket);
 }
 
 // Render both halves of the box score
-console.log(JSON.stringify(Object.fromEntries(by_team), null, 2))
+console.log(JSON.stringify(Object.fromEntries(by_team), null, 2));

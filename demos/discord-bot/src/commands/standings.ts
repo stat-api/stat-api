@@ -1,18 +1,28 @@
 // /standings — NBA standings, grouped by conference (v1: NBA only).
 import type { StatApi } from '@stat-api/client';
 import { cache, cacheKey, TTL } from '../cache';
-import { standingsEmbed, statFooter, type Embed, type StandingRow, type StandingsGroup } from '../format';
+import {
+  type Embed,
+  type StandingRow,
+  type StandingsGroup,
+  standingsEmbed,
+  statFooter,
+} from '../format';
 
 export interface StandingsArgs {
   league: 'nba';
 }
 
 export async function handleStandings(api: StatApi, _args: StandingsArgs): Promise<Embed> {
-  const { value, ...meta } = await cache.fetch(cacheKey('standings', 'nba'), TTL.standings, () => fetchStandings(api));
+  const { value, ...meta } = await cache.fetch(cacheKey('standings', 'nba'), TTL.standings, () =>
+    fetchStandings(api),
+  );
   return standingsEmbed(value, statFooter(meta));
 }
 
-async function fetchStandings(api: StatApi): Promise<{ league: 'nba'; day: number; groups: StandingsGroup[] }> {
+async function fetchStandings(
+  api: StatApi,
+): Promise<{ league: 'nba'; day: number; groups: StandingsGroup[] }> {
   // Unpaginated list is newest-first, so the current day's rows lead. Grab a
   // window comfortably larger than the 30-team slate, then keep only the most
   // recent day and de-dupe to one row per team.
@@ -31,7 +41,13 @@ async function fetchStandings(api: StatApi): Promise<{ league: 'nba'; day: numbe
     const team = teamById.get(s.team_id);
     const conference = team?.conference ?? 'League';
     const rows = byConference.get(conference) ?? [];
-    rows.push({ rank: 0, abbrev: team?.abbreviation ?? `#${s.team_id}`, wins: s.wins, losses: s.losses, pct: s.win_pct });
+    rows.push({
+      rank: 0,
+      abbrev: team?.abbreviation ?? `#${s.team_id}`,
+      wins: s.wins,
+      losses: s.losses,
+      pct: s.win_pct,
+    });
     byConference.set(conference, rows);
   }
 
@@ -39,7 +55,9 @@ async function fetchStandings(api: StatApi): Promise<{ league: 'nba'; day: numbe
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([conference, rows]) => {
       rows.sort((a, b) => Number(b.pct) - Number(a.pct) || b.wins - a.wins);
-      rows.forEach((r, i) => (r.rank = i + 1));
+      rows.forEach((r, i) => {
+            r.rank = i + 1;
+          });
       return { title: `${conference} Conference`, rows: rows.slice(0, 8) };
     });
 

@@ -13,7 +13,7 @@ public final class NflSeasonLeaders {
         // Resolve the current season
         List<NFLSeason> seasonList = api.nfl().seasons().list(new NFLSeasonsListParams().limit(200L)).rows();
         NFLSeason seasonCurrent = seasonList.stream().max(Comparator.comparingInt(NFLSeason::startYear)).orElseThrow();
-        long season = seasonCurrent.id();
+        long season = seasonCurrent.startYear();
 
         // Page through the whole season
         List<NFLSeasonPlayerStat> rows = new ArrayList<>();

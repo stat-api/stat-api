@@ -15,7 +15,6 @@ NFLDepthChart = TypedDict(
     "NFLDepthChart",
     {
         "id": int,
-        "elias_id": str | None,
         "game_id": int,
         "player_id": int,
         "season_id": int,

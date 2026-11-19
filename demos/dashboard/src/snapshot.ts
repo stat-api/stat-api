@@ -7,14 +7,7 @@
 // thousand idle viewers cost nothing and a real update reaches all of them from
 // a single poll. This is the fan-out that makes one metered poll serve every
 // browser.
-import type {
-  GameCard,
-  League,
-  LeagueSnapshot,
-  Quota,
-  Snapshot,
-  SseEvent,
-} from './contract.ts';
+import type { GameCard, League, LeagueSnapshot, Quota, Snapshot, SseEvent } from './contract.ts';
 
 type Subscriber = (event: SseEvent) => void;
 

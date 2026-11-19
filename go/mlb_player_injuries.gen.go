@@ -27,7 +27,6 @@ type MLBPlayerInjury struct {
 	InjuryType         string  `json:"injury_type"`
 	IsSurgeryRequired  *bool   `json:"is_surgery_required"`
 	Side               *string `json:"side"`
-	Source             *string `json:"source"`
 	StartDate          string  `json:"start_date"`
 	Status             string  `json:"status"`
 	UpdatedDate        string  `json:"updated_date"`

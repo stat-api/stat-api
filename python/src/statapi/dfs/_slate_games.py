@@ -30,9 +30,12 @@ class DFSSlateGamesResource:
     def __init__(self, transport: HttpTransport) -> None:
         self._transport = transport
 
-    def list(self, *, slate_id: int | None = None, limit: int | None = None, from_id: int | None = None) -> Page[DFSSlateGame]:
+    def list(self, *, slate_id: int | None = None, operator_slate_id: int | None = None, operator_id: str | int | None = None, operator: str | int | None = None, limit: int | None = None, from_id: int | None = None) -> Page[DFSSlateGame]:
         body, quota = self._transport.request(self._PATH, {
             "slate_id": slate_id,
+            "operator_slate_id": operator_slate_id,
+            "operator_id": operator_id,
+            "operator": operator,
             "limit": limit,
             "from_id": from_id,
         })
@@ -49,13 +52,13 @@ class DFSSlateGamesResource:
         row: DFSSlateGame = body
         return row
 
-    def iter(self, *, slate_id: int | None = None, limit: int | None = None) -> Iterator[DFSSlateGame]:
+    def iter(self, *, slate_id: int | None = None, operator_slate_id: int | None = None, operator_id: str | int | None = None, operator: str | int | None = None, limit: int | None = None) -> Iterator[DFSSlateGame]:
         # Always walk with from_id (starting at 0): from_id forces the server's
         # ascending keyset order. Without it, DESC-default tables re-yield page
         # 1 and under-walk. Iteration is therefore always oldest-first.
         from_id: int | None = 0
         while True:
-            page = self.list(slate_id=slate_id, limit=limit, from_id=from_id)
+            page = self.list(slate_id=slate_id, operator_slate_id=operator_slate_id, operator_id=operator_id, operator=operator, limit=limit, from_id=from_id)
             for row in page.rows:
                 yield row
             if page.next_from_id is None:

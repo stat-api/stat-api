@@ -1,7 +1,7 @@
 {
   "name": "@stat-api/client",
-  "version": "0.1.0",
-  "description": "Official TypeScript / JavaScript client for the stat-api sports & prediction-market data API.",
+  "version": "0.3.0",
+  "description": "Official TypeScript / JavaScript client for the stat-api sports data API.",
   "license": "MIT",
   "homepage": "https://stat-api.com",
   "repository": {
@@ -20,8 +20,6 @@
     "nfl",
     "nba",
     "mlb",
-    "kalshi",
-    "prediction-markets",
     "sdk"
   ],
   "type": "module",

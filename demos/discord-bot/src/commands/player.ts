@@ -1,7 +1,13 @@
 // /player <name> — NBA player lookup: fuzzy name search + season averages.
 import type { StatApi } from '@stat-api/client';
 import { cache, cacheKey, TTL } from '../cache';
-import { playerEmbed, playerNotFoundEmbed, statFooter, type Embed, type PlayerCard } from '../format';
+import {
+  type Embed,
+  type PlayerCard,
+  playerEmbed,
+  playerNotFoundEmbed,
+  statFooter,
+} from '../format';
 
 export interface PlayerArgs {
   name: string;
@@ -19,7 +25,10 @@ async function fetchPlayer(api: StatApi, name: string): Promise<PlayerCard | nul
   const player = results[0];
   if (!player) return null;
 
-  const { season_player_stats } = await api.nba.season_player_stats.list({ player_id: player.id, limit: 5 });
+  const { season_player_stats } = await api.nba.season_player_stats.list({
+    player_id: player.id,
+    limit: 5,
+  });
   // Newest-first by default, but sort defensively so we always take the latest.
   const latest = [...season_player_stats].sort((a, b) => b.season_id - a.season_id)[0];
 
@@ -27,7 +36,14 @@ async function fetchPlayer(api: StatApi, name: string): Promise<PlayerCard | nul
   const position = player.primary_position;
 
   if (!latest) {
-    return { name: player.full_name, team, position, season: '', stats: [], note: 'No season stats available.' };
+    return {
+      name: player.full_name,
+      team,
+      position,
+      season: '',
+      stats: [],
+      note: 'No season stats available.',
+    };
   }
 
   const season = await api.nba.seasons.get(latest.season_id);

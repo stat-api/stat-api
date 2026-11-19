@@ -15,8 +15,8 @@
 
 import type { Quota } from './client.js';
 
-/** Base class for every error the SDK throws on a non-2xx response (and for
- *  network/timeout failures, which use status 0). */
+/** Base class for every error the SDK throws on a non-2xx response, on a 202
+ *  (`NotReadyError`), and for network/timeout failures (status 0). */
 export class StatApiError extends Error {
   readonly status: number;
   /** Parsed JSON body the server returned (or the raw text if not JSON, or
@@ -40,12 +40,7 @@ export class StatApiError extends Error {
 /** 401 — the API key is missing, malformed, or revoked. */
 export class AuthenticationError extends StatApiError {
   constructor(body: unknown, path: string) {
-    super(
-      401,
-      body,
-      path,
-      `stat-api authentication failed (401) on ${path} — check STAT_API_KEY`,
-    );
+    super(401, body, path, `stat-api authentication failed (401) on ${path} — check STAT_API_KEY`);
     this.name = 'AuthenticationError';
   }
 }
@@ -106,15 +101,51 @@ export class QuotaExceededError extends StatApiError {
   }
 }
 
+/** 202 — the request was accepted but the data is not ready yet (for example a
+ *  contest whose lineup file is still queued to load). A 202 holds NO data, so
+ *  the SDK throws instead of handing the body back as the route's data. NEVER
+ *  retried inside the SDK: a 202 is not a transient failure, the caller decides
+ *  when to ask again. `body` holds the parsed 202 body verbatim. */
+export class NotReadyError extends StatApiError {
+  /** Seconds to wait before asking again: the body's `retry_after_seconds`,
+   *  else the `Retry-After` header (seconds form), else null. */
+  readonly retryAfterSeconds: number | null;
+  /** ISO-8601 instant the data is expected, or null when the server gives none
+   *  (state `waiting_for_contest`). */
+  readonly estimatedReadyAt: string | null;
+  /** The body's `status`: `queued` or `waiting_for_contest`. Null when absent. */
+  readonly state: string | null;
+
+  /** @param retryAfterHeader raw `Retry-After` response header, used when the
+   *  body carries no `retry_after_seconds`. */
+  constructor(body: unknown, path: string, retryAfterHeader: string | null = null) {
+    super(
+      202,
+      body,
+      path,
+      stringOrNull(field(body, 'message')) ?? `stat-api result not ready (202) on ${path}`,
+    );
+    this.name = 'NotReadyError';
+    this.retryAfterSeconds =
+      secondsOrNull(field(body, 'retry_after_seconds')) ?? secondsOrNull(retryAfterHeader);
+    this.estimatedReadyAt = stringOrNull(field(body, 'estimated_ready_at'));
+    this.state = stringOrNull(field(body, 'status'));
+  }
+}
+
 /** Map an HTTP status to its error subclass. Unmapped statuses (403, 5xx that
- *  survived retries, …) fall back to the base `StatApiError`. */
+ *  survived retries, …) fall back to the base `StatApiError`. `retryAfter` is the
+ *  raw `Retry-After` header; only the 202 mapping reads it. */
 export function errorForStatus(
   status: number,
   body: unknown,
   path: string,
   quota: Quota | null,
+  retryAfter: string | null = null,
 ): StatApiError {
   switch (status) {
+    case 202:
+      return new NotReadyError(body, path, retryAfter);
     case 400:
       return new ValidationError(body, path);
     case 401:
@@ -141,4 +172,16 @@ function numberOrNull(value: unknown): number | null {
 
 function stringOrNull(value: unknown): string | null {
   return typeof value === 'string' && value.length > 0 ? value : null;
+}
+
+/** One field of a parsed JSON object body; undefined for any other body shape. */
+function field(body: unknown, key: string): unknown {
+  if (typeof body !== 'object' || body === null) return undefined;
+  return Reflect.get(body, key);
+}
+
+/** A non-negative finite number of seconds, or null. */
+function secondsOrNull(value: unknown): number | null {
+  const n = numberOrNull(value);
+  return n !== null && n >= 0 ? n : null;
 }

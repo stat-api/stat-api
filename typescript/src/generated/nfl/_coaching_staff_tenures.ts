@@ -2,7 +2,12 @@
 //
 // SDK resource for nfl.coaching_staff_tenures (public API).
 // Source: schema/api/groups/public.yml + schema/model/nfl/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NFLCoachingStaffTenure {
   id: number;
@@ -30,6 +35,8 @@ export interface NFLCoachingStaffTenuresListResponse {
   coaching_staff_tenures: NFLCoachingStaffTenure[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -37,14 +44,21 @@ export interface NFLCoachingStaffTenuresListResponse {
 export class NFLCoachingStaffTenuresResource {
   constructor(private readonly opts: ResolvedStatApiOptions) {}
 
-  async list(params?: NFLCoachingStaffTenuresListParams): Promise<NFLCoachingStaffTenuresListResponse> {
+  async list(
+    params?: NFLCoachingStaffTenuresListParams,
+  ): Promise<NFLCoachingStaffTenuresListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NFLCoachingStaffTenuresListResponse, 'quota'>>(this.opts, `/api/v1/nfl/coaching_staff_tenures${qs}`);
+    const r = await fetchJson<Omit<NFLCoachingStaffTenuresListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nfl/coaching_staff_tenures${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
   async get(id: number): Promise<NFLCoachingStaffTenure> {
-    return (await fetchJson<NFLCoachingStaffTenure>(this.opts, `/api/v1/nfl/coaching_staff_tenures/${id}`)).data;
+    return (
+      await fetchJson<NFLCoachingStaffTenure>(this.opts, `/api/v1/nfl/coaching_staff_tenures/${id}`)
+    ).data;
   }
   async *iter(params?: NFLCoachingStaffTenuresListParams): AsyncGenerator<NFLCoachingStaffTenure> {
     // Always walk with from_id (starting at 0): from_id forces the server's
@@ -57,7 +71,10 @@ export class NFLCoachingStaffTenuresResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NFLCoachingStaffTenuresListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NFLCoachingStaffTenuresListParams);
+      const page: NFLCoachingStaffTenuresListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NFLCoachingStaffTenuresListParams);
       for (const row of page.coaching_staff_tenures) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

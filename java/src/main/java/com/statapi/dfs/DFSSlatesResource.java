@@ -7,6 +7,7 @@ package com.statapi.dfs;
 import com.statapi.Http;
 import com.statapi.JsonValue;
 import com.statapi.Page;
+import com.statapi.DfsLineups;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,6 +39,50 @@ public final class DFSSlatesResource {
     public DFSSlate get(long id) {
         Http.Response response = http.get(PATH + "/" + id, Collections.emptyMap());
         return DFSSlate.fromJson(response.body());
+    }
+
+    public DfsLineups.OptimizerLineupsResponse optimizerLineups(long slateId, DfsLineups.OptimizerLineupsRequest body) {
+        return DfsLineups.optimizerLineups(http, slateId, body);
+    }
+
+    public String optimizerLineupsCsv(long slateId, DfsLineups.OptimizerLineupsRequest body) {
+        return DfsLineups.optimizerLineupsCsv(http, slateId, body);
+    }
+
+    public DfsLineups.SimLineupsResponse simLineups(long slateId, DfsLineups.SimLineupsRequest body) {
+        return DfsLineups.simLineups(http, slateId, body, null);
+    }
+
+    public DfsLineups.SimLineupsResponse simLineups(long slateId, DfsLineups.SimLineupsRequest body, DfsLineups.SimRequestOptions opts) {
+        return DfsLineups.simLineups(http, slateId, body, opts);
+    }
+
+    public String simLineupsCsv(long slateId, DfsLineups.SimLineupsRequest body) {
+        return DfsLineups.simLineupsCsv(http, slateId, body, null);
+    }
+
+    public String simLineupsCsv(long slateId, DfsLineups.SimLineupsRequest body, DfsLineups.SimRequestOptions opts) {
+        return DfsLineups.simLineupsCsv(http, slateId, body, opts);
+    }
+
+    public DfsLineups.SimJobStatusResponse simLineupsStart(long slateId, DfsLineups.SimLineupsRequest body) {
+        return DfsLineups.simLineupsStart(http, slateId, body);
+    }
+
+    public DfsLineups.SimJobPollResult simJob(long slateId, String jobId) {
+        return DfsLineups.simJob(http, slateId, jobId);
+    }
+
+    public DfsLineups.PortfolioSelectResponse simSelectPool(long slateId, DfsLineups.PortfolioSelectRequest body) {
+        return DfsLineups.simSelectPool(http, slateId, body);
+    }
+
+    public DfsLineups.LateSwapResponse simLateSwap(long slateId, DfsLineups.LateSwapRequest body) {
+        return DfsLineups.simLateSwap(http, slateId, body, null);
+    }
+
+    public DfsLineups.LateSwapResponse simLateSwap(long slateId, DfsLineups.LateSwapRequest body, DfsLineups.SimRequestOptions opts) {
+        return DfsLineups.simLateSwap(http, slateId, body, opts);
     }
 
     public Iterable<DFSSlate> iterate() {

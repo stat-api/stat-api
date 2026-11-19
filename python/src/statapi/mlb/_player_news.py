@@ -15,7 +15,8 @@ MLBPlayerNew = TypedDict(
     "MLBPlayerNew",
     {
         "id": int,
-        "external_id": str,
+        "game_id": int | None,
+        "opponent_team_id": int | None,
         "player_id": int | None,
         "team_id": int | None,
         "ai_processed": bool,
@@ -24,13 +25,14 @@ MLBPlayerNew = TypedDict(
         "category": str | None,
         "content": str | None,
         "description": str | None,
-        "link": str | None,
+        "first_reported_at": str | None,
         "news_time": str,
         "priority": int,
         "processed_at": str | None,
         "situational_impact": dict[str, Any] | None,
-        "source": str,
+        "status_enum": str | None,
         "title": str,
+        "urgency": str | None,
     },
 )
 
@@ -41,10 +43,13 @@ class MLBPlayerNewsResource:
     def __init__(self, transport: HttpTransport) -> None:
         self._transport = transport
 
-    def list(self, *, player_id: int | None = None, team_id: int | None = None, news_time: str | None = None, limit: int | None = None, from_id: int | None = None) -> Page[MLBPlayerNew]:
+    def list(self, *, player_id: int | None = None, team_id: int | None = None, category: str | None = None, status_enum: str | None = None, urgency: str | None = None, news_time: str | None = None, limit: int | None = None, from_id: int | None = None) -> Page[MLBPlayerNew]:
         body, quota = self._transport.request(self._PATH, {
             "player_id": player_id,
             "team_id": team_id,
+            "category": category,
+            "status_enum": status_enum,
+            "urgency": urgency,
             "news_time": news_time,
             "limit": limit,
             "from_id": from_id,
@@ -62,13 +67,13 @@ class MLBPlayerNewsResource:
         row: MLBPlayerNew = body
         return row
 
-    def iter(self, *, player_id: int | None = None, team_id: int | None = None, news_time: str | None = None, limit: int | None = None) -> Iterator[MLBPlayerNew]:
+    def iter(self, *, player_id: int | None = None, team_id: int | None = None, category: str | None = None, status_enum: str | None = None, urgency: str | None = None, news_time: str | None = None, limit: int | None = None) -> Iterator[MLBPlayerNew]:
         # Always walk with from_id (starting at 0): from_id forces the server's
         # ascending keyset order. Without it, DESC-default tables re-yield page
         # 1 and under-walk. Iteration is therefore always oldest-first.
         from_id: int | None = 0
         while True:
-            page = self.list(player_id=player_id, team_id=team_id, news_time=news_time, limit=limit, from_id=from_id)
+            page = self.list(player_id=player_id, team_id=team_id, category=category, status_enum=status_enum, urgency=urgency, news_time=news_time, limit=limit, from_id=from_id)
             for row in page.rows:
                 yield row
             if page.next_from_id is None:

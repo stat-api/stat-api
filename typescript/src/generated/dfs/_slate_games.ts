@@ -2,7 +2,12 @@
 //
 // SDK resource for dfs.slate_games (public API).
 // Source: schema/api/groups/public.yml + schema/model/dfs/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface DFSSlateGame {
   id: number;
@@ -15,6 +20,9 @@ export interface DFSSlateGame {
 
 export interface DFSSlateGamesListParams {
   slate_id?: number;
+  operator_slate_id?: number;
+  operator_id?: string | number;
+  operator?: string | number;
   limit?: number;
   from_id?: number;
 }
@@ -23,6 +31,8 @@ export interface DFSSlateGamesListResponse {
   slate_games: DFSSlateGame[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -32,7 +42,10 @@ export class DFSSlateGamesResource {
 
   async list(params?: DFSSlateGamesListParams): Promise<DFSSlateGamesListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<DFSSlateGamesListResponse, 'quota'>>(this.opts, `/api/v1/dfs/slate_games${qs}`);
+    const r = await fetchJson<Omit<DFSSlateGamesListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/dfs/slate_games${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -50,7 +63,10 @@ export class DFSSlateGamesResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: DFSSlateGamesListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as DFSSlateGamesListParams);
+      const page: DFSSlateGamesListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as DFSSlateGamesListParams);
       for (const row of page.slate_games) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

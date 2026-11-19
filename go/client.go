@@ -18,7 +18,9 @@
 package statapi
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"math/rand"
@@ -122,7 +124,8 @@ func NewWithOptions(opts Options) (*Client, error) {
 // get issues an authenticated GET and returns the raw body plus the parsed
 // quota snapshot. Connection errors and 5xx responses are retried up to
 // maxAttempts with jittered backoff; 4xx (including 429) are never retried and
-// surface as the mapped typed error.
+// surface as the mapped typed error. A 202 Accepted holds no data: it surfaces
+// as *NotReadyError (never as a body) and is never retried.
 func (c *Client) get(ctx context.Context, path string, q url.Values) ([]byte, Quota, error) {
 	target := c.baseURL + path
 	if enc := q.Encode(); enc != "" {
@@ -131,7 +134,7 @@ func (c *Client) get(ctx context.Context, path string, q url.Values) ([]byte, Qu
 
 	for attempt := 0; ; attempt++ {
 		last := attempt == maxAttempts-1
-		body, quota, status, err := c.do(ctx, target)
+		res, err := c.do(ctx, http.MethodGet, target, nil)
 		if err != nil {
 			if last {
 				return nil, Quota{}, &APIError{Status: 0, Body: err.Error(), Path: path}
@@ -141,42 +144,142 @@ func (c *Client) get(ctx context.Context, path string, q url.Values) ([]byte, Qu
 			}
 			continue
 		}
-		if status >= 200 && status < 300 {
-			return body, quota, nil
+		// A 202 holds no data: it falls through to errorForStatus (NotReadyError)
+		// and, being below 500, is never retried.
+		if res.status >= 200 && res.status < 300 && res.status != http.StatusAccepted {
+			return res.body, res.quota, nil
 		}
-		if status >= 500 && !last {
+		if res.status >= 500 && !last {
 			if werr := sleepBackoff(ctx, attempt); werr != nil {
-				return nil, quota, &APIError{Status: 0, Body: werr.Error(), Path: path}
+				return nil, res.quota, &APIError{Status: 0, Body: werr.Error(), Path: path}
 			}
 			continue
 		}
-		return nil, quota, errorForStatus(status, string(body), path, quota)
+		return nil, res.quota, errorForStatus(res.status, string(res.body), path, res.quota, res.header)
+	}
+}
+
+// post issues an authenticated JSON POST request and returns the raw body plus
+// the parsed quota snapshot.
+func (c *Client) post(ctx context.Context, path string, payload any) ([]byte, Quota, error) {
+	raw, err := json.Marshal(payload)
+	if err != nil {
+		return nil, Quota{}, err
+	}
+	target := c.baseURL + path
+	res, err := c.do(ctx, http.MethodPost, target, raw)
+	if err != nil {
+		return nil, Quota{}, &APIError{Status: 0, Body: err.Error(), Path: path}
+	}
+	if res.status >= 200 && res.status < 300 && res.status != http.StatusAccepted {
+		return res.body, res.quota, nil
+	}
+	return nil, res.quota, errorForStatus(res.status, string(res.body), path, res.quota, res.header)
+}
+
+// response is one completed request attempt: the full body, the parsed quota
+// snapshot, the HTTP status and the response headers.
+type response struct {
+	body   []byte
+	quota  Quota
+	status int
+	header http.Header
+}
+
+// doRaw issues an authenticated request returning the raw response (including 202 Accepted)
+// with optional extra headers and 5xx/network retries for idempotent calls.
+func (c *Client) doRaw(
+	ctx context.Context,
+	method string,
+	path string,
+	payload any,
+	extraHeaders map[string]string,
+	retry5xx bool,
+) (response, error) {
+	var bodyBytes []byte
+	if payload != nil {
+		raw, err := json.Marshal(payload)
+		if err != nil {
+			return response{}, err
+		}
+		bodyBytes = raw
+	}
+	target := c.baseURL + path
+	for attempt := 0; ; attempt++ {
+		last := !retry5xx || attempt == maxAttempts-1
+		res, err := c.doWithHeaders(ctx, method, target, bodyBytes, extraHeaders)
+		if err != nil {
+			if last {
+				return response{}, &APIError{Status: 0, Body: err.Error(), Path: path}
+			}
+			if werr := sleepBackoff(ctx, attempt); werr != nil {
+				return response{}, &APIError{Status: 0, Body: werr.Error(), Path: path}
+			}
+			continue
+		}
+		if res.status >= 200 && res.status < 300 {
+			return res, nil
+		}
+		if retry5xx && res.status >= 500 && !last {
+			if werr := sleepBackoff(ctx, attempt); werr != nil {
+				return response{}, &APIError{Status: 0, Body: werr.Error(), Path: path}
+			}
+			continue
+		}
+		return response{}, errorForStatus(res.status, string(res.body), path, res.quota, res.header)
 	}
 }
 
 // do performs a single request attempt: build, send, read the full body, parse
 // quota headers. A non-nil error is a transport-level failure (retryable); an
 // HTTP error status is reported through the returned status code.
-func (c *Client) do(ctx context.Context, target string) ([]byte, Quota, int, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, target, nil)
+func (c *Client) do(ctx context.Context, method string, target string, bodyBytes []byte) (response, error) {
+	return c.doWithHeaders(ctx, method, target, bodyBytes, nil)
+}
+
+func (c *Client) doWithHeaders(
+	ctx context.Context,
+	method string,
+	target string,
+	bodyBytes []byte,
+	extraHeaders map[string]string,
+) (response, error) {
+	var bodyReader io.Reader
+	if bodyBytes != nil {
+		bodyReader = bytes.NewReader(bodyBytes)
+	}
+	req, err := http.NewRequestWithContext(ctx, method, target, bodyReader)
 	if err != nil {
-		return nil, Quota{}, 0, err
+		return response{}, err
 	}
 	req.Header.Set("Authorization", "Bearer "+c.apiKey)
 	req.Header.Set("User-Agent", c.userAgent)
 	req.Header.Set("Accept", "application/json")
+	if bodyBytes != nil {
+		req.Header.Set("Content-Type", "application/json")
+	}
+	for k, v := range extraHeaders {
+		if v != "" {
+			req.Header.Set(k, v)
+		}
+	}
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, Quota{}, 0, err
+		return response{}, err
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, Quota{}, 0, err
+		return response{}, err
 	}
-	return body, parseQuota(resp.Header), resp.StatusCode, nil
+	return response{
+		body:   body,
+		quota:  parseQuota(resp.Header),
+		status: resp.StatusCode,
+		header: resp.Header,
+	}, nil
 }
 
 // sleepBackoff waits out the jittered backoff for the given retry attempt,

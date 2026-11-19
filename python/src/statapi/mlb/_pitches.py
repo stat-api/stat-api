@@ -75,6 +75,7 @@ MLBPitch = TypedDict(
         "spin_direction": float | None,
         "spin_rate": float | None,
         "spray_angle": float | None,
+        "start_time": str | None,
         "statcast_quality_score": float | None,
         "strike": bool,
         "strike_zone_bottom": float | None,

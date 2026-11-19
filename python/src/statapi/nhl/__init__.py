@@ -4,48 +4,82 @@
 
 from ._seasons import NHLSeasonsResource
 from ._arenas import NHLArenasResource
+from ._broadcasters import NHLBroadcastersResource
+from ._coaching_staffs import NHLCoachingStaffsResource
+from ._referees import NHLRefereesResource
 from ._teams import NHLTeamsResource
-from ._players import NHLPlayersResource
 from ._games import NHLGamesResource
+from ._players import NHLPlayersResource
 from ._line_combinations import NHLLineCombinationsResource
 from ._operator_team_lookups import NHLOperatorTeamLookupsResource
 from ._playoff_series import NHLPlayoffSeriesResource
 from ._season_team_stats import NHLSeasonTeamStatsResource
 from ._standings import NHLStandingsResource
-from ._draft_picks import NHLDraftPicksResource
-from ._game_odds import NHLGameOddsResource
+from ._team_coaching_staffs import NHLTeamCoachingStaffsResource
+from ._team_standings import NHLTeamStandingsResource
+from ._game_broadcasters import NHLGameBroadcastersResource
+from ._game_lines import NHLGameLinesResource
+from ._game_period_lines import NHLGamePeriodLinesResource
+from ._game_player_props import NHLGamePlayerPropsResource
 from ._game_player_stats import NHLGamePlayerStatsResource
+from ._game_referees import NHLGameRefereesResource
+from ._game_shifts import NHLGameShiftsResource
+from ._game_team_rosters import NHLGameTeamRostersResource
 from ._game_team_stats import NHLGameTeamStatsResource
 from ._goalie_depth_charts import NHLGoalieDepthChartsResource
+from ._operator_game_fantasy_stats import NHLOperatorGameFantasyStatsResource
+from ._operator_player_fantasy_stats import NHLOperatorPlayerFantasyStatsResource
 from ._operator_player_lookups import NHLOperatorPlayerLookupsResource
+from ._operator_team_fantasy_stats import NHLOperatorTeamFantasyStatsResource
 from ._penalties import NHLPenaltiesResource
 from ._periods import NHLPeriodsResource
-from ._player_injuries import NHLPlayerInjuriesResource
+from ._play_by_plays import NHLPlayByPlaysResource
 from ._player_news import NHLPlayerNewsResource
+from ._projected_player_stats import NHLProjectedPlayerStatsResource
+from ._projected_team_stats import NHLProjectedTeamStatsResource
 from ._scoring_plays import NHLScoringPlaysResource
 from ._season_player_stats import NHLSeasonPlayerStatsResource
+from ._team_game_contexts import NHLTeamGameContextsResource
+from ._team_news import NHLTeamNewsResource
 
 __all__ = [
     "NHLSeasonsResource",
     "NHLArenasResource",
+    "NHLBroadcastersResource",
+    "NHLCoachingStaffsResource",
+    "NHLRefereesResource",
     "NHLTeamsResource",
-    "NHLPlayersResource",
     "NHLGamesResource",
+    "NHLPlayersResource",
     "NHLLineCombinationsResource",
     "NHLOperatorTeamLookupsResource",
     "NHLPlayoffSeriesResource",
     "NHLSeasonTeamStatsResource",
     "NHLStandingsResource",
-    "NHLDraftPicksResource",
-    "NHLGameOddsResource",
+    "NHLTeamCoachingStaffsResource",
+    "NHLTeamStandingsResource",
+    "NHLGameBroadcastersResource",
+    "NHLGameLinesResource",
+    "NHLGamePeriodLinesResource",
+    "NHLGamePlayerPropsResource",
     "NHLGamePlayerStatsResource",
+    "NHLGameRefereesResource",
+    "NHLGameShiftsResource",
+    "NHLGameTeamRostersResource",
     "NHLGameTeamStatsResource",
     "NHLGoalieDepthChartsResource",
+    "NHLOperatorGameFantasyStatsResource",
+    "NHLOperatorPlayerFantasyStatsResource",
     "NHLOperatorPlayerLookupsResource",
+    "NHLOperatorTeamFantasyStatsResource",
     "NHLPenaltiesResource",
     "NHLPeriodsResource",
-    "NHLPlayerInjuriesResource",
+    "NHLPlayByPlaysResource",
     "NHLPlayerNewsResource",
+    "NHLProjectedPlayerStatsResource",
+    "NHLProjectedTeamStatsResource",
     "NHLScoringPlaysResource",
     "NHLSeasonPlayerStatsResource",
+    "NHLTeamGameContextsResource",
+    "NHLTeamNewsResource",
 ]

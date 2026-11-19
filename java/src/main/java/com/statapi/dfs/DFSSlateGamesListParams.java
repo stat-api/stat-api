@@ -10,11 +10,29 @@ import java.util.Map;
 public final class DFSSlateGamesListParams {
 
     private Long slateId;
+    private Long operatorSlateId;
+    private String operatorId;
+    private String operator;
     private Long limit;
     private Long fromId;
 
     public DFSSlateGamesListParams slateId(Long slateId) {
         this.slateId = slateId;
+        return this;
+    }
+
+    public DFSSlateGamesListParams operatorSlateId(Long operatorSlateId) {
+        this.operatorSlateId = operatorSlateId;
+        return this;
+    }
+
+    public DFSSlateGamesListParams operatorId(String operatorId) {
+        this.operatorId = operatorId;
+        return this;
+    }
+
+    public DFSSlateGamesListParams operator(String operator) {
+        this.operator = operator;
         return this;
     }
 
@@ -32,6 +50,15 @@ public final class DFSSlateGamesListParams {
         Map<String, String> query = new LinkedHashMap<>();
         if (slateId != null) {
             query.put("slate_id", String.valueOf(slateId));
+        }
+        if (operatorSlateId != null) {
+            query.put("operator_slate_id", String.valueOf(operatorSlateId));
+        }
+        if (operatorId != null) {
+            query.put("operator_id", String.valueOf(operatorId));
+        }
+        if (operator != null) {
+            query.put("operator", String.valueOf(operator));
         }
         if (limit != null) {
             query.put("limit", String.valueOf(limit));

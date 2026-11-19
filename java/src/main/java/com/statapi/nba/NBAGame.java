@@ -33,7 +33,6 @@ public record NBAGame(
     String seriesGameNumber,
     String seriesName,
     String seriesText,
-    String startTime,
     String status
 ) {
 
@@ -65,7 +64,6 @@ public record NBAGame(
             json.get("series_game_number").asString(),
             json.get("series_name").asString(),
             json.get("series_text").asString(),
-            json.get("start_time").asString(),
             json.get("status").asString()
         );
     }

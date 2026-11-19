@@ -30,7 +30,7 @@ export function createApp(opts: AppOptions): Hono {
   const { store, startedAt } = opts;
   const app = new Hono();
 
-  app.get('/healthz', c =>
+  app.get('/healthz', (c) =>
     c.json({
       ok: true,
       uptimeSec: Math.round((Date.now() - startedAt) / 1000),
@@ -38,16 +38,16 @@ export function createApp(opts: AppOptions): Hono {
     }),
   );
 
-  app.get('/api/snapshot', c => c.json(store.snapshot()));
+  app.get('/api/snapshot', (c) => c.json(store.snapshot()));
 
-  app.get('/api/events', c => {
+  app.get('/api/events', (c) => {
     c.header('Cache-Control', 'no-cache');
     c.header('X-Accel-Buffering', 'no');
-    return streamSSE(c, async stream => {
+    return streamSSE(c, async (stream) => {
       const pending: SseEvent[] = [];
       let wake: (() => void) | null = null;
 
-      const unsubscribe = store.subscribe(event => {
+      const unsubscribe = store.subscribe((event) => {
         pending.push(event); // the current full snapshot arrives here synchronously
         wake?.();
       });
@@ -63,7 +63,7 @@ export function createApp(opts: AppOptions): Hono {
             await stream.writeSSE({ data: JSON.stringify(event) });
           }
           if (stream.aborted) break;
-          await new Promise<void>(resolve => {
+          await new Promise<void>((resolve) => {
             const timer = setTimeout(resolve, HEARTBEAT_MS);
             wake = () => {
               clearTimeout(timer);

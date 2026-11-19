@@ -11,6 +11,9 @@ public final class NHLPlayerNewsListParams {
 
     private Long playerId;
     private Long teamId;
+    private String category;
+    private String statusEnum;
+    private String urgency;
     private String newsTime;
     private Long limit;
     private Long fromId;
@@ -22,6 +25,21 @@ public final class NHLPlayerNewsListParams {
 
     public NHLPlayerNewsListParams teamId(Long teamId) {
         this.teamId = teamId;
+        return this;
+    }
+
+    public NHLPlayerNewsListParams category(String category) {
+        this.category = category;
+        return this;
+    }
+
+    public NHLPlayerNewsListParams statusEnum(String statusEnum) {
+        this.statusEnum = statusEnum;
+        return this;
+    }
+
+    public NHLPlayerNewsListParams urgency(String urgency) {
+        this.urgency = urgency;
         return this;
     }
 
@@ -47,6 +65,15 @@ public final class NHLPlayerNewsListParams {
         }
         if (teamId != null) {
             query.put("team_id", String.valueOf(teamId));
+        }
+        if (category != null) {
+            query.put("category", String.valueOf(category));
+        }
+        if (statusEnum != null) {
+            query.put("status_enum", String.valueOf(statusEnum));
+        }
+        if (urgency != null) {
+            query.put("urgency", String.valueOf(urgency));
         }
         if (newsTime != null) {
             query.put("news_time", String.valueOf(newsTime));

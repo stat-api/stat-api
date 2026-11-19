@@ -15,7 +15,6 @@ PGATour = TypedDict(
     "PGATour",
     {
         "id": int,
-        "tour_id": int,
         "active": bool,
         "code": str,
         "description": str | None,

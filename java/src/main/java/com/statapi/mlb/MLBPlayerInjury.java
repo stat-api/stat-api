@@ -19,7 +19,6 @@ public record MLBPlayerInjury(
     String injuryType,
     Boolean isSurgeryRequired,
     String side,
-    String source,
     String startDate,
     String status,
     String updatedDate
@@ -39,7 +38,6 @@ public record MLBPlayerInjury(
             json.get("injury_type").asString(),
             json.get("is_surgery_required").asBoolean(),
             json.get("side").asString(),
-            json.get("source").asString(),
             json.get("start_date").asString(),
             json.get("status").asString(),
             json.get("updated_date").asString()

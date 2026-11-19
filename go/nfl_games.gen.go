@@ -30,7 +30,7 @@ type NFLGame struct {
 	EndTime            *string `json:"end_time"`
 	GameLabel          *string `json:"game_label"`
 	GameSubLabel       *string `json:"game_sub_label"`
-	GameTime           string  `json:"game_time"`
+	GameTime           *string `json:"game_time"`
 	HomeRotationNumber *int    `json:"home_rotation_number"`
 	HomeTeam           string  `json:"home_team"`
 	HomeTeamScore      int     `json:"home_team_score"`
@@ -42,8 +42,8 @@ type NFLGame struct {
 	PlayoffSeedHome    *int    `json:"playoff_seed_home"`
 	PostponedStatus    *string `json:"postponed_status"`
 	SeasonType         string  `json:"season_type"`
-	StartTime          string  `json:"start_time"`
 	Status             string  `json:"status"`
+	TimeTbd            bool    `json:"time_tbd"`
 	Type               string  `json:"type"`
 	Week               int     `json:"week"`
 }

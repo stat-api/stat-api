@@ -10,11 +10,65 @@ import java.util.Map;
 public final class DFSContestsListParams {
 
     private Long slateId;
+    private Long operatorSlateId;
+    private Long operatorId;
+    private String operator;
+    private String status;
+    private String slateStatus;
+    private String lineupsStatus;
+    private String hasLineups;
+    private Integer partialLineupsCount;
+    private Boolean completeFile;
     private Long limit;
     private Long fromId;
 
     public DFSContestsListParams slateId(Long slateId) {
         this.slateId = slateId;
+        return this;
+    }
+
+    public DFSContestsListParams operatorSlateId(Long operatorSlateId) {
+        this.operatorSlateId = operatorSlateId;
+        return this;
+    }
+
+    public DFSContestsListParams operatorId(Long operatorId) {
+        this.operatorId = operatorId;
+        return this;
+    }
+
+    public DFSContestsListParams operator(String operator) {
+        this.operator = operator;
+        return this;
+    }
+
+    public DFSContestsListParams status(String status) {
+        this.status = status;
+        return this;
+    }
+
+    public DFSContestsListParams slateStatus(String slateStatus) {
+        this.slateStatus = slateStatus;
+        return this;
+    }
+
+    public DFSContestsListParams lineupsStatus(String lineupsStatus) {
+        this.lineupsStatus = lineupsStatus;
+        return this;
+    }
+
+    public DFSContestsListParams hasLineups(String hasLineups) {
+        this.hasLineups = hasLineups;
+        return this;
+    }
+
+    public DFSContestsListParams partialLineupsCount(Integer partialLineupsCount) {
+        this.partialLineupsCount = partialLineupsCount;
+        return this;
+    }
+
+    public DFSContestsListParams completeFile(Boolean completeFile) {
+        this.completeFile = completeFile;
         return this;
     }
 
@@ -32,6 +86,33 @@ public final class DFSContestsListParams {
         Map<String, String> query = new LinkedHashMap<>();
         if (slateId != null) {
             query.put("slate_id", String.valueOf(slateId));
+        }
+        if (operatorSlateId != null) {
+            query.put("operator_slate_id", String.valueOf(operatorSlateId));
+        }
+        if (operatorId != null) {
+            query.put("operator_id", String.valueOf(operatorId));
+        }
+        if (operator != null) {
+            query.put("operator", String.valueOf(operator));
+        }
+        if (status != null) {
+            query.put("status", String.valueOf(status));
+        }
+        if (slateStatus != null) {
+            query.put("slate_status", String.valueOf(slateStatus));
+        }
+        if (lineupsStatus != null) {
+            query.put("lineups_status", String.valueOf(lineupsStatus));
+        }
+        if (hasLineups != null) {
+            query.put("has_lineups", String.valueOf(hasLineups));
+        }
+        if (partialLineupsCount != null) {
+            query.put("partial_lineups_count", String.valueOf(partialLineupsCount));
+        }
+        if (completeFile != null) {
+            query.put("complete_file", String.valueOf(completeFile));
         }
         if (limit != null) {
             query.put("limit", String.valueOf(limit));

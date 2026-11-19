@@ -60,7 +60,10 @@ export function LineChart({
   const scaleY = (v: number) =>
     yMax === yMin ? (top + bottom) / 2 : bottom - ((v - yMin) / (yMax - yMin)) * (bottom - top);
 
-  const gridLines = Array.from({ length: yTicks + 1 }, (_, i) => yMin + ((yMax - yMin) * i) / yTicks);
+  const gridLines = Array.from(
+    { length: yTicks + 1 },
+    (_, i) => yMin + ((yMax - yMin) * i) / yTicks,
+  );
 
   return (
     <svg
@@ -69,12 +72,19 @@ export function LineChart({
       preserveAspectRatio="xMidYMid meet"
       role="img"
     >
-      {gridLines.map((gv, i) => {
+      <title>Line chart</title>
+      {gridLines.map((gv) => {
         const y = scaleY(gv);
         return (
-          <g key={`grid-${i}`}>
+          <g key={`grid-${gv}`}>
             <line className={styles.grid} x1={left} y1={y} x2={right} y2={y} />
-            <text className={styles.label} x={left - 8} y={y} dominantBaseline="middle" textAnchor="end">
+            <text
+              className={styles.label}
+              x={left - 8}
+              y={y}
+              dominantBaseline="middle"
+              textAnchor="end"
+            >
               {formatY(gv)}
             </text>
           </g>
@@ -92,11 +102,19 @@ export function LineChart({
       {drawable.map((s) => {
         const ordered = s.points.slice().sort((a, b) => a.t - b.t);
         const last = ordered[ordered.length - 1]!;
-        const path = ordered.map((p) => `${scaleX(p.t).toFixed(1)},${scaleY(p.v).toFixed(1)}`).join(' ');
+        const path = ordered
+          .map((p) => `${scaleX(p.t).toFixed(1)},${scaleY(p.v).toFixed(1)}`)
+          .join(' ');
         return (
           <g key={s.label}>
             <polyline className={styles.line} points={path} stroke={s.color} />
-            <circle className={styles.dot} cx={scaleX(last.t)} cy={scaleY(last.v)} r={3.2} fill={s.color} />
+            <circle
+              className={styles.dot}
+              cx={scaleX(last.t)}
+              cy={scaleY(last.v)}
+              r={3.2}
+              fill={s.color}
+            />
           </g>
         );
       })}

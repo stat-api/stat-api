@@ -18,7 +18,11 @@ export function QuotaFooter({ quota, generatedAt }: QuotaFooterProps) {
       <div className={styles.left}>
         <span className={styles.tag}>records-metered · one poller feeds every viewer</span>
       </div>
-      {quota ? <QuotaBar quota={quota} /> : <span className={styles.na}>quota unavailable (demo data)</span>}
+      {quota ? (
+        <QuotaBar quota={quota} />
+      ) : (
+        <span className={styles.na}>quota unavailable (demo data)</span>
+      )}
       <div className={styles.stamp}>snapshot {formatAgo(generatedAt)}</div>
     </footer>
   );

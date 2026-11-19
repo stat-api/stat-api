@@ -12,10 +12,10 @@ import { StatApi } from '@stat-api/client';
 
 import { createApp } from '../src/app.ts';
 import { loadConfig } from '../src/config.ts';
+import type { Snapshot, SseEvent } from '../src/contract.ts';
 import { Poller } from '../src/poller.ts';
 import { QuotaMeter, type StatApiClient } from '../src/sdk.ts';
 import { SnapshotStore } from '../src/snapshot.ts';
-import type { Snapshot, SseEvent } from '../src/contract.ts';
 
 async function main(): Promise<number> {
   if (!process.env.STAT_API_KEY) {
@@ -34,7 +34,9 @@ async function main(): Promise<number> {
   const app = createApp({ store, startedAt: Date.now() });
   const server = Bun.serve({ port: 0, idleTimeout: 60, fetch: app.fetch });
   const base = `http://localhost:${server.port}`;
-  console.log(`[smoke] server on ${base} (backend ${config.dayOverride ? `day=${config.dayOverride} ` : ''}via SDK)`);
+  console.log(
+    `[smoke] server on ${base} (backend ${config.dayOverride ? `day=${config.dayOverride} ` : ''}via SDK)`,
+  );
 
   let ok = true;
   try {
@@ -95,14 +97,13 @@ async function readOneSseEvent(url: string, timeoutMs: number): Promise<SseEvent
       const { value, done } = await reader.read();
       if (done) return null;
       buffer += decoder.decode(value, { stream: true });
-      let sep: number;
-      while ((sep = buffer.indexOf('\n\n')) >= 0) {
+      for (let sep = buffer.indexOf('\n\n'); sep >= 0; sep = buffer.indexOf('\n\n')) {
         const block = buffer.slice(0, sep);
         buffer = buffer.slice(sep + 2);
         if (block.includes('event: ping')) continue;
-        const dataLine = block.split('\n').find(l => l.startsWith('data:'));
+        const dataLine = block.split('\n').find((l) => l.startsWith('data:'));
         const json = dataLine?.slice('data:'.length).trim();
-        if (json && json.startsWith('{')) return JSON.parse(json) as SseEvent;
+        if (json?.startsWith('{')) return JSON.parse(json) as SseEvent;
       }
     }
   } finally {

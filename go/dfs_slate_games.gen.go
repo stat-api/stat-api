@@ -25,9 +25,12 @@ type DFSSlateGame struct {
 
 // DFSSlateGamesListParams are the query parameters for listing dfs.slate_games.
 type DFSSlateGamesListParams struct {
-	SlateID *int64
-	Limit   *int
-	FromID  *int64
+	SlateID         *int64
+	OperatorSlateID *int
+	OperatorID      *string
+	Operator        *string
+	Limit           *int
+	FromID          *int64
 }
 
 func (p *DFSSlateGamesListParams) values() url.Values {
@@ -37,6 +40,15 @@ func (p *DFSSlateGamesListParams) values() url.Values {
 	}
 	if p.SlateID != nil {
 		v.Set("slate_id", strconv.FormatInt(*p.SlateID, 10))
+	}
+	if p.OperatorSlateID != nil {
+		v.Set("operator_slate_id", strconv.Itoa(*p.OperatorSlateID))
+	}
+	if p.OperatorID != nil {
+		v.Set("operator_id", *p.OperatorID)
+	}
+	if p.Operator != nil {
+		v.Set("operator", *p.Operator)
 	}
 	if p.Limit != nil {
 		v.Set("limit", strconv.Itoa(*p.Limit))

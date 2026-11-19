@@ -9,7 +9,6 @@ import com.statapi.JsonValue;
 public record NFLCombineResult(
     Long id,
     String cfbId,
-    String pfrId,
     Long playerId,
     Long teamId,
     Integer bench,
@@ -29,7 +28,6 @@ public record NFLCombineResult(
         return new NFLCombineResult(
             json.get("id").asLong(),
             json.get("cfb_id").asString(),
-            json.get("pfr_id").asString(),
             json.get("player_id").asLong(),
             json.get("team_id").asLong(),
             json.get("bench").asInt(),

@@ -13,7 +13,7 @@ public final class NflTeamStandings {
         // Resolve the current season
         List<NFLSeason> seasonList = api.nfl().seasons().list(new NFLSeasonsListParams().limit(200L)).rows();
         NFLSeason seasonCurrent = seasonList.stream().max(Comparator.comparingInt(NFLSeason::startYear)).orElseThrow();
-        long season = seasonCurrent.id();
+        long season = seasonCurrent.startYear();
 
         // Page every team's season record
         List<NFLSeasonTeamStat> rows = new ArrayList<>();

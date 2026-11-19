@@ -5,8 +5,29 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterator
-from typing import TypedDict
+from collections.abc import Iterator, Mapping
+from typing import Any, TypedDict
+
+from ..dfs_lineups import (
+    LateSwapRequest,
+    LateSwapResponse,
+    OptimizerLineupsRequest,
+    OptimizerLineupsResponse,
+    PortfolioSelectRequest,
+    PortfolioSelectResponse,
+    SimJobPollResult,
+    SimJobStatusResponse,
+    SimLineupsRequest,
+    SimLineupsResponse,
+    optimizer_lineups as _call_optimizer_lineups,
+    optimizer_lineups_csv as _call_optimizer_lineups_csv,
+    sim_job as _call_sim_job,
+    sim_late_swap as _call_sim_late_swap,
+    sim_lineups as _call_sim_lineups,
+    sim_lineups_csv as _call_sim_lineups_csv,
+    sim_lineups_start as _call_sim_lineups_start,
+    sim_select_pool as _call_sim_select_pool,
+)
 
 from ..page import Page
 from ..transport import HttpTransport
@@ -18,11 +39,21 @@ DFSSlate = TypedDict(
         "external_id": int,
         "league_id": int,
         "operator_id": int,
+        "operator_setting_id": str | None,
         "slate_setting_id": int,
+        "complete_file_count": int,
+        "contest_count": int,
         "date": str,
+        "game_count": int,
+        "game_type": str | None,
+        "lineup_contest_count": int,
         "main": bool,
         "name": str | None,
+        "part_of_game": str | None,
+        "player_count": int,
         "start_time": str,
+        "state": str,
+        "status": str,
     },
 )
 
@@ -33,11 +64,16 @@ class DFSSlatesResource:
     def __init__(self, transport: HttpTransport) -> None:
         self._transport = transport
 
-    def list(self, *, operator_id: int | None = None, date: str | None = None, league: str | int | None = None, limit: int | None = None, from_id: int | None = None) -> Page[DFSSlate]:
+    def list(self, *, operator_id: int | None = None, operator: str | int | None = None, date: str | None = None, league: str | int | None = None, sport: str | int | None = None, external_id: int | None = None, operator_slate_id: int | None = None, status: str | None = None, limit: int | None = None, from_id: int | None = None) -> Page[DFSSlate]:
         body, quota = self._transport.request(self._PATH, {
             "operator_id": operator_id,
+            "operator": operator,
             "date": date,
             "league": league,
+            "sport": sport,
+            "external_id": external_id,
+            "operator_slate_id": operator_slate_id,
+            "status": status,
             "limit": limit,
             "from_id": from_id,
         })
@@ -54,15 +90,84 @@ class DFSSlatesResource:
         row: DFSSlate = body
         return row
 
-    def iter(self, *, operator_id: int | None = None, date: str | None = None, league: str | int | None = None, limit: int | None = None) -> Iterator[DFSSlate]:
+    def iter(self, *, operator_id: int | None = None, operator: str | int | None = None, date: str | None = None, league: str | int | None = None, sport: str | int | None = None, external_id: int | None = None, operator_slate_id: int | None = None, status: str | None = None, limit: int | None = None) -> Iterator[DFSSlate]:
         # Always walk with from_id (starting at 0): from_id forces the server's
         # ascending keyset order. Without it, DESC-default tables re-yield page
         # 1 and under-walk. Iteration is therefore always oldest-first.
         from_id: int | None = 0
         while True:
-            page = self.list(operator_id=operator_id, date=date, league=league, limit=limit, from_id=from_id)
+            page = self.list(operator_id=operator_id, operator=operator, date=date, league=league, sport=sport, external_id=external_id, operator_slate_id=operator_slate_id, status=status, limit=limit, from_id=from_id)
             for row in page.rows:
                 yield row
             if page.next_from_id is None:
                 return
             from_id = page.next_from_id
+
+    def optimizer_lineups(
+        self, slate_id: int, request: OptimizerLineupsRequest | Mapping[str, Any] | None = None
+    ) -> OptimizerLineupsResponse:
+        return _call_optimizer_lineups(self._transport, slate_id, request)
+
+    def optimizer_lineups_csv(
+        self, slate_id: int, request: OptimizerLineupsRequest | Mapping[str, Any] | None = None
+    ) -> str:
+        return _call_optimizer_lineups_csv(self._transport, slate_id, request)
+
+    def sim_lineups(
+        self,
+        slate_id: int,
+        request: SimLineupsRequest | Mapping[str, Any] | None = None,
+        *,
+        wait: bool = False,
+        timeout_s: float = 120.0,
+        poll_interval_s: float | None = None,
+    ) -> SimLineupsResponse:
+        return _call_sim_lineups(
+            self._transport, slate_id, request, wait=wait, timeout_s=timeout_s, poll_interval_s=poll_interval_s
+        )
+
+    def sim_lineups_csv(
+        self,
+        slate_id: int,
+        request: SimLineupsRequest | Mapping[str, Any] | None = None,
+        *,
+        wait: bool = False,
+        timeout_s: float = 120.0,
+        poll_interval_s: float | None = None,
+    ) -> str:
+        return _call_sim_lineups_csv(
+            self._transport, slate_id, request, wait=wait, timeout_s=timeout_s, poll_interval_s=poll_interval_s
+        )
+
+    def sim_lineups_start(
+        self, slate_id: int, request: SimLineupsRequest | Mapping[str, Any] | None = None
+    ) -> SimJobStatusResponse:
+        return _call_sim_lineups_start(self._transport, slate_id, request)
+
+    def sim_job(self, slate_id: int, job_id: str) -> SimJobPollResult:
+        return _call_sim_job(self._transport, slate_id, job_id)
+
+    def sim_select_pool(
+        self,
+        slate_id: int,
+        request: PortfolioSelectRequest | Mapping[str, Any],
+        *,
+        timeout_s: float = 120.0,
+        poll_interval_s: float | None = None,
+    ) -> PortfolioSelectResponse:
+        return _call_sim_select_pool(
+            self._transport, slate_id, request, timeout_s=timeout_s, poll_interval_s=poll_interval_s
+        )
+
+    def sim_late_swap(
+        self,
+        slate_id: int,
+        request: LateSwapRequest | Mapping[str, Any],
+        *,
+        wait: bool = False,
+        timeout_s: float = 120.0,
+        poll_interval_s: float | None = None,
+    ) -> LateSwapResponse:
+        return _call_sim_late_swap(
+            self._transport, slate_id, request, wait=wait, timeout_s=timeout_s, poll_interval_s=poll_interval_s
+        )

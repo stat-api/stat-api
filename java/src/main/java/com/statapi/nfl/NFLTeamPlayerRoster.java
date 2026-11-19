@@ -8,25 +8,43 @@ import com.statapi.JsonValue;
 
 public record NFLTeamPlayerRoster(
     Long id,
+    Long gameId,
     Long playerId,
     Long seasonId,
     Long teamId,
     Integer day,
     Integer depthOrder,
+    String gameTime,
+    String injuryStatus,
     String position,
-    String positionGroup
+    String positionGroup,
+    String practiceStatus,
+    String reportPrimaryInjury,
+    String reportStatus,
+    String seasonType,
+    String status,
+    Integer week
 ) {
 
     public static NFLTeamPlayerRoster fromJson(JsonValue json) {
         return new NFLTeamPlayerRoster(
             json.get("id").asLong(),
+            json.get("game_id").asLong(),
             json.get("player_id").asLong(),
             json.get("season_id").asLong(),
             json.get("team_id").asLong(),
             json.get("day").asInt(),
             json.get("depth_order").asInt(),
+            json.get("game_time").asString(),
+            json.get("injury_status").asString(),
             json.get("position").asString(),
-            json.get("position_group").asString()
+            json.get("position_group").asString(),
+            json.get("practice_status").asString(),
+            json.get("report_primary_injury").asString(),
+            json.get("report_status").asString(),
+            json.get("season_type").asString(),
+            json.get("status").asString(),
+            json.get("week").asInt()
         );
     }
 }

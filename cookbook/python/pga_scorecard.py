@@ -1,5 +1,5 @@
 # Build a PGA golfer's scorecard
-# Generated from schema/api/examples/scorecard.yml — do not edit.
+# Generated from schema/api/examples/golf-scorecard.yml — do not edit.
 from statapi import StatApi
 
 api = StatApi()  # reads STAT_API_KEY from the environment

@@ -16,8 +16,9 @@ import (
 // NHLPlayerNew is a row from nhl.player_news.
 type NHLPlayerNew struct {
 	ID                int64            `json:"id"`
-	ExternalID        *string          `json:"external_id"`
+	GameID            *int64           `json:"game_id"`
 	NewsID            *int             `json:"news_id"`
+	OpponentTeamID    *int64           `json:"opponent_team_id"`
 	PlayerID          *int64           `json:"player_id"`
 	TeamID            *int64           `json:"team_id"`
 	AiProcessed       bool             `json:"ai_processed"`
@@ -25,25 +26,28 @@ type NHLPlayerNew struct {
 	Categories        *string          `json:"categories"`
 	Category          *string          `json:"category"`
 	Content           *string          `json:"content"`
+	Description       *string          `json:"description"`
+	FirstReportedAt   *string          `json:"first_reported_at"`
 	NewsTime          string           `json:"news_time"`
-	OriginalSource    *string          `json:"original_source"`
-	OriginalSourceURL *string          `json:"original_source_url"`
 	Priority          int              `json:"priority"`
 	SituationalImpact *json.RawMessage `json:"situational_impact"`
-	Source            *string          `json:"source"`
+	StatusEnum        *string          `json:"status_enum"`
 	TermsOfUse        *string          `json:"terms_of_use"`
 	Title             string           `json:"title"`
 	UpdatedTime       *string          `json:"updated_time"`
-	URL               *string          `json:"url"`
+	Urgency           *string          `json:"urgency"`
 }
 
 // NHLPlayerNewsListParams are the query parameters for listing nhl.player_news.
 type NHLPlayerNewsListParams struct {
-	PlayerID *int64
-	TeamID   *int64
-	NewsTime *string
-	Limit    *int
-	FromID   *int64
+	PlayerID   *int64
+	TeamID     *int64
+	Category   *string
+	StatusEnum *string
+	Urgency    *string
+	NewsTime   *string
+	Limit      *int
+	FromID     *int64
 }
 
 func (p *NHLPlayerNewsListParams) values() url.Values {
@@ -56,6 +60,15 @@ func (p *NHLPlayerNewsListParams) values() url.Values {
 	}
 	if p.TeamID != nil {
 		v.Set("team_id", strconv.FormatInt(*p.TeamID, 10))
+	}
+	if p.Category != nil {
+		v.Set("category", *p.Category)
+	}
+	if p.StatusEnum != nil {
+		v.Set("status_enum", *p.StatusEnum)
+	}
+	if p.Urgency != nil {
+		v.Set("urgency", *p.Urgency)
 	}
 	if p.NewsTime != nil {
 		v.Set("news_time", *p.NewsTime)

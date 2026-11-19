@@ -7,70 +7,40 @@ import com.statapi.Http;
 
 public final class DfsApi {
 
-    private final DFSSlatesResource slates;
-    private final DFSContestUserLineupPlayerEntriesResource contestUserLineupPlayerEntries;
-    private final DFSContestUsersResource contestUsers;
-    private final DFSGameStatsResource gameStats;
-    private final DFSPlayerStatsResource playerStats;
-    private final DFSSlatePlayerProjectionsResource slatePlayerProjections;
-    private final DFSSlateProjectionSourcesResource slateProjectionSources;
     private final DFSSlateSettingsResource slateSettings;
-    private final DFSTeamStatsResource teamStats;
+    private final DFSContestUsersResource contestUsers;
+    private final DFSSlatesResource slates;
     private final DFSContestsResource contests;
     private final DFSSlateGamesResource slateGames;
+    private final DFSGameStatsResource gameStats;
+    private final DFSPlayerStatsResource playerStats;
+    private final DFSTeamStatsResource teamStats;
+    private final DFSContestPayoutShapesResource contestPayoutShapes;
     private final DFSSlatePlayersResource slatePlayers;
-    private final DFSContestUserLineupsResource contestUserLineups;
 
     public DfsApi(Http http) {
-        this.slates = new DFSSlatesResource(http);
-        this.contestUserLineupPlayerEntries = new DFSContestUserLineupPlayerEntriesResource(http);
-        this.contestUsers = new DFSContestUsersResource(http);
-        this.gameStats = new DFSGameStatsResource(http);
-        this.playerStats = new DFSPlayerStatsResource(http);
-        this.slatePlayerProjections = new DFSSlatePlayerProjectionsResource(http);
-        this.slateProjectionSources = new DFSSlateProjectionSourcesResource(http);
         this.slateSettings = new DFSSlateSettingsResource(http);
-        this.teamStats = new DFSTeamStatsResource(http);
+        this.contestUsers = new DFSContestUsersResource(http);
+        this.slates = new DFSSlatesResource(http);
         this.contests = new DFSContestsResource(http);
         this.slateGames = new DFSSlateGamesResource(http);
+        this.gameStats = new DFSGameStatsResource(http);
+        this.playerStats = new DFSPlayerStatsResource(http);
+        this.teamStats = new DFSTeamStatsResource(http);
+        this.contestPayoutShapes = new DFSContestPayoutShapesResource(http);
         this.slatePlayers = new DFSSlatePlayersResource(http);
-        this.contestUserLineups = new DFSContestUserLineupsResource(http);
-    }
-
-    public DFSSlatesResource slates() {
-        return slates;
-    }
-
-    public DFSContestUserLineupPlayerEntriesResource contestUserLineupPlayerEntries() {
-        return contestUserLineupPlayerEntries;
-    }
-
-    public DFSContestUsersResource contestUsers() {
-        return contestUsers;
-    }
-
-    public DFSGameStatsResource gameStats() {
-        return gameStats;
-    }
-
-    public DFSPlayerStatsResource playerStats() {
-        return playerStats;
-    }
-
-    public DFSSlatePlayerProjectionsResource slatePlayerProjections() {
-        return slatePlayerProjections;
-    }
-
-    public DFSSlateProjectionSourcesResource slateProjectionSources() {
-        return slateProjectionSources;
     }
 
     public DFSSlateSettingsResource slateSettings() {
         return slateSettings;
     }
 
-    public DFSTeamStatsResource teamStats() {
-        return teamStats;
+    public DFSContestUsersResource contestUsers() {
+        return contestUsers;
+    }
+
+    public DFSSlatesResource slates() {
+        return slates;
     }
 
     public DFSContestsResource contests() {
@@ -81,11 +51,23 @@ public final class DfsApi {
         return slateGames;
     }
 
-    public DFSSlatePlayersResource slatePlayers() {
-        return slatePlayers;
+    public DFSGameStatsResource gameStats() {
+        return gameStats;
     }
 
-    public DFSContestUserLineupsResource contestUserLineups() {
-        return contestUserLineups;
+    public DFSPlayerStatsResource playerStats() {
+        return playerStats;
+    }
+
+    public DFSTeamStatsResource teamStats() {
+        return teamStats;
+    }
+
+    public DFSContestPayoutShapesResource contestPayoutShapes() {
+        return contestPayoutShapes;
+    }
+
+    public DFSSlatePlayersResource slatePlayers() {
+        return slatePlayers;
     }
 }

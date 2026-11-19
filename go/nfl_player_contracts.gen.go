@@ -16,7 +16,6 @@ import (
 // NFLPlayerContract is a row from nfl.player_contracts.
 type NFLPlayerContract struct {
 	ID                 int64   `json:"id"`
-	OtcID              string  `json:"otc_id"`
 	PlayerID           int64   `json:"player_id"`
 	TeamID             int64   `json:"team_id"`
 	Apy                int64   `json:"apy"`
@@ -29,7 +28,6 @@ type NFLPlayerContract struct {
 	InflatedGuaranteed int64   `json:"inflated_guaranteed"`
 	InflatedValue      int64   `json:"inflated_value"`
 	IsActive           bool    `json:"is_active"`
-	PlayerPageURL      *string `json:"player_page_url"`
 	Position           string  `json:"position"`
 	SeasonHistoryJSON  *string `json:"season_history_json"`
 	Value              int64   `json:"value"`

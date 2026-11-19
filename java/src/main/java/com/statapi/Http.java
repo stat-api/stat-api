@@ -19,8 +19,10 @@ import java.util.Map;
  * (Cloudflare rejects the JDK default), retries transient failures and 5xx
  * responses (never a 4xx — a 429 is a monthly budget, not a transient fault),
  * parses the {@code X-Quota-*} headers, and maps non-2xx statuses onto typed
- * {@link StatApiException} subclasses. The advertised version comes from the
- * generated {@link Version} constant so the User-Agent tracks {@code sdks/VERSION}.
+ * {@link StatApiException} subclasses. A {@code 202 Accepted} holds no data: it
+ * throws {@link NotReadyException} (never returned as data, never retried). The
+ * advertised version comes from the generated {@link Version} constant so the
+ * User-Agent tracks {@code sdks/VERSION}.
  */
 public final class Http {
 
@@ -85,7 +87,41 @@ public final class Http {
         }
     }
 
-    /** Perform a GET and return the parsed body + quota, or throw on non-2xx. */
+    /** Raw HTTP response (allows 202 Accepted and non-JSON CSV bodies). */
+    public static final class RawResponse {
+        private final int status;
+        private final java.net.http.HttpHeaders headers;
+        private final String body;
+        private final Quota quota;
+
+        RawResponse(int status, java.net.http.HttpHeaders headers, String body, Quota quota) {
+            this.status = status;
+            this.headers = headers;
+            this.body = body;
+            this.quota = quota;
+        }
+
+        public int status() {
+            return status;
+        }
+
+        public java.net.http.HttpHeaders headers() {
+            return headers;
+        }
+
+        public String body() {
+            return body;
+        }
+
+        public Quota quota() {
+            return quota;
+        }
+    }
+
+    /**
+     * Perform a GET and return the parsed body + quota, or throw on non-2xx and
+     * on 202 ({@link NotReadyException}: a 202 holds no data).
+     */
     public Response get(String path, Map<String, String> query) {
         String url = baseUrl + path + encodeQuery(query);
         HttpRequest request = HttpRequest.newBuilder(URI.create(url))
@@ -115,6 +151,12 @@ public final class Http {
             }
 
             int status = response.statusCode();
+            if (status == 202) {
+                // 202 Accepted: the work is queued and the body holds no data.
+                // Throw (never return it as data) and never retry.
+                throw new NotReadyException(status, safeParse(response.body()), path,
+                    response.headers().firstValue("Retry-After").orElse(null));
+            }
             if (status >= 200 && status < 300) {
                 return new Response(Json.parse(response.body()), Quota.fromHeaders(response.headers()));
             }
@@ -122,6 +164,108 @@ public final class Http {
             JsonValue body = safeParse(response.body());
             // Retry 5xx until attempts run out; 4xx (incl. 429) fails immediately.
             if (status >= 500 && !last) {
+                sleepBackoff(attempt);
+                continue;
+            }
+            throw StatApiException.forStatus(status, body, path);
+        }
+        throw new AssertionError("stat-api: retry loop exhausted without a result");
+    }
+
+    /**
+     * Perform a POST with a JSON body and return the parsed body + quota, or
+     * throw on non-2xx and on 202 ({@link NotReadyException}).
+     */
+    public Response post(String path, String jsonBody) {
+        String url = baseUrl + path;
+        HttpRequest request = HttpRequest.newBuilder(URI.create(url))
+            .timeout(timeout)
+            .header("Authorization", "Bearer " + apiKey)
+            .header("User-Agent", userAgent)
+            .header("Accept", "application/json")
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(jsonBody, StandardCharsets.UTF_8))
+            .build();
+
+        HttpResponse<String> response;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException ex) {
+            throw new StatApiException(0, JsonValue.NULL, path,
+                "stat-api connection error on " + path + ": " + ex.getMessage());
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new StatApiException(0, JsonValue.NULL, path,
+                "stat-api request interrupted on " + path);
+        }
+
+        int status = response.statusCode();
+        if (status == 202) {
+            throw new NotReadyException(status, safeParse(response.body()), path,
+                response.headers().firstValue("Retry-After").orElse(null));
+        }
+        if (status >= 200 && status < 300) {
+            return new Response(Json.parse(response.body()), Quota.fromHeaders(response.headers()));
+        }
+        throw StatApiException.forStatus(status, safeParse(response.body()), path);
+    }
+
+    /**
+     * Perform a request returning raw status, headers, body, and quota for any 2xx response
+     * (including 202 Accepted), mapping non-2xx statuses onto {@link StatApiException}.
+     */
+    public RawResponse rawRequest(
+        String method,
+        String path,
+        String jsonBody,
+        Map<String, String> extraHeaders,
+        boolean retry5xx
+    ) {
+        String url = baseUrl + path;
+        int attempts = retry5xx ? MAX_ATTEMPTS : 1;
+        for (int attempt = 0; attempt < attempts; attempt++) {
+            boolean last = attempt == attempts - 1;
+            HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(url))
+                .timeout(timeout)
+                .header("Authorization", "Bearer " + apiKey)
+                .header("User-Agent", userAgent)
+                .header("Accept", "application/json");
+            if (extraHeaders != null) {
+                for (Map.Entry<String, String> entry : extraHeaders.entrySet()) {
+                    if (entry.getValue() != null && !entry.getValue().isEmpty()) {
+                        builder.header(entry.getKey(), entry.getValue());
+                    }
+                }
+            }
+            if ("POST".equalsIgnoreCase(method)) {
+                builder.header("Content-Type", "application/json");
+                builder.POST(HttpRequest.BodyPublishers.ofString(jsonBody == null ? "{}" : jsonBody, StandardCharsets.UTF_8));
+            } else {
+                builder.GET();
+            }
+
+            HttpResponse<String> response;
+            try {
+                response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+            } catch (IOException ex) {
+                if (last) {
+                    throw new StatApiException(0, JsonValue.NULL, path,
+                        "stat-api connection error on " + path + ": " + ex.getMessage());
+                }
+                sleepBackoff(attempt);
+                continue;
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw new StatApiException(0, JsonValue.NULL, path,
+                    "stat-api request interrupted on " + path);
+            }
+
+            int status = response.statusCode();
+            if (status >= 200 && status < 300) {
+                return new RawResponse(status, response.headers(), response.body(), Quota.fromHeaders(response.headers()));
+            }
+            JsonValue body = safeParse(response.body());
+            if (retry5xx && status >= 500 && !last) {
                 sleepBackoff(attempt);
                 continue;
             }

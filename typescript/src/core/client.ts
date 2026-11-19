@@ -13,10 +13,12 @@
 //   - list envelope     { "<table>": [...], limit, next_from_id }
 //   - quota headers     X-Quota-Limit / X-Quota-Used / X-Quota-Remaining
 //   - typed errors      401/402/404/400/429 → error.ts subclasses
+//   - 202 Accepted      → NotReadyError (the data is queued; a 202 holds no data)
 //
 // Retries: GETs retry twice on network/timeout failures and 5xx, with jittered
 // 250ms then 1s backoff. 4xx are NEVER retried — including 429, which is a
-// monthly quota and cannot succeed on retry, so it fails loud.
+// monthly quota and cannot succeed on retry, so it fails loud. A 202 is never
+// retried either: it is not a failure, the caller decides when to ask again.
 // =============================================================================
 
 import { errorForStatus, StatApiError } from './error.js';
@@ -78,23 +80,25 @@ export class StatApiBase {
           'STAT_API_KEY environment variable. Get a key at https://stat-api.com.',
       );
     }
-    const baseUrl = (
-      options.baseUrl ??
-      envVar('STAT_API_BASE_URL') ??
-      DEFAULT_BASE_URL
-    ).replace(/\/+$/, '');
+    const baseUrl = (options.baseUrl ?? envVar('STAT_API_BASE_URL') ?? DEFAULT_BASE_URL).replace(
+      /\/+$/,
+      '',
+    );
     this.opts = {
       apiKey,
       baseUrl,
       timeoutMs: options.timeoutMs ?? DEFAULT_TIMEOUT_MS,
-      fetch: options.fetch ?? globalThis.fetch,
+      // Not the bare `globalThis.fetch`: the SDK calls `opts.fetch(...)`, so a bare fetch would run with the
+      // options object as `this`, and a browser throws "Illegal invocation" for that.
+      fetch: options.fetch ?? ((input, init) => globalThis.fetch(input, init)),
     };
   }
 }
 
 /**
  * Issue a JSON request and return the parsed body plus quota. Throws a typed
- * `StatApiError` subclass on non-2xx. Retries GETs on transient failures.
+ * `StatApiError` subclass on non-2xx and `NotReadyError` on 202 (a 202 holds no
+ * data, so it is never returned as data). Retries GETs on transient failures.
  */
 export async function fetchJson<T>(
   opts: ResolvedStatApiOptions,
@@ -128,6 +132,12 @@ export async function fetchJson<T>(
     const body: unknown = text.length === 0 ? null : safeJsonParse(text);
     const quota = parseQuota(resp.headers);
 
+    // 202 Accepted: the work is queued and the body holds NO data. Surface it as
+    // NotReadyError (never as `data`), and never retry it.
+    if (resp.status === 202) {
+      throw errorForStatus(resp.status, body, path, quota, resp.headers.get('Retry-After'));
+    }
+
     if (resp.ok) return { data: body as T, quota };
 
     // 5xx is retryable on a GET; every 4xx (429 included) fails immediately.
@@ -139,6 +149,122 @@ export async function fetchJson<T>(
   }
 
   // Unreachable in practice: the loop either returns or throws. Guard anyway.
+  throw lastError ?? new StatApiError(0, null, path, `stat-api request failed on ${path}`);
+}
+
+/** A file answer (`<id>File` methods, e.g. the contest download's CSV or ZIP): the bytes, the file name the answer gives
+ *  (null when it names none, or a browser cannot read the header across origins), every header, and the quota. */
+export interface FileResult {
+  readonly data: ArrayBuffer;
+  readonly fileName: string | null;
+  readonly headers: Headers;
+  readonly quota: Quota | null;
+}
+
+/** The file name of a `Content-Disposition: attachment; filename="..."` header; null when there is none. */
+export function attachmentFileName(disposition: string | null): string | null {
+  const m = disposition?.match(/filename="([^"]+)"/);
+  return m?.[1] ?? null;
+}
+
+/**
+ * Issue a GET whose answer is a file and return its bytes and headers. The same errors as fetchJson: a typed
+ * `StatApiError` subclass on non-2xx and `NotReadyError` on 202 (its JSON body holds no file). Retries on transient
+ * failures. The timeout covers the wait for the headers, not the read of a large body.
+ */
+export async function fetchFile(opts: ResolvedStatApiOptions, path: string): Promise<FileResult> {
+  const url = `${opts.baseUrl}${path}`;
+  let lastError: StatApiError | null = null;
+  for (let attempt = 0; attempt < 1 + GET_RETRIES; attempt++) {
+    if (attempt > 0) await sleep(backoffMs(attempt));
+    let resp: Response;
+    try {
+      resp = await withTimeout(opts, url, {}, 'GET');
+    } catch (err) {
+      lastError = new StatApiError(
+        0,
+        null,
+        path,
+        `stat-api network error on ${path}: ${errMessage(err)}`,
+      );
+      continue;
+    }
+    const quota = parseQuota(resp.headers);
+    if (resp.ok && resp.status !== 202) {
+      return {
+        data: await resp.arrayBuffer(),
+        fileName: attachmentFileName(resp.headers.get('Content-Disposition')),
+        headers: resp.headers,
+        quota,
+      };
+    }
+    const text = await resp.text();
+    const body: unknown = text.length === 0 ? null : safeJsonParse(text);
+    if (resp.status === 202) {
+      throw errorForStatus(resp.status, body, path, quota, resp.headers.get('Retry-After'));
+    }
+    if (resp.status >= 500 && attempt < GET_RETRIES) {
+      lastError = new StatApiError(resp.status, body, path);
+      continue;
+    }
+    throw errorForStatus(resp.status, body, path, quota);
+  }
+  throw lastError ?? new StatApiError(0, null, path, `stat-api request failed on ${path}`);
+}
+
+/** Raw HTTP response for endpoints supporting `202 Accepted` async jobs or non-JSON (`text/csv`) payloads. */
+export interface RawFetchResult {
+  readonly status: number;
+  readonly text: string;
+  readonly headers: Headers;
+  readonly quota: Quota | null;
+}
+
+/**
+ * Issue an authenticated request returning `{ status, text, headers, quota }` for any `2xx`
+ * status including `202 Accepted` (without throwing `NotReadyError`), while mapping `>= 400`
+ * responses onto typed `StatApiError` subclasses. Retries `GET` on transient network/`5xx` errors.
+ */
+export async function fetchRaw(
+  opts: ResolvedStatApiOptions,
+  path: string,
+  init: RequestInit = {},
+): Promise<RawFetchResult> {
+  const url = `${opts.baseUrl}${path}`;
+  const method = (init.method ?? 'GET').toUpperCase();
+  const maxAttempts = method === 'GET' ? 1 + GET_RETRIES : 1;
+  let lastError: StatApiError | null = null;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    if (attempt > 0) await sleep(backoffMs(attempt));
+
+    let resp: Response;
+    try {
+      resp = await withTimeout(opts, url, init, method);
+    } catch (err) {
+      lastError = new StatApiError(
+        0,
+        null,
+        path,
+        `stat-api network error on ${path}: ${errMessage(err)}`,
+      );
+      if (attempt < maxAttempts - 1) continue;
+      throw lastError;
+    }
+
+    const text = await resp.text();
+    const quota = parseQuota(resp.headers);
+    if (resp.status >= 200 && resp.status < 300) {
+      return { status: resp.status, text, headers: resp.headers, quota };
+    }
+
+    const body: unknown = text.length === 0 ? null : safeJsonParse(text);
+    if (resp.status >= 500 && attempt < maxAttempts - 1) {
+      lastError = new StatApiError(resp.status, body, path);
+      continue;
+    }
+    throw errorForStatus(resp.status, body, path, quota);
+  }
   throw lastError ?? new StatApiError(0, null, path, `stat-api request failed on ${path}`);
 }
 
@@ -200,7 +326,7 @@ function backoffMs(attempt: number): number {
 }
 
 function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function safeJsonParse(text: string): unknown {

@@ -2,7 +2,12 @@
 //
 // SDK resource for nfl.play_by_plays (public API).
 // Source: schema/api/groups/public.yml + schema/model/nfl/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NFLPlayByPlay {
   id: number;
@@ -34,7 +39,6 @@ export interface NFLPlayByPlay {
   lateral_rusher_player_id?: string | null;
   lateral_sack_player_id?: string | null;
   nfl_api_id?: string | null;
-  nflverse_game_id?: string | null;
   old_game_id?: string | null;
   own_kickoff_recovery_player_id?: string | null;
   pass_defense_1_player_id?: string | null;
@@ -392,6 +396,8 @@ export interface NFLPlayByPlaysListResponse {
   play_by_plays: NFLPlayByPlay[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -401,7 +407,10 @@ export class NFLPlayByPlaysResource {
 
   async list(params?: NFLPlayByPlaysListParams): Promise<NFLPlayByPlaysListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NFLPlayByPlaysListResponse, 'quota'>>(this.opts, `/api/v1/nfl/play_by_plays${qs}`);
+    const r = await fetchJson<Omit<NFLPlayByPlaysListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nfl/play_by_plays${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -419,7 +428,10 @@ export class NFLPlayByPlaysResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NFLPlayByPlaysListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NFLPlayByPlaysListParams);
+      const page: NFLPlayByPlaysListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NFLPlayByPlaysListParams);
       for (const row of page.play_by_plays) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

@@ -8,7 +8,8 @@ import com.statapi.JsonValue;
 
 public record MLBPlayerNew(
     Long id,
-    String externalId,
+    Long gameId,
+    Long opponentTeamId,
     Long playerId,
     Long teamId,
     Boolean aiProcessed,
@@ -17,19 +18,21 @@ public record MLBPlayerNew(
     String category,
     String content,
     String description,
-    String link,
+    String firstReportedAt,
     String newsTime,
     Integer priority,
     String processedAt,
     JsonValue situationalImpact,
-    String source,
-    String title
+    String statusEnum,
+    String title,
+    String urgency
 ) {
 
     public static MLBPlayerNew fromJson(JsonValue json) {
         return new MLBPlayerNew(
             json.get("id").asLong(),
-            json.get("external_id").asString(),
+            json.get("game_id").asLong(),
+            json.get("opponent_team_id").asLong(),
             json.get("player_id").asLong(),
             json.get("team_id").asLong(),
             json.get("ai_processed").asBoolean(),
@@ -38,13 +41,14 @@ public record MLBPlayerNew(
             json.get("category").asString(),
             json.get("content").asString(),
             json.get("description").asString(),
-            json.get("link").asString(),
+            json.get("first_reported_at").asString(),
             json.get("news_time").asString(),
             json.get("priority").asInt(),
             json.get("processed_at").asString(),
             json.get("situational_impact"),
-            json.get("source").asString(),
-            json.get("title").asString()
+            json.get("status_enum").asString(),
+            json.get("title").asString(),
+            json.get("urgency").asString()
         );
     }
 }

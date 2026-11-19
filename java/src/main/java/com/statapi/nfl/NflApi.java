@@ -4,32 +4,35 @@
 package com.statapi.nfl;
 
 import com.statapi.Http;
+import com.statapi.NFLWeeksResponse;
+import com.statapi.SimNFLResource;
 
 public final class NflApi {
 
+    private final SimNFLResource simNfl;
     private final NFLSeasonsResource seasons;
     private final NFLStadiumsResource stadiums;
     private final NFLRefereesResource referees;
     private final NFLTeamsResource teams;
-    private final NFLPlayersResource players;
     private final NFLGamesResource games;
+    private final NFLPlayersResource players;
     private final NFLCoachingStaffTenuresResource coachingStaffTenures;
     private final NFLCoachingStaffsResource coachingStaffs;
-    private final NFLDepthChartSnapshotsResource depthChartSnapshots;
     private final NFLOperatorTeamLookupsResource operatorTeamLookups;
     private final NFLPlayoffsResource playoffs;
     private final NFLSeasonTeamStatsResource seasonTeamStats;
+    private final NFLGameDrivesResource gameDrives;
+    private final NFLCoachSchemeTendenciesResource coachSchemeTendencies;
     private final NFLCombineResultsResource combineResults;
-    private final NFLDepthChartEntriesResource depthChartEntries;
     private final NFLDepthChartsResource depthCharts;
     private final NFLDraftPicksResource draftPicks;
-    private final NFLGameDrivesResource gameDrives;
     private final NFLGameLinesResource gameLines;
+    private final NFLGamePlayerAdvancedStatsResource gamePlayerAdvancedStats;
     private final NFLGamePlayerFirstdownStatsResource gamePlayerFirstdownStats;
     private final NFLGamePlayerNgsPassingsResource gamePlayerNgsPassings;
     private final NFLGamePlayerNgsReceivingsResource gamePlayerNgsReceivings;
     private final NFLGamePlayerNgsRushingsResource gamePlayerNgsRushings;
-    private final NFLGamePlayerPfrAdvstatsResource gamePlayerPfrAdvstats;
+    private final NFLGamePlayerPropsResource gamePlayerProps;
     private final NFLGamePlayerRedzoneStatsResource gamePlayerRedzoneStats;
     private final NFLGamePlayerStatsResource gamePlayerStats;
     private final NFLGamePlayerThirddownStatsResource gamePlayerThirddownStats;
@@ -40,40 +43,44 @@ public final class NflApi {
     private final NFLGameWeathersResource gameWeathers;
     private final NFLInjuriesResource injuries;
     private final NFLOperatorPlayerLookupsResource operatorPlayerLookups;
-    private final NFLPlayByPlaysResource playByPlays;
     private final NFLPlayParticipationsResource playParticipations;
     private final NFLPlayerContractsResource playerContracts;
     private final NFLPlayerNewsResource playerNews;
+    private final NFLProjectedPlayerSnapsResource projectedPlayerSnaps;
+    private final NFLProjectedTeamSnapsResource projectedTeamSnaps;
     private final NFLSeasonPlayerFirstdownStatsResource seasonPlayerFirstdownStats;
     private final NFLSeasonPlayerRedzoneStatsResource seasonPlayerRedzoneStats;
     private final NFLSeasonPlayerStatsResource seasonPlayerStats;
     private final NFLSeasonPlayerThirddownStatsResource seasonPlayerThirddownStats;
+    private final NFLTeamNewsResource teamNews;
     private final NFLTeamPlayerRostersResource teamPlayerRosters;
+    private final NFLPlayByPlaysResource playByPlays;
 
     public NflApi(Http http) {
+        this.simNfl = new SimNFLResource(http);
         this.seasons = new NFLSeasonsResource(http);
         this.stadiums = new NFLStadiumsResource(http);
         this.referees = new NFLRefereesResource(http);
         this.teams = new NFLTeamsResource(http);
-        this.players = new NFLPlayersResource(http);
         this.games = new NFLGamesResource(http);
+        this.players = new NFLPlayersResource(http);
         this.coachingStaffTenures = new NFLCoachingStaffTenuresResource(http);
         this.coachingStaffs = new NFLCoachingStaffsResource(http);
-        this.depthChartSnapshots = new NFLDepthChartSnapshotsResource(http);
         this.operatorTeamLookups = new NFLOperatorTeamLookupsResource(http);
         this.playoffs = new NFLPlayoffsResource(http);
         this.seasonTeamStats = new NFLSeasonTeamStatsResource(http);
+        this.gameDrives = new NFLGameDrivesResource(http);
+        this.coachSchemeTendencies = new NFLCoachSchemeTendenciesResource(http);
         this.combineResults = new NFLCombineResultsResource(http);
-        this.depthChartEntries = new NFLDepthChartEntriesResource(http);
         this.depthCharts = new NFLDepthChartsResource(http);
         this.draftPicks = new NFLDraftPicksResource(http);
-        this.gameDrives = new NFLGameDrivesResource(http);
         this.gameLines = new NFLGameLinesResource(http);
+        this.gamePlayerAdvancedStats = new NFLGamePlayerAdvancedStatsResource(http);
         this.gamePlayerFirstdownStats = new NFLGamePlayerFirstdownStatsResource(http);
         this.gamePlayerNgsPassings = new NFLGamePlayerNgsPassingsResource(http);
         this.gamePlayerNgsReceivings = new NFLGamePlayerNgsReceivingsResource(http);
         this.gamePlayerNgsRushings = new NFLGamePlayerNgsRushingsResource(http);
-        this.gamePlayerPfrAdvstats = new NFLGamePlayerPfrAdvstatsResource(http);
+        this.gamePlayerProps = new NFLGamePlayerPropsResource(http);
         this.gamePlayerRedzoneStats = new NFLGamePlayerRedzoneStatsResource(http);
         this.gamePlayerStats = new NFLGamePlayerStatsResource(http);
         this.gamePlayerThirddownStats = new NFLGamePlayerThirddownStatsResource(http);
@@ -84,15 +91,18 @@ public final class NflApi {
         this.gameWeathers = new NFLGameWeathersResource(http);
         this.injuries = new NFLInjuriesResource(http);
         this.operatorPlayerLookups = new NFLOperatorPlayerLookupsResource(http);
-        this.playByPlays = new NFLPlayByPlaysResource(http);
         this.playParticipations = new NFLPlayParticipationsResource(http);
         this.playerContracts = new NFLPlayerContractsResource(http);
         this.playerNews = new NFLPlayerNewsResource(http);
+        this.projectedPlayerSnaps = new NFLProjectedPlayerSnapsResource(http);
+        this.projectedTeamSnaps = new NFLProjectedTeamSnapsResource(http);
         this.seasonPlayerFirstdownStats = new NFLSeasonPlayerFirstdownStatsResource(http);
         this.seasonPlayerRedzoneStats = new NFLSeasonPlayerRedzoneStatsResource(http);
         this.seasonPlayerStats = new NFLSeasonPlayerStatsResource(http);
         this.seasonPlayerThirddownStats = new NFLSeasonPlayerThirddownStatsResource(http);
+        this.teamNews = new NFLTeamNewsResource(http);
         this.teamPlayerRosters = new NFLTeamPlayerRostersResource(http);
+        this.playByPlays = new NFLPlayByPlaysResource(http);
     }
 
     public NFLSeasonsResource seasons() {
@@ -111,12 +121,12 @@ public final class NflApi {
         return teams;
     }
 
-    public NFLPlayersResource players() {
-        return players;
-    }
-
     public NFLGamesResource games() {
         return games;
+    }
+
+    public NFLPlayersResource players() {
+        return players;
     }
 
     public NFLCoachingStaffTenuresResource coachingStaffTenures() {
@@ -125,10 +135,6 @@ public final class NflApi {
 
     public NFLCoachingStaffsResource coachingStaffs() {
         return coachingStaffs;
-    }
-
-    public NFLDepthChartSnapshotsResource depthChartSnapshots() {
-        return depthChartSnapshots;
     }
 
     public NFLOperatorTeamLookupsResource operatorTeamLookups() {
@@ -143,12 +149,16 @@ public final class NflApi {
         return seasonTeamStats;
     }
 
-    public NFLCombineResultsResource combineResults() {
-        return combineResults;
+    public NFLGameDrivesResource gameDrives() {
+        return gameDrives;
     }
 
-    public NFLDepthChartEntriesResource depthChartEntries() {
-        return depthChartEntries;
+    public NFLCoachSchemeTendenciesResource coachSchemeTendencies() {
+        return coachSchemeTendencies;
+    }
+
+    public NFLCombineResultsResource combineResults() {
+        return combineResults;
     }
 
     public NFLDepthChartsResource depthCharts() {
@@ -159,12 +169,12 @@ public final class NflApi {
         return draftPicks;
     }
 
-    public NFLGameDrivesResource gameDrives() {
-        return gameDrives;
-    }
-
     public NFLGameLinesResource gameLines() {
         return gameLines;
+    }
+
+    public NFLGamePlayerAdvancedStatsResource gamePlayerAdvancedStats() {
+        return gamePlayerAdvancedStats;
     }
 
     public NFLGamePlayerFirstdownStatsResource gamePlayerFirstdownStats() {
@@ -183,8 +193,8 @@ public final class NflApi {
         return gamePlayerNgsRushings;
     }
 
-    public NFLGamePlayerPfrAdvstatsResource gamePlayerPfrAdvstats() {
-        return gamePlayerPfrAdvstats;
+    public NFLGamePlayerPropsResource gamePlayerProps() {
+        return gamePlayerProps;
     }
 
     public NFLGamePlayerRedzoneStatsResource gamePlayerRedzoneStats() {
@@ -227,10 +237,6 @@ public final class NflApi {
         return operatorPlayerLookups;
     }
 
-    public NFLPlayByPlaysResource playByPlays() {
-        return playByPlays;
-    }
-
     public NFLPlayParticipationsResource playParticipations() {
         return playParticipations;
     }
@@ -241,6 +247,14 @@ public final class NflApi {
 
     public NFLPlayerNewsResource playerNews() {
         return playerNews;
+    }
+
+    public NFLProjectedPlayerSnapsResource projectedPlayerSnaps() {
+        return projectedPlayerSnaps;
+    }
+
+    public NFLProjectedTeamSnapsResource projectedTeamSnaps() {
+        return projectedTeamSnaps;
     }
 
     public NFLSeasonPlayerFirstdownStatsResource seasonPlayerFirstdownStats() {
@@ -259,7 +273,23 @@ public final class NflApi {
         return seasonPlayerThirddownStats;
     }
 
+    public NFLTeamNewsResource teamNews() {
+        return teamNews;
+    }
+
     public NFLTeamPlayerRostersResource teamPlayerRosters() {
         return teamPlayerRosters;
+    }
+
+    public NFLPlayByPlaysResource playByPlays() {
+        return playByPlays;
+    }
+
+    public NFLWeeksResponse weeks() {
+        return simNfl.weeks(null);
+    }
+
+    public NFLWeeksResponse weeks(Integer season) {
+        return simNfl.weeks(season);
     }
 }

@@ -17,12 +17,12 @@ public record DFSSlatePlayer(
     Long teamId,
     Double avgPoints,
     String displayName,
+    String eligiblePositions,
     String firstName,
     String injuryDetails,
     String injuryStatus,
     String lastName,
     String position,
-    String rosterPosition,
     Integer salary
 ) {
 
@@ -38,12 +38,12 @@ public record DFSSlatePlayer(
             json.get("team_id").asLong(),
             json.get("avg_points").asDouble(),
             json.get("display_name").asString(),
+            json.get("eligible_positions").asString(),
             json.get("first_name").asString(),
             json.get("injury_details").asString(),
             json.get("injury_status").asString(),
             json.get("last_name").asString(),
             json.get("position").asString(),
-            json.get("roster_position").asString(),
             json.get("salary").asInt()
         );
     }

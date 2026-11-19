@@ -107,7 +107,11 @@ export const cache = new TtlCache();
 
 /** Deterministic key from (command, league, args). Sorted so arg order never
  *  produces two keys for the same logical request. */
-export function cacheKey(command: string, league: string, args: Record<string, unknown> = {}): string {
+export function cacheKey(
+  command: string,
+  league: string,
+  args: Record<string, unknown> = {},
+): string {
   const normalized = Object.keys(args)
     .sort()
     .map((k) => `${k}=${String(args[k])}`)

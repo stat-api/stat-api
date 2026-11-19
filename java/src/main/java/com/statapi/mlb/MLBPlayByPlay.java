@@ -20,15 +20,19 @@ public record MLBPlayByPlay(
     Long secondBaseRunnerId,
     Long teamId,
     Long thirdBaseRunnerId,
+    Integer awayScore,
     Integer countBalls,
     Integer countStrikes,
+    String endTime,
     Integer eventSubType,
     Integer eventType,
     String hitLocation,
     String hitType,
+    Integer homeScore,
     Integer mlbEventNum,
     Integer outs,
-    Integer runnersOnBase
+    Integer runnersOnBase,
+    String startTime
 ) {
 
     public static MLBPlayByPlay fromJson(JsonValue json) {
@@ -46,15 +50,19 @@ public record MLBPlayByPlay(
             json.get("second_base_runner_id").asLong(),
             json.get("team_id").asLong(),
             json.get("third_base_runner_id").asLong(),
+            json.get("away_score").asInt(),
             json.get("count_balls").asInt(),
             json.get("count_strikes").asInt(),
+            json.get("end_time").asString(),
             json.get("event_sub_type").asInt(),
             json.get("event_type").asInt(),
             json.get("hit_location").asString(),
             json.get("hit_type").asString(),
+            json.get("home_score").asInt(),
             json.get("mlb_event_num").asInt(),
             json.get("outs").asInt(),
-            json.get("runners_on_base").asInt()
+            json.get("runners_on_base").asInt(),
+            json.get("start_time").asString()
         );
     }
 }

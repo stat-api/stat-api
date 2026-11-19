@@ -28,15 +28,19 @@ type MLBPlayByPlay struct {
 	SecondBaseRunnerID *int64  `json:"second_base_runner_id"`
 	TeamID             int64   `json:"team_id"`
 	ThirdBaseRunnerID  *int64  `json:"third_base_runner_id"`
+	AwayScore          *int    `json:"away_score"`
 	CountBalls         int     `json:"count_balls"`
 	CountStrikes       int     `json:"count_strikes"`
+	EndTime            *string `json:"end_time"`
 	EventSubType       int     `json:"event_sub_type"`
 	EventType          int     `json:"event_type"`
 	HitLocation        *string `json:"hit_location"`
 	HitType            *string `json:"hit_type"`
+	HomeScore          *int    `json:"home_score"`
 	MlbEventNum        int     `json:"mlb_event_num"`
 	Outs               int     `json:"outs"`
 	RunnersOnBase      int     `json:"runners_on_base"`
+	StartTime          *string `json:"start_time"`
 }
 
 // MLBPlayByPlaysListParams are the query parameters for listing mlb.play_by_plays.

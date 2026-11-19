@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.stat-api"
-version = "0.1.0"
+version = "0.3.0"
 
 java {
     toolchain {
@@ -28,7 +28,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.stat-api"
             artifactId = "statapi"
-            version = "0.1.0"
+            version = "0.3.0"
             from(components["java"])
         }
     }

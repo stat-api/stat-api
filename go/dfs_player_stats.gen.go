@@ -15,24 +15,154 @@ import (
 
 // DFSPlayerStat is a row from dfs.player_stats.
 type DFSPlayerStat struct {
-	ID       int64           `json:"id"`
-	GameID   int64           `json:"game_id"`
-	LeagueID int64           `json:"league_id"`
-	PlayerID int64           `json:"player_id"`
-	TeamID   int64           `json:"team_id"`
-	Data     json.RawMessage `json:"data"`
+	ID                         int64    `json:"id"`
+	GameID                     *int64   `json:"game_id"`
+	LeagueID                   int64    `json:"league_id"`
+	OperatorID                 int64    `json:"operator_id"`
+	PlayerID                   int64    `json:"player_id"`
+	SlateID                    int64    `json:"slate_id"`
+	TeamID                     *int64   `json:"team_id"`
+	Assists                    *int     `json:"assists"`
+	AssistsFpts                *float64 `json:"assists_fpts"`
+	BlockedKickFpts            *float64 `json:"blocked_kick_fpts"`
+	BlockedKicks               *int     `json:"blocked_kicks"`
+	Blocks                     *int     `json:"blocks"`
+	BlocksFpts                 *float64 `json:"blocks_fpts"`
+	DefenseInterceptionFpts    *float64 `json:"defense_interception_fpts"`
+	DefensiveInterceptions     *int     `json:"defensive_interceptions"`
+	DefensiveSacks             *float64 `json:"defensive_sacks"`
+	DefensiveTdFpts            *float64 `json:"defensive_td_fpts"`
+	DefensiveTds               *int     `json:"defensive_tds"`
+	DoubleDoubleFpts           *float64 `json:"double_double_fpts"`
+	ExtraPointFpts             *float64 `json:"extra_point_fpts"`
+	ExtraPtsMade               *int     `json:"extra_pts_made"`
+	FantasyPts                 *float64 `json:"fantasy_pts"`
+	FantasyPtsSource           *string  `json:"fantasy_pts_source"`
+	FieldGoalFpts              *float64 `json:"field_goal_fpts"`
+	FieldGoalMissedFpts        *float64 `json:"field_goal_missed_fpts"`
+	FieldGoalsAttempted        *int     `json:"field_goals_attempted"`
+	FieldGoalsMade             *int     `json:"field_goals_made"`
+	FieldGoalsMade019          *int     `json:"field_goals_made_0_19"`
+	FieldGoalsMade2029         *int     `json:"field_goals_made_20_29"`
+	FieldGoalsMade3039         *int     `json:"field_goals_made_30_39"`
+	FieldGoalsMade4049         *int     `json:"field_goals_made_40_49"`
+	FieldGoalsMade50Plus       *int     `json:"field_goals_made_50_plus"`
+	FumbleLostFpts             *float64 `json:"fumble_lost_fpts"`
+	FumbleRecoveryFpts         *float64 `json:"fumble_recovery_fpts"`
+	FumblesRecovered           *int     `json:"fumbles_recovered"`
+	InterceptionFpts           *float64 `json:"interception_fpts"`
+	InterceptionReturnTds      *int     `json:"interception_return_tds"`
+	InterceptionsThrown        *int     `json:"interceptions_thrown"`
+	KickReturnTds              *int     `json:"kick_return_tds"`
+	KickReturnYds              *int     `json:"kick_return_yds"`
+	Passing2ptConversionFpts   *float64 `json:"passing_2pt_conversion_fpts"`
+	Passing2ptConversions      *int     `json:"passing_2pt_conversions"`
+	PassingBonusFpts           *float64 `json:"passing_bonus_fpts"`
+	PassingTdFpts              *float64 `json:"passing_td_fpts"`
+	PassingTds                 *int     `json:"passing_tds"`
+	PassingYds                 *int     `json:"passing_yds"`
+	PassingYdsFpts             *float64 `json:"passing_yds_fpts"`
+	Position                   string   `json:"position"`
+	Pts                        *int     `json:"pts"`
+	PtsAllowedDef              *int     `json:"pts_allowed_def"`
+	PtsAllowedDst              *int     `json:"pts_allowed_dst"`
+	PtsAllowedFpts             *float64 `json:"pts_allowed_fpts"`
+	PtsFpts                    *float64 `json:"pts_fpts"`
+	PuntReturnTds              *int     `json:"punt_return_tds"`
+	PuntReturnYds              *int     `json:"punt_return_yds"`
+	Rebounds                   *int     `json:"rebounds"`
+	ReboundsFpts               *float64 `json:"rebounds_fpts"`
+	Receiving2ptConversionFpts *float64 `json:"receiving_2pt_conversion_fpts"`
+	Receiving2ptConversions    *int     `json:"receiving_2pt_conversions"`
+	ReceivingBonusFpts         *float64 `json:"receiving_bonus_fpts"`
+	ReceivingFumblesLost       *int     `json:"receiving_fumbles_lost"`
+	ReceivingTdFpts            *float64 `json:"receiving_td_fpts"`
+	ReceivingTds               *int     `json:"receiving_tds"`
+	ReceivingYds               *int     `json:"receiving_yds"`
+	ReceivingYdsFpts           *float64 `json:"receiving_yds_fpts"`
+	ReceptionFpts              *float64 `json:"reception_fpts"`
+	Receptions                 *int     `json:"receptions"`
+	ReturnTdFpts               *float64 `json:"return_td_fpts"`
+	ReturnYdsFpts              *float64 `json:"return_yds_fpts"`
+	Rushing2ptConversionFpts   *float64 `json:"rushing_2pt_conversion_fpts"`
+	Rushing2ptConversions      *int     `json:"rushing_2pt_conversions"`
+	RushingBonusFpts           *float64 `json:"rushing_bonus_fpts"`
+	RushingFumblesLost         *int     `json:"rushing_fumbles_lost"`
+	RushingTdFpts              *float64 `json:"rushing_td_fpts"`
+	RushingTds                 *int     `json:"rushing_tds"`
+	RushingYds                 *int     `json:"rushing_yds"`
+	RushingYdsFpts             *float64 `json:"rushing_yds_fpts"`
+	SackFpts                   *float64 `json:"sack_fpts"`
+	SackFumblesLost            *int     `json:"sack_fumbles_lost"`
+	Safeties                   *int     `json:"safeties"`
+	SafetyFpts                 *float64 `json:"safety_fpts"`
+	Salary                     int      `json:"salary"`
+	ScoringFormat              *string  `json:"scoring_format"`
+	ScoringRule                *string  `json:"scoring_rule"`
+	SlateDate                  string   `json:"slate_date"`
+	Steals                     *int     `json:"steals"`
+	StealsFpts                 *float64 `json:"steals_fpts"`
+	ThreePointersMade          *int     `json:"three_pointers_made"`
+	ThreePointersMadeFpts      *float64 `json:"three_pointers_made_fpts"`
+	TripleDoubleFpts           *float64 `json:"triple_double_fpts"`
+	Turnovers                  *int     `json:"turnovers"`
+	TurnoversFpts              *float64 `json:"turnovers_fpts"`
 }
 
 // DFSPlayerStatsListParams are the query parameters for listing dfs.player_stats.
 type DFSPlayerStatsListParams struct {
-	Limit  *int
-	FromID *int64
+	SlateID         *int64
+	OperatorSlateID *int
+	PlayerID        *int64
+	GameID          *int64
+	SlateDate       *string
+	TeamID          *int64
+	ScoringFormat   *string
+	Position        *string
+	OperatorID      *int64
+	Operator        *string
+	LeagueID        *int64
+	Limit           *int
+	FromID          *int64
 }
 
 func (p *DFSPlayerStatsListParams) values() url.Values {
 	v := url.Values{}
 	if p == nil {
 		return v
+	}
+	if p.SlateID != nil {
+		v.Set("slate_id", strconv.FormatInt(*p.SlateID, 10))
+	}
+	if p.OperatorSlateID != nil {
+		v.Set("operator_slate_id", strconv.Itoa(*p.OperatorSlateID))
+	}
+	if p.PlayerID != nil {
+		v.Set("player_id", strconv.FormatInt(*p.PlayerID, 10))
+	}
+	if p.GameID != nil {
+		v.Set("game_id", strconv.FormatInt(*p.GameID, 10))
+	}
+	if p.SlateDate != nil {
+		v.Set("slate_date", *p.SlateDate)
+	}
+	if p.TeamID != nil {
+		v.Set("team_id", strconv.FormatInt(*p.TeamID, 10))
+	}
+	if p.ScoringFormat != nil {
+		v.Set("scoring_format", *p.ScoringFormat)
+	}
+	if p.Position != nil {
+		v.Set("position", *p.Position)
+	}
+	if p.OperatorID != nil {
+		v.Set("operator_id", strconv.FormatInt(*p.OperatorID, 10))
+	}
+	if p.Operator != nil {
+		v.Set("operator", *p.Operator)
+	}
+	if p.LeagueID != nil {
+		v.Set("league_id", strconv.FormatInt(*p.LeagueID, 10))
 	}
 	if p.Limit != nil {
 		v.Set("limit", strconv.Itoa(*p.Limit))

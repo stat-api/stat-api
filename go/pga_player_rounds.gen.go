@@ -17,7 +17,6 @@ import (
 type PGAPlayerRound struct {
 	ID                   int64    `json:"id"`
 	PlayerID             int64    `json:"player_id"`
-	PlayerRoundID        int      `json:"player_round_id"`
 	TournamentID         int64    `json:"tournament_id"`
 	BackNineStart        *bool    `json:"back_nine_start"`
 	Birdies              *int     `json:"birdies"`

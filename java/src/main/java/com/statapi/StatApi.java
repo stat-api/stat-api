@@ -6,13 +6,11 @@ package com.statapi;
 import java.time.Duration;
 
 import com.statapi.dfs.DfsApi;
-import com.statapi.kalshi.KalshiApi;
 import com.statapi.mlb.MlbApi;
 import com.statapi.nba.NbaApi;
 import com.statapi.nfl.NflApi;
 import com.statapi.nhl.NhlApi;
 import com.statapi.pga.PgaApi;
-import com.statapi.polymarket.PolymarketApi;
 import com.statapi.reference.ReferenceApi;
 
 /**
@@ -25,14 +23,13 @@ import com.statapi.reference.ReferenceApi;
 public final class StatApi {
 
     private final DfsApi dfs;
-    private final KalshiApi kalshi;
     private final MlbApi mlb;
     private final NbaApi nba;
     private final NflApi nfl;
     private final NhlApi nhl;
     private final PgaApi pga;
-    private final PolymarketApi polymarket;
     private final ReferenceApi reference;
+    private final SimApi sim;
 
     public StatApi() {
         this(new Http());
@@ -48,14 +45,13 @@ public final class StatApi {
 
     private StatApi(Http http) {
         this.dfs = new DfsApi(http);
-        this.kalshi = new KalshiApi(http);
         this.mlb = new MlbApi(http);
         this.nba = new NbaApi(http);
         this.nfl = new NflApi(http);
         this.nhl = new NhlApi(http);
         this.pga = new PgaApi(http);
-        this.polymarket = new PolymarketApi(http);
         this.reference = new ReferenceApi(http);
+        this.sim = new SimApi(http);
     }
 
     public static Builder builder() {
@@ -64,10 +60,6 @@ public final class StatApi {
 
     public DfsApi dfs() {
         return dfs;
-    }
-
-    public KalshiApi kalshi() {
-        return kalshi;
     }
 
     public MlbApi mlb() {
@@ -90,12 +82,12 @@ public final class StatApi {
         return pga;
     }
 
-    public PolymarketApi polymarket() {
-        return polymarket;
-    }
-
     public ReferenceApi reference() {
         return reference;
+    }
+
+    public SimApi sim() {
+        return sim;
     }
 
     /** Fluent construction for callers that need a custom timeout. */

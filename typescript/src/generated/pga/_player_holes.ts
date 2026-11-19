@@ -2,7 +2,12 @@
 //
 // SDK resource for pga.player_holes (public API).
 // Source: schema/api/groups/public.yml + schema/model/golf/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface PGAPlayerHole {
   id: number;
@@ -35,6 +40,8 @@ export interface PGAPlayerHolesListResponse {
   player_holes: PGAPlayerHole[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -44,7 +51,10 @@ export class PGAPlayerHolesResource {
 
   async list(params?: PGAPlayerHolesListParams): Promise<PGAPlayerHolesListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<PGAPlayerHolesListResponse, 'quota'>>(this.opts, `/api/v1/pga/player_holes${qs}`);
+    const r = await fetchJson<Omit<PGAPlayerHolesListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/pga/player_holes${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -62,7 +72,10 @@ export class PGAPlayerHolesResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: PGAPlayerHolesListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as PGAPlayerHolesListParams);
+      const page: PGAPlayerHolesListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as PGAPlayerHolesListParams);
       for (const row of page.player_holes) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

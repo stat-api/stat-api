@@ -11,6 +11,9 @@ public record NHLOperatorPlayerLookup(
     Long operatorId,
     String operatorPlayerId,
     Long playerId,
+    String decidedAt,
+    String decidedReason,
+    String decision,
     String playerName,
     String position
 ) {
@@ -21,6 +24,9 @@ public record NHLOperatorPlayerLookup(
             json.get("operator_id").asLong(),
             json.get("operator_player_id").asString(),
             json.get("player_id").asLong(),
+            json.get("decided_at").asString(),
+            json.get("decided_reason").asString(),
+            json.get("decision").asString(),
             json.get("player_name").asString(),
             json.get("position").asString()
         );

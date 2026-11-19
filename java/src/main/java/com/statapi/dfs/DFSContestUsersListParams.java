@@ -10,11 +10,23 @@ import java.util.Map;
 public final class DFSContestUsersListParams {
 
     private Long operatorId;
+    private String operator;
+    private String name;
     private Long limit;
     private Long fromId;
 
     public DFSContestUsersListParams operatorId(Long operatorId) {
         this.operatorId = operatorId;
+        return this;
+    }
+
+    public DFSContestUsersListParams operator(String operator) {
+        this.operator = operator;
+        return this;
+    }
+
+    public DFSContestUsersListParams name(String name) {
+        this.name = name;
         return this;
     }
 
@@ -32,6 +44,12 @@ public final class DFSContestUsersListParams {
         Map<String, String> query = new LinkedHashMap<>();
         if (operatorId != null) {
             query.put("operator_id", String.valueOf(operatorId));
+        }
+        if (operator != null) {
+            query.put("operator", String.valueOf(operator));
+        }
+        if (name != null) {
+            query.put("name", String.valueOf(name));
         }
         if (limit != null) {
             query.put("limit", String.valueOf(limit));

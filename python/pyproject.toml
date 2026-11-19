@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "statapi"
-version = "0.1.0"
+version = "0.3.0"
 description = "Official Python client for the stat-api sports data API"
 readme = "README.md"
 license = { text = "MIT" }

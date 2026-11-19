@@ -2,18 +2,125 @@
 //
 // SDK resource for dfs.player_stats (public API).
 // Source: schema/api/groups/public.yml + schema/model/dfs/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  type FileResult,
+  fetchFile,
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface DFSPlayerStat {
   id: number;
-  game_id: number;
+  game_id?: number | null;
   league_id: number;
+  operator_id: number;
   player_id: number;
-  team_id: number;
-  data: Record<string, unknown>;
+  slate_id: number;
+  team_id?: number | null;
+  assists?: number | null;
+  assists_fpts?: number | null;
+  blocked_kick_fpts?: number | null;
+  blocked_kicks?: number | null;
+  blocks?: number | null;
+  blocks_fpts?: number | null;
+  defense_interception_fpts?: number | null;
+  defensive_interceptions?: number | null;
+  defensive_sacks?: number | null;
+  defensive_td_fpts?: number | null;
+  defensive_tds?: number | null;
+  double_double_fpts?: number | null;
+  extra_point_fpts?: number | null;
+  extra_pts_made?: number | null;
+  fantasy_pts?: number | null;
+  fantasy_pts_source?: string | null;
+  field_goal_fpts?: number | null;
+  field_goal_missed_fpts?: number | null;
+  field_goals_attempted?: number | null;
+  field_goals_made?: number | null;
+  field_goals_made_0_19?: number | null;
+  field_goals_made_20_29?: number | null;
+  field_goals_made_30_39?: number | null;
+  field_goals_made_40_49?: number | null;
+  field_goals_made_50_plus?: number | null;
+  fumble_lost_fpts?: number | null;
+  fumble_recovery_fpts?: number | null;
+  fumbles_recovered?: number | null;
+  interception_fpts?: number | null;
+  interception_return_tds?: number | null;
+  interceptions_thrown?: number | null;
+  kick_return_tds?: number | null;
+  kick_return_yds?: number | null;
+  passing_2pt_conversion_fpts?: number | null;
+  passing_2pt_conversions?: number | null;
+  passing_bonus_fpts?: number | null;
+  passing_td_fpts?: number | null;
+  passing_tds?: number | null;
+  passing_yds?: number | null;
+  passing_yds_fpts?: number | null;
+  position: string;
+  pts?: number | null;
+  pts_allowed_def?: number | null;
+  pts_allowed_dst?: number | null;
+  pts_allowed_fpts?: number | null;
+  pts_fpts?: number | null;
+  punt_return_tds?: number | null;
+  punt_return_yds?: number | null;
+  rebounds?: number | null;
+  rebounds_fpts?: number | null;
+  receiving_2pt_conversion_fpts?: number | null;
+  receiving_2pt_conversions?: number | null;
+  receiving_bonus_fpts?: number | null;
+  receiving_fumbles_lost?: number | null;
+  receiving_td_fpts?: number | null;
+  receiving_tds?: number | null;
+  receiving_yds?: number | null;
+  receiving_yds_fpts?: number | null;
+  reception_fpts?: number | null;
+  receptions?: number | null;
+  return_td_fpts?: number | null;
+  return_yds_fpts?: number | null;
+  rushing_2pt_conversion_fpts?: number | null;
+  rushing_2pt_conversions?: number | null;
+  rushing_bonus_fpts?: number | null;
+  rushing_fumbles_lost?: number | null;
+  rushing_td_fpts?: number | null;
+  rushing_tds?: number | null;
+  rushing_yds?: number | null;
+  rushing_yds_fpts?: number | null;
+  sack_fpts?: number | null;
+  sack_fumbles_lost?: number | null;
+  safeties?: number | null;
+  safety_fpts?: number | null;
+  salary: number;
+  scoring_format?: string | null;
+  scoring_rule?: string | null;
+  slate_date: string;
+  steals?: number | null;
+  steals_fpts?: number | null;
+  three_pointers_made?: number | null;
+  three_pointers_made_fpts?: number | null;
+  triple_double_fpts?: number | null;
+  turnovers?: number | null;
+  turnovers_fpts?: number | null;
 }
 
 export interface DFSPlayerStatsListParams {
+  slate_id?: number;
+  operator_slate_id?: number;
+  player_id?: number;
+  game_id?: number;
+  slate_date?: string;
+  slate_date__gte?: string;
+  slate_date__lte?: string;
+  slate_date__between?: string;
+  team_id?: number;
+  scoring_format?: string;
+  position?: string;
+  operator_id?: number;
+  operator?: string | number;
+  league_id?: number;
   limit?: number;
   from_id?: number;
 }
@@ -22,6 +129,8 @@ export interface DFSPlayerStatsListResponse {
   player_stats: DFSPlayerStat[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -31,8 +140,20 @@ export class DFSPlayerStatsResource {
 
   async list(params?: DFSPlayerStatsListParams): Promise<DFSPlayerStatsListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<DFSPlayerStatsListResponse, 'quota'>>(this.opts, `/api/v1/dfs/player_stats${qs}`);
+    const r = await fetchJson<Omit<DFSPlayerStatsListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/dfs/player_stats${qs}`,
+    );
     return { ...r.data, quota: r.quota };
+  }
+
+  /**
+   * The list as a CSV file: the bytes the API writes for these filters, the file name it gives and every header. The rows
+   * are those of `list`; one file holds up to `limit` rows. A 202 throws NotReadyError, like every call.
+   */
+  async listFile(params?: Omit<DFSPlayerStatsListParams, 'from_id'>): Promise<FileResult> {
+    const qs = toQueryString({ ...params, format: 'csv' });
+    return fetchFile(this.opts, `/api/v1/dfs/player_stats${qs}`);
   }
 
   async get(id: number): Promise<DFSPlayerStat> {
@@ -49,7 +170,10 @@ export class DFSPlayerStatsResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: DFSPlayerStatsListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as DFSPlayerStatsListParams);
+      const page: DFSPlayerStatsListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as DFSPlayerStatsListParams);
       for (const row of page.player_stats) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

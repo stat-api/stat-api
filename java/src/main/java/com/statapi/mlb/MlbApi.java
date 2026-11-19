@@ -9,20 +9,26 @@ public final class MlbApi {
 
     private final MLBSeasonsResource seasons;
     private final MLBVenuesResource venues;
+    private final MLBBroadcastersResource broadcasters;
     private final MLBUmpiresResource umpires;
     private final MLBTeamsResource teams;
     private final MLBParkFactorsResource parkFactors;
     private final MLBSeasonRunEnvironmentsResource seasonRunEnvironments;
     private final MLBVenueDimensionsResource venueDimensions;
     private final MLBWobaWeightsResource wobaWeights;
-    private final MLBGamesResource games;
     private final MLBPlayersResource players;
-    private final MLBBroadcastersResource broadcasters;
     private final MLBOperatorTeamLookupsResource operatorTeamLookups;
     private final MLBPlayoffsResource playoffs;
     private final MLBSeasonTeamStatsResource seasonTeamStats;
     private final MLBSeriesOddsResource seriesOdds;
+    private final MLBGamesResource games;
+    private final MLBOperatorPlayerLookupsResource operatorPlayerLookups;
+    private final MLBPlayerAwardsResource playerAwards;
+    private final MLBPlayerInjuriesResource playerInjuries;
+    private final MLBSeasonPlayerStatsResource seasonPlayerStats;
+    private final MLBTeamPlayerRostersResource teamPlayerRosters;
     private final MLBInningsResource innings;
+    private final MLBTeamStartingLineupsResource teamStartingLineups;
     private final MLBGameAltLinesResource gameAltLines;
     private final MLBGameBroadcastersResource gameBroadcasters;
     private final MLBGameLinesResource gameLines;
@@ -33,36 +39,37 @@ public final class MlbApi {
     private final MLBGameTeamRostersResource gameTeamRosters;
     private final MLBGameTeamStatsResource gameTeamStats;
     private final MLBGameUmpiresResource gameUmpires;
-    private final MLBOperatorPlayerLookupsResource operatorPlayerLookups;
-    private final MLBPitchesResource pitches;
-    private final MLBPlayerAwardsResource playerAwards;
-    private final MLBPlayerInjuriesResource playerInjuries;
+    private final MLBGameWeathersResource gameWeathers;
     private final MLBPlayerNewsResource playerNews;
-    private final MLBSeasonPlayerStatsResource seasonPlayerStats;
-    private final MLBTeamPlayerRostersResource teamPlayerRosters;
-    private final MLBTeamStartingLineupBattersResource teamStartingLineupBatters;
-    private final MLBTeamStartingLineupsResource teamStartingLineups;
-    private final MLBVenueWeathersResource venueWeathers;
+    private final MLBTeamNewsResource teamNews;
     private final MLBAtBatsResource atBats;
+    private final MLBTeamStartingLineupBattersResource teamStartingLineupBatters;
+    private final MLBPitchesResource pitches;
     private final MLBPlayByPlaysResource playByPlays;
 
     public MlbApi(Http http) {
         this.seasons = new MLBSeasonsResource(http);
         this.venues = new MLBVenuesResource(http);
+        this.broadcasters = new MLBBroadcastersResource(http);
         this.umpires = new MLBUmpiresResource(http);
         this.teams = new MLBTeamsResource(http);
         this.parkFactors = new MLBParkFactorsResource(http);
         this.seasonRunEnvironments = new MLBSeasonRunEnvironmentsResource(http);
         this.venueDimensions = new MLBVenueDimensionsResource(http);
         this.wobaWeights = new MLBWobaWeightsResource(http);
-        this.games = new MLBGamesResource(http);
         this.players = new MLBPlayersResource(http);
-        this.broadcasters = new MLBBroadcastersResource(http);
         this.operatorTeamLookups = new MLBOperatorTeamLookupsResource(http);
         this.playoffs = new MLBPlayoffsResource(http);
         this.seasonTeamStats = new MLBSeasonTeamStatsResource(http);
         this.seriesOdds = new MLBSeriesOddsResource(http);
+        this.games = new MLBGamesResource(http);
+        this.operatorPlayerLookups = new MLBOperatorPlayerLookupsResource(http);
+        this.playerAwards = new MLBPlayerAwardsResource(http);
+        this.playerInjuries = new MLBPlayerInjuriesResource(http);
+        this.seasonPlayerStats = new MLBSeasonPlayerStatsResource(http);
+        this.teamPlayerRosters = new MLBTeamPlayerRostersResource(http);
         this.innings = new MLBInningsResource(http);
+        this.teamStartingLineups = new MLBTeamStartingLineupsResource(http);
         this.gameAltLines = new MLBGameAltLinesResource(http);
         this.gameBroadcasters = new MLBGameBroadcastersResource(http);
         this.gameLines = new MLBGameLinesResource(http);
@@ -73,17 +80,12 @@ public final class MlbApi {
         this.gameTeamRosters = new MLBGameTeamRostersResource(http);
         this.gameTeamStats = new MLBGameTeamStatsResource(http);
         this.gameUmpires = new MLBGameUmpiresResource(http);
-        this.operatorPlayerLookups = new MLBOperatorPlayerLookupsResource(http);
-        this.pitches = new MLBPitchesResource(http);
-        this.playerAwards = new MLBPlayerAwardsResource(http);
-        this.playerInjuries = new MLBPlayerInjuriesResource(http);
+        this.gameWeathers = new MLBGameWeathersResource(http);
         this.playerNews = new MLBPlayerNewsResource(http);
-        this.seasonPlayerStats = new MLBSeasonPlayerStatsResource(http);
-        this.teamPlayerRosters = new MLBTeamPlayerRostersResource(http);
-        this.teamStartingLineupBatters = new MLBTeamStartingLineupBattersResource(http);
-        this.teamStartingLineups = new MLBTeamStartingLineupsResource(http);
-        this.venueWeathers = new MLBVenueWeathersResource(http);
+        this.teamNews = new MLBTeamNewsResource(http);
         this.atBats = new MLBAtBatsResource(http);
+        this.teamStartingLineupBatters = new MLBTeamStartingLineupBattersResource(http);
+        this.pitches = new MLBPitchesResource(http);
         this.playByPlays = new MLBPlayByPlaysResource(http);
     }
 
@@ -93,6 +95,10 @@ public final class MlbApi {
 
     public MLBVenuesResource venues() {
         return venues;
+    }
+
+    public MLBBroadcastersResource broadcasters() {
+        return broadcasters;
     }
 
     public MLBUmpiresResource umpires() {
@@ -119,16 +125,8 @@ public final class MlbApi {
         return wobaWeights;
     }
 
-    public MLBGamesResource games() {
-        return games;
-    }
-
     public MLBPlayersResource players() {
         return players;
-    }
-
-    public MLBBroadcastersResource broadcasters() {
-        return broadcasters;
     }
 
     public MLBOperatorTeamLookupsResource operatorTeamLookups() {
@@ -147,8 +145,36 @@ public final class MlbApi {
         return seriesOdds;
     }
 
+    public MLBGamesResource games() {
+        return games;
+    }
+
+    public MLBOperatorPlayerLookupsResource operatorPlayerLookups() {
+        return operatorPlayerLookups;
+    }
+
+    public MLBPlayerAwardsResource playerAwards() {
+        return playerAwards;
+    }
+
+    public MLBPlayerInjuriesResource playerInjuries() {
+        return playerInjuries;
+    }
+
+    public MLBSeasonPlayerStatsResource seasonPlayerStats() {
+        return seasonPlayerStats;
+    }
+
+    public MLBTeamPlayerRostersResource teamPlayerRosters() {
+        return teamPlayerRosters;
+    }
+
     public MLBInningsResource innings() {
         return innings;
+    }
+
+    public MLBTeamStartingLineupsResource teamStartingLineups() {
+        return teamStartingLineups;
     }
 
     public MLBGameAltLinesResource gameAltLines() {
@@ -191,48 +217,28 @@ public final class MlbApi {
         return gameUmpires;
     }
 
-    public MLBOperatorPlayerLookupsResource operatorPlayerLookups() {
-        return operatorPlayerLookups;
-    }
-
-    public MLBPitchesResource pitches() {
-        return pitches;
-    }
-
-    public MLBPlayerAwardsResource playerAwards() {
-        return playerAwards;
-    }
-
-    public MLBPlayerInjuriesResource playerInjuries() {
-        return playerInjuries;
+    public MLBGameWeathersResource gameWeathers() {
+        return gameWeathers;
     }
 
     public MLBPlayerNewsResource playerNews() {
         return playerNews;
     }
 
-    public MLBSeasonPlayerStatsResource seasonPlayerStats() {
-        return seasonPlayerStats;
+    public MLBTeamNewsResource teamNews() {
+        return teamNews;
     }
 
-    public MLBTeamPlayerRostersResource teamPlayerRosters() {
-        return teamPlayerRosters;
+    public MLBAtBatsResource atBats() {
+        return atBats;
     }
 
     public MLBTeamStartingLineupBattersResource teamStartingLineupBatters() {
         return teamStartingLineupBatters;
     }
 
-    public MLBTeamStartingLineupsResource teamStartingLineups() {
-        return teamStartingLineups;
-    }
-
-    public MLBVenueWeathersResource venueWeathers() {
-        return venueWeathers;
-    }
-
-    public MLBAtBatsResource atBats() {
-        return atBats;
+    public MLBPitchesResource pitches() {
+        return pitches;
     }
 
     public MLBPlayByPlaysResource playByPlays() {

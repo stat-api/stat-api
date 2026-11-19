@@ -11,7 +11,7 @@ public final class NbaPaginationManual {
         StatApi api = new StatApi(); // reads STAT_API_KEY from the environment
 
         // Follow next_from_id until it is null
-        Long fromId = null;
+        Long fromId = 0L;
         int total = 0;
         int pageNum = 0;
         while (true) {

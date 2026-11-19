@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
-from typing import Any, TypedDict
+from typing import TypedDict
 
 from ..page import Page
 from ..transport import HttpTransport
@@ -15,9 +15,65 @@ DFSGameStat = TypedDict(
     "DFSGameStat",
     {
         "id": int,
+        "away_team_id": int,
         "game_id": int,
+        "home_team_id": int,
         "league_id": int,
-        "data": dict[str, Any],
+        "operator_id": int,
+        "slate_id": int,
+        "away_fpts": float | None,
+        "away_passing_yds": int | None,
+        "away_pts": int | None,
+        "away_rushing_yds": int | None,
+        "away_total_yds": int | None,
+        "away_turnovers": int | None,
+        "home_fpts": float | None,
+        "home_passing_yds": int | None,
+        "home_pts": int | None,
+        "home_rushing_yds": int | None,
+        "home_total_yds": int | None,
+        "home_turnovers": int | None,
+        "player_count": int | None,
+        "scoring_format": str | None,
+        "scoring_rule": str | None,
+        "slate_date": str,
+        "total_assists_fpts": float | None,
+        "total_blocked_kick_fpts": float | None,
+        "total_blocks_fpts": float | None,
+        "total_defense_interception_fpts": float | None,
+        "total_defensive_td_fpts": float | None,
+        "total_double_double_fpts": float | None,
+        "total_extra_point_fpts": float | None,
+        "total_field_goal_fpts": float | None,
+        "total_field_goal_missed_fpts": float | None,
+        "total_fpts": float | None,
+        "total_fumble_lost_fpts": float | None,
+        "total_fumble_recovery_fpts": float | None,
+        "total_interception_fpts": float | None,
+        "total_passing_2pt_conversion_fpts": float | None,
+        "total_passing_bonus_fpts": float | None,
+        "total_passing_td_fpts": float | None,
+        "total_passing_yds_fpts": float | None,
+        "total_pts_allowed_fpts": float | None,
+        "total_pts_fpts": float | None,
+        "total_rebounds_fpts": float | None,
+        "total_receiving_2pt_conversion_fpts": float | None,
+        "total_receiving_bonus_fpts": float | None,
+        "total_receiving_td_fpts": float | None,
+        "total_receiving_yds_fpts": float | None,
+        "total_reception_fpts": float | None,
+        "total_return_td_fpts": float | None,
+        "total_return_yds_fpts": float | None,
+        "total_rushing_2pt_conversion_fpts": float | None,
+        "total_rushing_bonus_fpts": float | None,
+        "total_rushing_td_fpts": float | None,
+        "total_rushing_yds_fpts": float | None,
+        "total_sack_fpts": float | None,
+        "total_safety_fpts": float | None,
+        "total_steals_fpts": float | None,
+        "total_three_pointers_made_fpts": float | None,
+        "total_triple_double_fpts": float | None,
+        "total_turnovers_fpts": float | None,
     },
 )
 
@@ -28,8 +84,16 @@ class DFSGameStatsResource:
     def __init__(self, transport: HttpTransport) -> None:
         self._transport = transport
 
-    def list(self, *, limit: int | None = None, from_id: int | None = None) -> Page[DFSGameStat]:
+    def list(self, *, slate_id: int | None = None, operator_slate_id: int | None = None, game_id: int | None = None, slate_date: str | None = None, scoring_format: str | None = None, operator_id: int | None = None, operator: str | int | None = None, league_id: int | None = None, limit: int | None = None, from_id: int | None = None) -> Page[DFSGameStat]:
         body, quota = self._transport.request(self._PATH, {
+            "slate_id": slate_id,
+            "operator_slate_id": operator_slate_id,
+            "game_id": game_id,
+            "slate_date": slate_date,
+            "scoring_format": scoring_format,
+            "operator_id": operator_id,
+            "operator": operator,
+            "league_id": league_id,
             "limit": limit,
             "from_id": from_id,
         })
@@ -46,13 +110,13 @@ class DFSGameStatsResource:
         row: DFSGameStat = body
         return row
 
-    def iter(self, *, limit: int | None = None) -> Iterator[DFSGameStat]:
+    def iter(self, *, slate_id: int | None = None, operator_slate_id: int | None = None, game_id: int | None = None, slate_date: str | None = None, scoring_format: str | None = None, operator_id: int | None = None, operator: str | int | None = None, league_id: int | None = None, limit: int | None = None) -> Iterator[DFSGameStat]:
         # Always walk with from_id (starting at 0): from_id forces the server's
         # ascending keyset order. Without it, DESC-default tables re-yield page
         # 1 and under-walk. Iteration is therefore always oldest-first.
         from_id: int | None = 0
         while True:
-            page = self.list(limit=limit, from_id=from_id)
+            page = self.list(slate_id=slate_id, operator_slate_id=operator_slate_id, game_id=game_id, slate_date=slate_date, scoring_format=scoring_format, operator_id=operator_id, operator=operator, league_id=league_id, limit=limit, from_id=from_id)
             for row in page.rows:
                 yield row
             if page.next_from_id is None:

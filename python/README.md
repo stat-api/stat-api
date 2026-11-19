@@ -82,6 +82,17 @@ except StatApiError as err:
 | 429 | `QuotaExceededError` |
 | other | `StatApiError` |
 
+## NFL sim (beta)
+
+The Python client has the core calls of the NFL play-by-play simulator. Game 43418 (2026 Week 1 DEN @ KC) is free. Other games need a Pro or Elite plan, or the DFS add-on.
+
+- `api.nfl.weeks(season=...)`
+- `api.sim.nfl.run(game_id=..., n_draws=..., seed=..., include=..., home_spread=...)`
+
+The tutorial has 5 recipes. Each one runs on the free game and prints real output. Start with [Run your first NFL game simulation](../cookbook/python/nfl_sim_summary.py), or read the whole tutorial at https://stat-api.com/docs/cookbook/sim/.
+
+The API reference: https://stat-api.com/docs/api/sim/
+
 ## Quota
 
 Every response carries your monthly record quota. It's on each `Page` and on

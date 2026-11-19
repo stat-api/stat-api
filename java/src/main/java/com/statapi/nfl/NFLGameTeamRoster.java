@@ -12,7 +12,10 @@ public record NFLGameTeamRoster(
     Long playerId,
     Long teamId,
     String comment,
-    Integer day,
+    Integer depthOrder,
+    String depthPosition,
+    String formation,
+    String injuryStatus,
     String position,
     Boolean starter,
     String status
@@ -25,7 +28,10 @@ public record NFLGameTeamRoster(
             json.get("player_id").asLong(),
             json.get("team_id").asLong(),
             json.get("comment").asString(),
-            json.get("day").asInt(),
+            json.get("depth_order").asInt(),
+            json.get("depth_position").asString(),
+            json.get("formation").asString(),
+            json.get("injury_status").asString(),
             json.get("position").asString(),
             json.get("starter").asBoolean(),
             json.get("status").asString()

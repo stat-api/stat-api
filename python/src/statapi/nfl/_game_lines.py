@@ -27,6 +27,7 @@ NFLGameLine = TypedDict(
         "moneyline_away": int | None,
         "moneyline_home": int | None,
         "over_odds": int | None,
+        "source": str,
         "spread": float | None,
         "spread_away_odds": int | None,
         "spread_home_odds": int | None,

@@ -23,15 +23,11 @@ type PGAPlayerNew struct {
 	Categories        *string          `json:"categories"`
 	Content           *string          `json:"content"`
 	NewsTime          string           `json:"news_time"`
-	OriginalSource    *string          `json:"original_source"`
-	OriginalSourceURL *string          `json:"original_source_url"`
 	Priority          int              `json:"priority"`
 	SituationalImpact *json.RawMessage `json:"situational_impact"`
-	Source            *string          `json:"source"`
 	TermsOfUse        *string          `json:"terms_of_use"`
 	Title             string           `json:"title"`
 	UpdatedTime       *string          `json:"updated_time"`
-	URL               *string          `json:"url"`
 }
 
 // PGAPlayerNewsListParams are the query parameters for listing pga.player_news.

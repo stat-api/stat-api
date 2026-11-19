@@ -2,7 +2,12 @@
 //
 // SDK resource for nfl.season_player_stats (public API).
 // Source: schema/api/groups/public.yml + schema/model/nfl/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NFLSeasonPlayerStat {
   id: number;
@@ -107,6 +112,8 @@ export interface NFLSeasonPlayerStatsListResponse {
   season_player_stats: NFLSeasonPlayerStat[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -116,12 +123,17 @@ export class NFLSeasonPlayerStatsResource {
 
   async list(params?: NFLSeasonPlayerStatsListParams): Promise<NFLSeasonPlayerStatsListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NFLSeasonPlayerStatsListResponse, 'quota'>>(this.opts, `/api/v1/nfl/season_player_stats${qs}`);
+    const r = await fetchJson<Omit<NFLSeasonPlayerStatsListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nfl/season_player_stats${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
   async get(id: number): Promise<NFLSeasonPlayerStat> {
-    return (await fetchJson<NFLSeasonPlayerStat>(this.opts, `/api/v1/nfl/season_player_stats/${id}`)).data;
+    return (
+      await fetchJson<NFLSeasonPlayerStat>(this.opts, `/api/v1/nfl/season_player_stats/${id}`)
+    ).data;
   }
   async *iter(params?: NFLSeasonPlayerStatsListParams): AsyncGenerator<NFLSeasonPlayerStat> {
     // Always walk with from_id (starting at 0): from_id forces the server's
@@ -134,7 +146,10 @@ export class NFLSeasonPlayerStatsResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NFLSeasonPlayerStatsListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NFLSeasonPlayerStatsListParams);
+      const page: NFLSeasonPlayerStatsListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NFLSeasonPlayerStatsListParams);
       for (const row of page.season_player_stats) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

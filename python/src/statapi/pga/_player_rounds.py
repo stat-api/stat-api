@@ -16,7 +16,6 @@ PGAPlayerRound = TypedDict(
     {
         "id": int,
         "player_id": int,
-        "player_round_id": int,
         "tournament_id": int,
         "back_nine_start": bool | None,
         "birdies": int | None,

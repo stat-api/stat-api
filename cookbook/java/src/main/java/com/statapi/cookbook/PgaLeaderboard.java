@@ -1,5 +1,5 @@
 // Read a PGA golfer's leaderboard finishes
-// Generated from schema/api/examples/leaderboard.yml — do not edit.
+// Generated from schema/api/examples/golf-leaderboard.yml — do not edit.
 package com.statapi.cookbook;
 
 import com.statapi.StatApi;

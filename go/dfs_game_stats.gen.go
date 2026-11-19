@@ -15,22 +15,110 @@ import (
 
 // DFSGameStat is a row from dfs.game_stats.
 type DFSGameStat struct {
-	ID       int64           `json:"id"`
-	GameID   int64           `json:"game_id"`
-	LeagueID int64           `json:"league_id"`
-	Data     json.RawMessage `json:"data"`
+	ID                              int64    `json:"id"`
+	AwayTeamID                      int64    `json:"away_team_id"`
+	GameID                          int64    `json:"game_id"`
+	HomeTeamID                      int64    `json:"home_team_id"`
+	LeagueID                        int64    `json:"league_id"`
+	OperatorID                      int64    `json:"operator_id"`
+	SlateID                         int64    `json:"slate_id"`
+	AwayFpts                        *float64 `json:"away_fpts"`
+	AwayPassingYds                  *int     `json:"away_passing_yds"`
+	AwayPts                         *int     `json:"away_pts"`
+	AwayRushingYds                  *int     `json:"away_rushing_yds"`
+	AwayTotalYds                    *int     `json:"away_total_yds"`
+	AwayTurnovers                   *int     `json:"away_turnovers"`
+	HomeFpts                        *float64 `json:"home_fpts"`
+	HomePassingYds                  *int     `json:"home_passing_yds"`
+	HomePts                         *int     `json:"home_pts"`
+	HomeRushingYds                  *int     `json:"home_rushing_yds"`
+	HomeTotalYds                    *int     `json:"home_total_yds"`
+	HomeTurnovers                   *int     `json:"home_turnovers"`
+	PlayerCount                     *int     `json:"player_count"`
+	ScoringFormat                   *string  `json:"scoring_format"`
+	ScoringRule                     *string  `json:"scoring_rule"`
+	SlateDate                       string   `json:"slate_date"`
+	TotalAssistsFpts                *float64 `json:"total_assists_fpts"`
+	TotalBlockedKickFpts            *float64 `json:"total_blocked_kick_fpts"`
+	TotalBlocksFpts                 *float64 `json:"total_blocks_fpts"`
+	TotalDefenseInterceptionFpts    *float64 `json:"total_defense_interception_fpts"`
+	TotalDefensiveTdFpts            *float64 `json:"total_defensive_td_fpts"`
+	TotalDoubleDoubleFpts           *float64 `json:"total_double_double_fpts"`
+	TotalExtraPointFpts             *float64 `json:"total_extra_point_fpts"`
+	TotalFieldGoalFpts              *float64 `json:"total_field_goal_fpts"`
+	TotalFieldGoalMissedFpts        *float64 `json:"total_field_goal_missed_fpts"`
+	TotalFpts                       *float64 `json:"total_fpts"`
+	TotalFumbleLostFpts             *float64 `json:"total_fumble_lost_fpts"`
+	TotalFumbleRecoveryFpts         *float64 `json:"total_fumble_recovery_fpts"`
+	TotalInterceptionFpts           *float64 `json:"total_interception_fpts"`
+	TotalPassing2ptConversionFpts   *float64 `json:"total_passing_2pt_conversion_fpts"`
+	TotalPassingBonusFpts           *float64 `json:"total_passing_bonus_fpts"`
+	TotalPassingTdFpts              *float64 `json:"total_passing_td_fpts"`
+	TotalPassingYdsFpts             *float64 `json:"total_passing_yds_fpts"`
+	TotalPtsAllowedFpts             *float64 `json:"total_pts_allowed_fpts"`
+	TotalPtsFpts                    *float64 `json:"total_pts_fpts"`
+	TotalReboundsFpts               *float64 `json:"total_rebounds_fpts"`
+	TotalReceiving2ptConversionFpts *float64 `json:"total_receiving_2pt_conversion_fpts"`
+	TotalReceivingBonusFpts         *float64 `json:"total_receiving_bonus_fpts"`
+	TotalReceivingTdFpts            *float64 `json:"total_receiving_td_fpts"`
+	TotalReceivingYdsFpts           *float64 `json:"total_receiving_yds_fpts"`
+	TotalReceptionFpts              *float64 `json:"total_reception_fpts"`
+	TotalReturnTdFpts               *float64 `json:"total_return_td_fpts"`
+	TotalReturnYdsFpts              *float64 `json:"total_return_yds_fpts"`
+	TotalRushing2ptConversionFpts   *float64 `json:"total_rushing_2pt_conversion_fpts"`
+	TotalRushingBonusFpts           *float64 `json:"total_rushing_bonus_fpts"`
+	TotalRushingTdFpts              *float64 `json:"total_rushing_td_fpts"`
+	TotalRushingYdsFpts             *float64 `json:"total_rushing_yds_fpts"`
+	TotalSackFpts                   *float64 `json:"total_sack_fpts"`
+	TotalSafetyFpts                 *float64 `json:"total_safety_fpts"`
+	TotalStealsFpts                 *float64 `json:"total_steals_fpts"`
+	TotalThreePointersMadeFpts      *float64 `json:"total_three_pointers_made_fpts"`
+	TotalTripleDoubleFpts           *float64 `json:"total_triple_double_fpts"`
+	TotalTurnoversFpts              *float64 `json:"total_turnovers_fpts"`
 }
 
 // DFSGameStatsListParams are the query parameters for listing dfs.game_stats.
 type DFSGameStatsListParams struct {
-	Limit  *int
-	FromID *int64
+	SlateID         *int64
+	OperatorSlateID *int
+	GameID          *int64
+	SlateDate       *string
+	ScoringFormat   *string
+	OperatorID      *int64
+	Operator        *string
+	LeagueID        *int64
+	Limit           *int
+	FromID          *int64
 }
 
 func (p *DFSGameStatsListParams) values() url.Values {
 	v := url.Values{}
 	if p == nil {
 		return v
+	}
+	if p.SlateID != nil {
+		v.Set("slate_id", strconv.FormatInt(*p.SlateID, 10))
+	}
+	if p.OperatorSlateID != nil {
+		v.Set("operator_slate_id", strconv.Itoa(*p.OperatorSlateID))
+	}
+	if p.GameID != nil {
+		v.Set("game_id", strconv.FormatInt(*p.GameID, 10))
+	}
+	if p.SlateDate != nil {
+		v.Set("slate_date", *p.SlateDate)
+	}
+	if p.ScoringFormat != nil {
+		v.Set("scoring_format", *p.ScoringFormat)
+	}
+	if p.OperatorID != nil {
+		v.Set("operator_id", strconv.FormatInt(*p.OperatorID, 10))
+	}
+	if p.Operator != nil {
+		v.Set("operator", *p.Operator)
+	}
+	if p.LeagueID != nil {
+		v.Set("league_id", strconv.FormatInt(*p.LeagueID, 10))
 	}
 	if p.Limit != nil {
 		v.Set("limit", strconv.Itoa(*p.Limit))

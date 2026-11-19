@@ -29,7 +29,7 @@ async function kalshiPulse(ctx: WpContext): Promise<MarketPulsePoint[]> {
 
   const home = ctx.homeTeamName.toLowerCase();
   const market = markets.find(
-    m =>
+    (m) =>
       m.last_price !== null &&
       m.last_price !== undefined &&
       (m.title.toLowerCase().includes(home) || (m.subtitle ?? '').toLowerCase().includes(home)),

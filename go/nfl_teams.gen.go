@@ -24,7 +24,6 @@ type NFLTeam struct {
 	Conference     string  `json:"conference"`
 	Division       string  `json:"division"`
 	FullName       string  `json:"full_name"`
-	LogoURL        *string `json:"logo_url"`
 	Name           string  `json:"name"`
 	PrimaryColor   *string `json:"primary_color"`
 	SecondaryColor *string `json:"secondary_color"`

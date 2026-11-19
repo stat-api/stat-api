@@ -4,69 +4,79 @@
 package com.statapi.nba;
 
 import com.statapi.Http;
+import com.statapi.NBASimWeeksResponse;
+import com.statapi.SimNBAResource;
 
 public final class NbaApi {
 
+    private final SimNBAResource simNba;
     private final NBASeasonsResource seasons;
     private final NBAStadiumsResource stadiums;
-    private final NBARefereesResource referees;
+    private final NBABroadcastersResource broadcasters;
     private final NBACoachingStaffsResource coachingStaffs;
+    private final NBARefereesResource referees;
     private final NBATeamsResource teams;
     private final NBAGamesResource games;
     private final NBAPlayersResource players;
-    private final NBABroadcastersResource broadcasters;
     private final NBAOperatorTeamLookupsResource operatorTeamLookups;
     private final NBAPlayoffsResource playoffs;
     private final NBASeasonTeamStatsResource seasonTeamStats;
     private final NBATeamCoachingStaffsResource teamCoachingStaffs;
     private final NBATeamStandingsResource teamStandings;
+    private final NBAGamePossessionsResource gamePossessions;
     private final NBAGameBroadcastersResource gameBroadcasters;
     private final NBAGameLinesResource gameLines;
     private final NBAGamePeriodLinesResource gamePeriodLines;
     private final NBAGamePlayerPropsResource gamePlayerProps;
     private final NBAGamePlayerStatsResource gamePlayerStats;
-    private final NBAGamePossessionsResource gamePossessions;
     private final NBAGameRefereesResource gameReferees;
     private final NBAGameTeamLineupStintsResource gameTeamLineupStints;
     private final NBAGameTeamRostersResource gameTeamRosters;
     private final NBAGameTeamStatsResource gameTeamStats;
     private final NBAOperatorPlayerLookupsResource operatorPlayerLookups;
-    private final NBAPlayByPlaysResource playByPlays;
     private final NBAPlayerNewsResource playerNews;
+    private final NBAProjectedPlayerStatsResource projectedPlayerStats;
+    private final NBAProjectedTeamStatsResource projectedTeamStats;
     private final NBASeasonPlayerStatsResource seasonPlayerStats;
     private final NBATeamDepthChartsResource teamDepthCharts;
     private final NBATeamGameContextsResource teamGameContexts;
+    private final NBATeamNewsResource teamNews;
+    private final NBAPlayByPlaysResource playByPlays;
 
     public NbaApi(Http http) {
+        this.simNba = new SimNBAResource(http);
         this.seasons = new NBASeasonsResource(http);
         this.stadiums = new NBAStadiumsResource(http);
-        this.referees = new NBARefereesResource(http);
+        this.broadcasters = new NBABroadcastersResource(http);
         this.coachingStaffs = new NBACoachingStaffsResource(http);
+        this.referees = new NBARefereesResource(http);
         this.teams = new NBATeamsResource(http);
         this.games = new NBAGamesResource(http);
         this.players = new NBAPlayersResource(http);
-        this.broadcasters = new NBABroadcastersResource(http);
         this.operatorTeamLookups = new NBAOperatorTeamLookupsResource(http);
         this.playoffs = new NBAPlayoffsResource(http);
         this.seasonTeamStats = new NBASeasonTeamStatsResource(http);
         this.teamCoachingStaffs = new NBATeamCoachingStaffsResource(http);
         this.teamStandings = new NBATeamStandingsResource(http);
+        this.gamePossessions = new NBAGamePossessionsResource(http);
         this.gameBroadcasters = new NBAGameBroadcastersResource(http);
         this.gameLines = new NBAGameLinesResource(http);
         this.gamePeriodLines = new NBAGamePeriodLinesResource(http);
         this.gamePlayerProps = new NBAGamePlayerPropsResource(http);
         this.gamePlayerStats = new NBAGamePlayerStatsResource(http);
-        this.gamePossessions = new NBAGamePossessionsResource(http);
         this.gameReferees = new NBAGameRefereesResource(http);
         this.gameTeamLineupStints = new NBAGameTeamLineupStintsResource(http);
         this.gameTeamRosters = new NBAGameTeamRostersResource(http);
         this.gameTeamStats = new NBAGameTeamStatsResource(http);
         this.operatorPlayerLookups = new NBAOperatorPlayerLookupsResource(http);
-        this.playByPlays = new NBAPlayByPlaysResource(http);
         this.playerNews = new NBAPlayerNewsResource(http);
+        this.projectedPlayerStats = new NBAProjectedPlayerStatsResource(http);
+        this.projectedTeamStats = new NBAProjectedTeamStatsResource(http);
         this.seasonPlayerStats = new NBASeasonPlayerStatsResource(http);
         this.teamDepthCharts = new NBATeamDepthChartsResource(http);
         this.teamGameContexts = new NBATeamGameContextsResource(http);
+        this.teamNews = new NBATeamNewsResource(http);
+        this.playByPlays = new NBAPlayByPlaysResource(http);
     }
 
     public NBASeasonsResource seasons() {
@@ -77,12 +87,16 @@ public final class NbaApi {
         return stadiums;
     }
 
-    public NBARefereesResource referees() {
-        return referees;
+    public NBABroadcastersResource broadcasters() {
+        return broadcasters;
     }
 
     public NBACoachingStaffsResource coachingStaffs() {
         return coachingStaffs;
+    }
+
+    public NBARefereesResource referees() {
+        return referees;
     }
 
     public NBATeamsResource teams() {
@@ -95,10 +109,6 @@ public final class NbaApi {
 
     public NBAPlayersResource players() {
         return players;
-    }
-
-    public NBABroadcastersResource broadcasters() {
-        return broadcasters;
     }
 
     public NBAOperatorTeamLookupsResource operatorTeamLookups() {
@@ -121,6 +131,10 @@ public final class NbaApi {
         return teamStandings;
     }
 
+    public NBAGamePossessionsResource gamePossessions() {
+        return gamePossessions;
+    }
+
     public NBAGameBroadcastersResource gameBroadcasters() {
         return gameBroadcasters;
     }
@@ -139,10 +153,6 @@ public final class NbaApi {
 
     public NBAGamePlayerStatsResource gamePlayerStats() {
         return gamePlayerStats;
-    }
-
-    public NBAGamePossessionsResource gamePossessions() {
-        return gamePossessions;
     }
 
     public NBAGameRefereesResource gameReferees() {
@@ -165,12 +175,16 @@ public final class NbaApi {
         return operatorPlayerLookups;
     }
 
-    public NBAPlayByPlaysResource playByPlays() {
-        return playByPlays;
-    }
-
     public NBAPlayerNewsResource playerNews() {
         return playerNews;
+    }
+
+    public NBAProjectedPlayerStatsResource projectedPlayerStats() {
+        return projectedPlayerStats;
+    }
+
+    public NBAProjectedTeamStatsResource projectedTeamStats() {
+        return projectedTeamStats;
     }
 
     public NBASeasonPlayerStatsResource seasonPlayerStats() {
@@ -183,5 +197,25 @@ public final class NbaApi {
 
     public NBATeamGameContextsResource teamGameContexts() {
         return teamGameContexts;
+    }
+
+    public NBATeamNewsResource teamNews() {
+        return teamNews;
+    }
+
+    public NBAPlayByPlaysResource playByPlays() {
+        return playByPlays;
+    }
+
+    public NBASimWeeksResponse weeks() {
+        return simNba.weeks(null, null, null);
+    }
+
+    public NBASimWeeksResponse weeks(Integer season) {
+        return simNba.weeks(season, null, null);
+    }
+
+    public NBASimWeeksResponse weeks(Integer season, Integer week, String seasonType) {
+        return simNba.weeks(season, week, seasonType);
     }
 }

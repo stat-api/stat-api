@@ -5,43 +5,27 @@
 //   const api = new StatApi();                       // reads STAT_API_KEY
 //   const { teams } = await api.nfl.teams.list({ limit: 10 });
 
-import { StatApiBase, type ResolvedStatApiOptions, type StatApiOptions } from '../core/client.js';
-import { DFSSlatesResource } from './dfs/_slates.js';
-import { DFSContestUserLineupPlayerEntriesResource } from './dfs/_contest_user_lineup_player_entries.js';
+import { type ResolvedStatApiOptions, StatApiBase, type StatApiOptions } from '../core/client.js';
+import {
+  type NBASimWeeksResponse,
+  type NBAWeeksParams,
+  type NFLWeeksParams,
+  type NFLWeeksResponse,
+  SimNBAClient,
+  SimNFLClient,
+} from '../core/sim.js';
+import { DFSContestPayoutShapesResource } from './dfs/_contest_payout_shapes.js';
 import { DFSContestUsersResource } from './dfs/_contest_users.js';
+import { DFSContestsResource } from './dfs/_contests.js';
 import { DFSGameStatsResource } from './dfs/_game_stats.js';
 import { DFSPlayerStatsResource } from './dfs/_player_stats.js';
-import { DFSSlatePlayerProjectionsResource } from './dfs/_slate_player_projections.js';
-import { DFSSlateProjectionSourcesResource } from './dfs/_slate_projection_sources.js';
-import { DFSSlateSettingsResource } from './dfs/_slate_settings.js';
-import { DFSTeamStatsResource } from './dfs/_team_stats.js';
-import { DFSContestsResource } from './dfs/_contests.js';
 import { DFSSlateGamesResource } from './dfs/_slate_games.js';
 import { DFSSlatePlayersResource } from './dfs/_slate_players.js';
-import { DFSContestUserLineupsResource } from './dfs/_contest_user_lineups.js';
-import { KalshiSeriesResource } from './kalshi/_series.js';
-import { KalshiMarketStatusesResource } from './kalshi/_market_statuses.js';
-import { KalshiEventsResource } from './kalshi/_events.js';
-import { KalshiMarketsResource } from './kalshi/_markets.js';
-import { KalshiCandlesResource } from './kalshi/_candles.js';
-import { KalshiMarketSnapshotsResource } from './kalshi/_market_snapshots.js';
-import { KalshiPublicTradesResource } from './kalshi/_public_trades.js';
-import { MLBSeasonsResource } from './mlb/_seasons.js';
-import { MLBVenuesResource } from './mlb/_venues.js';
-import { MLBUmpiresResource } from './mlb/_umpires.js';
-import { MLBTeamsResource } from './mlb/_teams.js';
-import { MLBParkFactorsResource } from './mlb/_park_factors.js';
-import { MLBSeasonRunEnvironmentsResource } from './mlb/_season_run_environments.js';
-import { MLBVenueDimensionsResource } from './mlb/_venue_dimensions.js';
-import { MLBWobaWeightsResource } from './mlb/_woba_weights.js';
-import { MLBGamesResource } from './mlb/_games.js';
-import { MLBPlayersResource } from './mlb/_players.js';
+import { DFSSlateSettingsResource } from './dfs/_slate_settings.js';
+import { DFSSlatesResource } from './dfs/_slates.js';
+import { DFSTeamStatsResource } from './dfs/_team_stats.js';
+import { MLBAtBatsResource } from './mlb/_at_bats.js';
 import { MLBBroadcastersResource } from './mlb/_broadcasters.js';
-import { MLBOperatorTeamLookupsResource } from './mlb/_operator_team_lookups.js';
-import { MLBPlayoffsResource } from './mlb/_playoffs.js';
-import { MLBSeasonTeamStatsResource } from './mlb/_season_team_stats.js';
-import { MLBSeriesOddsResource } from './mlb/_series_odds.js';
-import { MLBInningsResource } from './mlb/_innings.js';
 import { MLBGameAltLinesResource } from './mlb/_game_alt_lines.js';
 import { MLBGameBroadcastersResource } from './mlb/_game_broadcasters.js';
 import { MLBGameLinesResource } from './mlb/_game_lines.js';
@@ -52,31 +36,35 @@ import { MLBGamePlayerPropsResource } from './mlb/_game_player_props.js';
 import { MLBGameTeamRostersResource } from './mlb/_game_team_rosters.js';
 import { MLBGameTeamStatsResource } from './mlb/_game_team_stats.js';
 import { MLBGameUmpiresResource } from './mlb/_game_umpires.js';
+import { MLBGameWeathersResource } from './mlb/_game_weathers.js';
+import { MLBGamesResource } from './mlb/_games.js';
+import { MLBInningsResource } from './mlb/_innings.js';
 import { MLBOperatorPlayerLookupsResource } from './mlb/_operator_player_lookups.js';
+import { MLBOperatorTeamLookupsResource } from './mlb/_operator_team_lookups.js';
+import { MLBParkFactorsResource } from './mlb/_park_factors.js';
 import { MLBPitchesResource } from './mlb/_pitches.js';
+import { MLBPlayByPlaysResource } from './mlb/_play_by_plays.js';
 import { MLBPlayerAwardsResource } from './mlb/_player_awards.js';
 import { MLBPlayerInjuriesResource } from './mlb/_player_injuries.js';
 import { MLBPlayerNewsResource } from './mlb/_player_news.js';
+import { MLBPlayersResource } from './mlb/_players.js';
+import { MLBPlayoffsResource } from './mlb/_playoffs.js';
 import { MLBSeasonPlayerStatsResource } from './mlb/_season_player_stats.js';
+import { MLBSeasonRunEnvironmentsResource } from './mlb/_season_run_environments.js';
+import { MLBSeasonTeamStatsResource } from './mlb/_season_team_stats.js';
+import { MLBSeasonsResource } from './mlb/_seasons.js';
+import { MLBSeriesOddsResource } from './mlb/_series_odds.js';
+import { MLBTeamNewsResource } from './mlb/_team_news.js';
 import { MLBTeamPlayerRostersResource } from './mlb/_team_player_rosters.js';
 import { MLBTeamStartingLineupBattersResource } from './mlb/_team_starting_lineup_batters.js';
 import { MLBTeamStartingLineupsResource } from './mlb/_team_starting_lineups.js';
-import { MLBVenueWeathersResource } from './mlb/_venue_weathers.js';
-import { MLBAtBatsResource } from './mlb/_at_bats.js';
-import { MLBPlayByPlaysResource } from './mlb/_play_by_plays.js';
-import { NBASeasonsResource } from './nba/_seasons.js';
-import { NBAStadiumsResource } from './nba/_stadiums.js';
-import { NBARefereesResource } from './nba/_referees.js';
-import { NBACoachingStaffsResource } from './nba/_coaching_staffs.js';
-import { NBATeamsResource } from './nba/_teams.js';
-import { NBAGamesResource } from './nba/_games.js';
-import { NBAPlayersResource } from './nba/_players.js';
+import { MLBTeamsResource } from './mlb/_teams.js';
+import { MLBUmpiresResource } from './mlb/_umpires.js';
+import { MLBVenueDimensionsResource } from './mlb/_venue_dimensions.js';
+import { MLBVenuesResource } from './mlb/_venues.js';
+import { MLBWobaWeightsResource } from './mlb/_woba_weights.js';
 import { NBABroadcastersResource } from './nba/_broadcasters.js';
-import { NBAOperatorTeamLookupsResource } from './nba/_operator_team_lookups.js';
-import { NBAPlayoffsResource } from './nba/_playoffs.js';
-import { NBASeasonTeamStatsResource } from './nba/_season_team_stats.js';
-import { NBATeamCoachingStaffsResource } from './nba/_team_coaching_staffs.js';
-import { NBATeamStandingsResource } from './nba/_team_standings.js';
+import { NBACoachingStaffsResource } from './nba/_coaching_staffs.js';
 import { NBAGameBroadcastersResource } from './nba/_game_broadcasters.js';
 import { NBAGameLinesResource } from './nba/_game_lines.js';
 import { NBAGamePeriodLinesResource } from './nba/_game_period_lines.js';
@@ -87,35 +75,40 @@ import { NBAGameRefereesResource } from './nba/_game_referees.js';
 import { NBAGameTeamLineupStintsResource } from './nba/_game_team_lineup_stints.js';
 import { NBAGameTeamRostersResource } from './nba/_game_team_rosters.js';
 import { NBAGameTeamStatsResource } from './nba/_game_team_stats.js';
+import { NBAGamesResource } from './nba/_games.js';
 import { NBAOperatorPlayerLookupsResource } from './nba/_operator_player_lookups.js';
+import { NBAOperatorTeamLookupsResource } from './nba/_operator_team_lookups.js';
 import { NBAPlayByPlaysResource } from './nba/_play_by_plays.js';
 import { NBAPlayerNewsResource } from './nba/_player_news.js';
+import { NBAPlayersResource } from './nba/_players.js';
+import { NBAPlayoffsResource } from './nba/_playoffs.js';
+import { NBAProjectedPlayerStatsResource } from './nba/_projected_player_stats.js';
+import { NBAProjectedTeamStatsResource } from './nba/_projected_team_stats.js';
+import { NBARefereesResource } from './nba/_referees.js';
 import { NBASeasonPlayerStatsResource } from './nba/_season_player_stats.js';
+import { NBASeasonTeamStatsResource } from './nba/_season_team_stats.js';
+import { NBASeasonsResource } from './nba/_seasons.js';
+import { NBAStadiumsResource } from './nba/_stadiums.js';
+import { NBATeamCoachingStaffsResource } from './nba/_team_coaching_staffs.js';
 import { NBATeamDepthChartsResource } from './nba/_team_depth_charts.js';
 import { NBATeamGameContextsResource } from './nba/_team_game_contexts.js';
-import { NFLSeasonsResource } from './nfl/_seasons.js';
-import { NFLStadiumsResource } from './nfl/_stadiums.js';
-import { NFLRefereesResource } from './nfl/_referees.js';
-import { NFLTeamsResource } from './nfl/_teams.js';
-import { NFLPlayersResource } from './nfl/_players.js';
-import { NFLGamesResource } from './nfl/_games.js';
+import { NBATeamNewsResource } from './nba/_team_news.js';
+import { NBATeamStandingsResource } from './nba/_team_standings.js';
+import { NBATeamsResource } from './nba/_teams.js';
+import { NFLCoachSchemeTendenciesResource } from './nfl/_coach_scheme_tendencies.js';
 import { NFLCoachingStaffTenuresResource } from './nfl/_coaching_staff_tenures.js';
 import { NFLCoachingStaffsResource } from './nfl/_coaching_staffs.js';
-import { NFLDepthChartSnapshotsResource } from './nfl/_depth_chart_snapshots.js';
-import { NFLOperatorTeamLookupsResource } from './nfl/_operator_team_lookups.js';
-import { NFLPlayoffsResource } from './nfl/_playoffs.js';
-import { NFLSeasonTeamStatsResource } from './nfl/_season_team_stats.js';
 import { NFLCombineResultsResource } from './nfl/_combine_results.js';
-import { NFLDepthChartEntriesResource } from './nfl/_depth_chart_entries.js';
 import { NFLDepthChartsResource } from './nfl/_depth_charts.js';
 import { NFLDraftPicksResource } from './nfl/_draft_picks.js';
 import { NFLGameDrivesResource } from './nfl/_game_drives.js';
 import { NFLGameLinesResource } from './nfl/_game_lines.js';
+import { NFLGamePlayerAdvancedStatsResource } from './nfl/_game_player_advanced_stats.js';
 import { NFLGamePlayerFirstdownStatsResource } from './nfl/_game_player_firstdown_stats.js';
 import { NFLGamePlayerNgsPassingsResource } from './nfl/_game_player_ngs_passings.js';
 import { NFLGamePlayerNgsReceivingsResource } from './nfl/_game_player_ngs_receivings.js';
 import { NFLGamePlayerNgsRushingsResource } from './nfl/_game_player_ngs_rushings.js';
-import { NFLGamePlayerPfrAdvstatsResource } from './nfl/_game_player_pfr_advstats.js';
+import { NFLGamePlayerPropsResource } from './nfl/_game_player_props.js';
 import { NFLGamePlayerRedzoneStatsResource } from './nfl/_game_player_redzone_stats.js';
 import { NFLGamePlayerStatsResource } from './nfl/_game_player_stats.js';
 import { NFLGamePlayerThirddownStatsResource } from './nfl/_game_player_thirddown_stats.js';
@@ -124,108 +117,121 @@ import { NFLGameTeamRostersResource } from './nfl/_game_team_rosters.js';
 import { NFLGameTeamStaffsResource } from './nfl/_game_team_staffs.js';
 import { NFLGameTeamStatsResource } from './nfl/_game_team_stats.js';
 import { NFLGameWeathersResource } from './nfl/_game_weathers.js';
+import { NFLGamesResource } from './nfl/_games.js';
 import { NFLInjuriesResource } from './nfl/_injuries.js';
 import { NFLOperatorPlayerLookupsResource } from './nfl/_operator_player_lookups.js';
+import { NFLOperatorTeamLookupsResource } from './nfl/_operator_team_lookups.js';
 import { NFLPlayByPlaysResource } from './nfl/_play_by_plays.js';
 import { NFLPlayParticipationsResource } from './nfl/_play_participations.js';
 import { NFLPlayerContractsResource } from './nfl/_player_contracts.js';
 import { NFLPlayerNewsResource } from './nfl/_player_news.js';
+import { NFLPlayersResource } from './nfl/_players.js';
+import { NFLPlayoffsResource } from './nfl/_playoffs.js';
+import { NFLProjectedPlayerSnapsResource } from './nfl/_projected_player_snaps.js';
+import { NFLProjectedTeamSnapsResource } from './nfl/_projected_team_snaps.js';
+import { NFLRefereesResource } from './nfl/_referees.js';
 import { NFLSeasonPlayerFirstdownStatsResource } from './nfl/_season_player_firstdown_stats.js';
 import { NFLSeasonPlayerRedzoneStatsResource } from './nfl/_season_player_redzone_stats.js';
 import { NFLSeasonPlayerStatsResource } from './nfl/_season_player_stats.js';
 import { NFLSeasonPlayerThirddownStatsResource } from './nfl/_season_player_thirddown_stats.js';
+import { NFLSeasonTeamStatsResource } from './nfl/_season_team_stats.js';
+import { NFLSeasonsResource } from './nfl/_seasons.js';
+import { NFLStadiumsResource } from './nfl/_stadiums.js';
+import { NFLTeamNewsResource } from './nfl/_team_news.js';
 import { NFLTeamPlayerRostersResource } from './nfl/_team_player_rosters.js';
-import { NHLSeasonsResource } from './nhl/_seasons.js';
+import { NFLTeamsResource } from './nfl/_teams.js';
 import { NHLArenasResource } from './nhl/_arenas.js';
-import { NHLTeamsResource } from './nhl/_teams.js';
-import { NHLPlayersResource } from './nhl/_players.js';
-import { NHLGamesResource } from './nhl/_games.js';
-import { NHLLineCombinationsResource } from './nhl/_line_combinations.js';
-import { NHLOperatorTeamLookupsResource } from './nhl/_operator_team_lookups.js';
-import { NHLPlayoffSeriesResource } from './nhl/_playoff_series.js';
-import { NHLSeasonTeamStatsResource } from './nhl/_season_team_stats.js';
-import { NHLStandingsResource } from './nhl/_standings.js';
-import { NHLDraftPicksResource } from './nhl/_draft_picks.js';
-import { NHLGameOddsResource } from './nhl/_game_odds.js';
+import { NHLBroadcastersResource } from './nhl/_broadcasters.js';
+import { NHLCoachingStaffsResource } from './nhl/_coaching_staffs.js';
+import { NHLGameBroadcastersResource } from './nhl/_game_broadcasters.js';
+import { NHLGameLinesResource } from './nhl/_game_lines.js';
+import { NHLGamePeriodLinesResource } from './nhl/_game_period_lines.js';
+import { NHLGamePlayerPropsResource } from './nhl/_game_player_props.js';
 import { NHLGamePlayerStatsResource } from './nhl/_game_player_stats.js';
+import { NHLGameRefereesResource } from './nhl/_game_referees.js';
+import { NHLGameShiftsResource } from './nhl/_game_shifts.js';
+import { NHLGameTeamRostersResource } from './nhl/_game_team_rosters.js';
 import { NHLGameTeamStatsResource } from './nhl/_game_team_stats.js';
+import { NHLGamesResource } from './nhl/_games.js';
 import { NHLGoalieDepthChartsResource } from './nhl/_goalie_depth_charts.js';
+import { NHLLineCombinationsResource } from './nhl/_line_combinations.js';
+import { NHLOperatorGameFantasyStatsResource } from './nhl/_operator_game_fantasy_stats.js';
+import { NHLOperatorPlayerFantasyStatsResource } from './nhl/_operator_player_fantasy_stats.js';
 import { NHLOperatorPlayerLookupsResource } from './nhl/_operator_player_lookups.js';
+import { NHLOperatorTeamFantasyStatsResource } from './nhl/_operator_team_fantasy_stats.js';
+import { NHLOperatorTeamLookupsResource } from './nhl/_operator_team_lookups.js';
 import { NHLPenaltiesResource } from './nhl/_penalties.js';
 import { NHLPeriodsResource } from './nhl/_periods.js';
-import { NHLPlayerInjuriesResource } from './nhl/_player_injuries.js';
+import { NHLPlayByPlaysResource } from './nhl/_play_by_plays.js';
 import { NHLPlayerNewsResource } from './nhl/_player_news.js';
+import { NHLPlayersResource } from './nhl/_players.js';
+import { NHLPlayoffSeriesResource } from './nhl/_playoff_series.js';
+import { NHLProjectedPlayerStatsResource } from './nhl/_projected_player_stats.js';
+import { NHLProjectedTeamStatsResource } from './nhl/_projected_team_stats.js';
+import { NHLRefereesResource } from './nhl/_referees.js';
 import { NHLScoringPlaysResource } from './nhl/_scoring_plays.js';
 import { NHLSeasonPlayerStatsResource } from './nhl/_season_player_stats.js';
-import { PGAPlayersResource } from './pga/_players.js';
-import { PGAToursResource } from './pga/_tours.js';
-import { PGACoursesResource } from './pga/_courses.js';
-import { PGASeasonsResource } from './pga/_seasons.js';
-import { PGAOperatorPlayerLookupsResource } from './pga/_operator_player_lookups.js';
-import { PGATournamentsResource } from './pga/_tournaments.js';
-import { PGAPlayerSeasonStatsResource } from './pga/_player_season_stats.js';
+import { NHLSeasonTeamStatsResource } from './nhl/_season_team_stats.js';
+import { NHLSeasonsResource } from './nhl/_seasons.js';
+import { NHLStandingsResource } from './nhl/_standings.js';
+import { NHLTeamCoachingStaffsResource } from './nhl/_team_coaching_staffs.js';
+import { NHLTeamGameContextsResource } from './nhl/_team_game_contexts.js';
+import { NHLTeamNewsResource } from './nhl/_team_news.js';
+import { NHLTeamStandingsResource } from './nhl/_team_standings.js';
+import { NHLTeamsResource } from './nhl/_teams.js';
 import { PGACourseHoleStatsResource } from './pga/_course_hole_stats.js';
+import { PGACoursesResource } from './pga/_courses.js';
 import { PGALeaderboardsResource } from './pga/_leaderboards.js';
+import { PGAOperatorPlayerLookupsResource } from './pga/_operator_player_lookups.js';
 import { PGAPlayerHolesResource } from './pga/_player_holes.js';
 import { PGAPlayerNewsResource } from './pga/_player_news.js';
 import { PGAPlayerRoundsResource } from './pga/_player_rounds.js';
+import { PGAPlayerSeasonStatsResource } from './pga/_player_season_stats.js';
 import { PGAPlayerShotsResource } from './pga/_player_shots.js';
+import { PGAPlayersResource } from './pga/_players.js';
+import { PGASeasonsResource } from './pga/_seasons.js';
 import { PGATournamentOddsResource } from './pga/_tournament_odds.js';
 import { PGATournamentRoundsResource } from './pga/_tournament_rounds.js';
-import { PolymarketEventsResource } from './polymarket/_events.js';
-import { PolymarketSportsResource } from './polymarket/_sports.js';
-import { PolymarketTokensResource } from './polymarket/_tokens.js';
-import { PolymarketMarketsResource } from './polymarket/_markets.js';
-import { PolymarketCandlesResource } from './polymarket/_candles.js';
-import { PolymarketMarketSnapshotsResource } from './polymarket/_market_snapshots.js';
-import { PolymarketOrderBookSnapshotsResource } from './polymarket/_order_book_snapshots.js';
-import { PolymarketPriceHistoriesResource } from './polymarket/_price_histories.js';
-import { PolymarketPublicTradesResource } from './polymarket/_public_trades.js';
-import { PolymarketTokenSnapshotsResource } from './polymarket/_token_snapshots.js';
+import { PGATournamentsResource } from './pga/_tournaments.js';
+import { PGAToursResource } from './pga/_tours.js';
 import { ReferenceOperatorsResource } from './reference/_operators.js';
 
 export class StatApi extends StatApiBase {
   dfs: {
-    slates: DFSSlatesResource;
-    contest_user_lineup_player_entries: DFSContestUserLineupPlayerEntriesResource;
-    contest_users: DFSContestUsersResource;
-    game_stats: DFSGameStatsResource;
-    player_stats: DFSPlayerStatsResource;
-    slate_player_projections: DFSSlatePlayerProjectionsResource;
-    slate_projection_sources: DFSSlateProjectionSourcesResource;
     slate_settings: DFSSlateSettingsResource;
-    team_stats: DFSTeamStatsResource;
+    contest_users: DFSContestUsersResource;
+    slates: DFSSlatesResource;
     contests: DFSContestsResource;
     slate_games: DFSSlateGamesResource;
+    game_stats: DFSGameStatsResource;
+    player_stats: DFSPlayerStatsResource;
+    team_stats: DFSTeamStatsResource;
+    contest_payout_shapes: DFSContestPayoutShapesResource;
     slate_players: DFSSlatePlayersResource;
-    contest_user_lineups: DFSContestUserLineupsResource;
-  };
-  kalshi: {
-    series: KalshiSeriesResource;
-    market_statuses: KalshiMarketStatusesResource;
-    events: KalshiEventsResource;
-    markets: KalshiMarketsResource;
-    candles: KalshiCandlesResource;
-    market_snapshots: KalshiMarketSnapshotsResource;
-    public_trades: KalshiPublicTradesResource;
   };
   mlb: {
     seasons: MLBSeasonsResource;
     venues: MLBVenuesResource;
+    broadcasters: MLBBroadcastersResource;
     umpires: MLBUmpiresResource;
     teams: MLBTeamsResource;
     park_factors: MLBParkFactorsResource;
     season_run_environments: MLBSeasonRunEnvironmentsResource;
     venue_dimensions: MLBVenueDimensionsResource;
     woba_weights: MLBWobaWeightsResource;
-    games: MLBGamesResource;
     players: MLBPlayersResource;
-    broadcasters: MLBBroadcastersResource;
     operator_team_lookups: MLBOperatorTeamLookupsResource;
     playoffs: MLBPlayoffsResource;
     season_team_stats: MLBSeasonTeamStatsResource;
     series_odds: MLBSeriesOddsResource;
+    games: MLBGamesResource;
+    operator_player_lookups: MLBOperatorPlayerLookupsResource;
+    player_awards: MLBPlayerAwardsResource;
+    player_injuries: MLBPlayerInjuriesResource;
+    season_player_stats: MLBSeasonPlayerStatsResource;
+    team_player_rosters: MLBTeamPlayerRostersResource;
     innings: MLBInningsResource;
+    team_starting_lineups: MLBTeamStartingLineupsResource;
     game_alt_lines: MLBGameAltLinesResource;
     game_broadcasters: MLBGameBroadcastersResource;
     game_lines: MLBGameLinesResource;
@@ -236,74 +242,73 @@ export class StatApi extends StatApiBase {
     game_team_rosters: MLBGameTeamRostersResource;
     game_team_stats: MLBGameTeamStatsResource;
     game_umpires: MLBGameUmpiresResource;
-    operator_player_lookups: MLBOperatorPlayerLookupsResource;
-    pitches: MLBPitchesResource;
-    player_awards: MLBPlayerAwardsResource;
-    player_injuries: MLBPlayerInjuriesResource;
+    game_weathers: MLBGameWeathersResource;
     player_news: MLBPlayerNewsResource;
-    season_player_stats: MLBSeasonPlayerStatsResource;
-    team_player_rosters: MLBTeamPlayerRostersResource;
-    team_starting_lineup_batters: MLBTeamStartingLineupBattersResource;
-    team_starting_lineups: MLBTeamStartingLineupsResource;
-    venue_weathers: MLBVenueWeathersResource;
+    team_news: MLBTeamNewsResource;
     at_bats: MLBAtBatsResource;
+    team_starting_lineup_batters: MLBTeamStartingLineupBattersResource;
+    pitches: MLBPitchesResource;
     play_by_plays: MLBPlayByPlaysResource;
   };
   nba: {
     seasons: NBASeasonsResource;
     stadiums: NBAStadiumsResource;
-    referees: NBARefereesResource;
+    broadcasters: NBABroadcastersResource;
     coaching_staffs: NBACoachingStaffsResource;
+    referees: NBARefereesResource;
     teams: NBATeamsResource;
     games: NBAGamesResource;
     players: NBAPlayersResource;
-    broadcasters: NBABroadcastersResource;
     operator_team_lookups: NBAOperatorTeamLookupsResource;
     playoffs: NBAPlayoffsResource;
     season_team_stats: NBASeasonTeamStatsResource;
     team_coaching_staffs: NBATeamCoachingStaffsResource;
     team_standings: NBATeamStandingsResource;
+    game_possessions: NBAGamePossessionsResource;
     game_broadcasters: NBAGameBroadcastersResource;
     game_lines: NBAGameLinesResource;
     game_period_lines: NBAGamePeriodLinesResource;
     game_player_props: NBAGamePlayerPropsResource;
     game_player_stats: NBAGamePlayerStatsResource;
-    game_possessions: NBAGamePossessionsResource;
     game_referees: NBAGameRefereesResource;
     game_team_lineup_stints: NBAGameTeamLineupStintsResource;
     game_team_rosters: NBAGameTeamRostersResource;
     game_team_stats: NBAGameTeamStatsResource;
     operator_player_lookups: NBAOperatorPlayerLookupsResource;
-    play_by_plays: NBAPlayByPlaysResource;
     player_news: NBAPlayerNewsResource;
+    projected_player_stats: NBAProjectedPlayerStatsResource;
+    projected_team_stats: NBAProjectedTeamStatsResource;
     season_player_stats: NBASeasonPlayerStatsResource;
     team_depth_charts: NBATeamDepthChartsResource;
     team_game_contexts: NBATeamGameContextsResource;
+    team_news: NBATeamNewsResource;
+    play_by_plays: NBAPlayByPlaysResource;
+    weeks: (params?: NBAWeeksParams) => Promise<NBASimWeeksResponse>;
   };
   nfl: {
     seasons: NFLSeasonsResource;
     stadiums: NFLStadiumsResource;
     referees: NFLRefereesResource;
     teams: NFLTeamsResource;
-    players: NFLPlayersResource;
     games: NFLGamesResource;
+    players: NFLPlayersResource;
     coaching_staff_tenures: NFLCoachingStaffTenuresResource;
     coaching_staffs: NFLCoachingStaffsResource;
-    depth_chart_snapshots: NFLDepthChartSnapshotsResource;
     operator_team_lookups: NFLOperatorTeamLookupsResource;
     playoffs: NFLPlayoffsResource;
     season_team_stats: NFLSeasonTeamStatsResource;
+    game_drives: NFLGameDrivesResource;
+    coach_scheme_tendencies: NFLCoachSchemeTendenciesResource;
     combine_results: NFLCombineResultsResource;
-    depth_chart_entries: NFLDepthChartEntriesResource;
     depth_charts: NFLDepthChartsResource;
     draft_picks: NFLDraftPicksResource;
-    game_drives: NFLGameDrivesResource;
     game_lines: NFLGameLinesResource;
+    game_player_advanced_stats: NFLGamePlayerAdvancedStatsResource;
     game_player_firstdown_stats: NFLGamePlayerFirstdownStatsResource;
     game_player_ngs_passings: NFLGamePlayerNgsPassingsResource;
     game_player_ngs_receivings: NFLGamePlayerNgsReceivingsResource;
     game_player_ngs_rushings: NFLGamePlayerNgsRushingsResource;
-    game_player_pfr_advstats: NFLGamePlayerPfrAdvstatsResource;
+    game_player_props: NFLGamePlayerPropsResource;
     game_player_redzone_stats: NFLGamePlayerRedzoneStatsResource;
     game_player_stats: NFLGamePlayerStatsResource;
     game_player_thirddown_stats: NFLGamePlayerThirddownStatsResource;
@@ -314,39 +319,60 @@ export class StatApi extends StatApiBase {
     game_weathers: NFLGameWeathersResource;
     injuries: NFLInjuriesResource;
     operator_player_lookups: NFLOperatorPlayerLookupsResource;
-    play_by_plays: NFLPlayByPlaysResource;
     play_participations: NFLPlayParticipationsResource;
     player_contracts: NFLPlayerContractsResource;
     player_news: NFLPlayerNewsResource;
+    projected_player_snaps: NFLProjectedPlayerSnapsResource;
+    projected_team_snaps: NFLProjectedTeamSnapsResource;
     season_player_firstdown_stats: NFLSeasonPlayerFirstdownStatsResource;
     season_player_redzone_stats: NFLSeasonPlayerRedzoneStatsResource;
     season_player_stats: NFLSeasonPlayerStatsResource;
     season_player_thirddown_stats: NFLSeasonPlayerThirddownStatsResource;
+    team_news: NFLTeamNewsResource;
     team_player_rosters: NFLTeamPlayerRostersResource;
+    play_by_plays: NFLPlayByPlaysResource;
+    weeks: (params?: NFLWeeksParams) => Promise<NFLWeeksResponse>;
   };
   nhl: {
     seasons: NHLSeasonsResource;
     arenas: NHLArenasResource;
+    broadcasters: NHLBroadcastersResource;
+    coaching_staffs: NHLCoachingStaffsResource;
+    referees: NHLRefereesResource;
     teams: NHLTeamsResource;
-    players: NHLPlayersResource;
     games: NHLGamesResource;
+    players: NHLPlayersResource;
     line_combinations: NHLLineCombinationsResource;
     operator_team_lookups: NHLOperatorTeamLookupsResource;
     playoff_series: NHLPlayoffSeriesResource;
     season_team_stats: NHLSeasonTeamStatsResource;
     standings: NHLStandingsResource;
-    draft_picks: NHLDraftPicksResource;
-    game_odds: NHLGameOddsResource;
+    team_coaching_staffs: NHLTeamCoachingStaffsResource;
+    team_standings: NHLTeamStandingsResource;
+    game_broadcasters: NHLGameBroadcastersResource;
+    game_lines: NHLGameLinesResource;
+    game_period_lines: NHLGamePeriodLinesResource;
+    game_player_props: NHLGamePlayerPropsResource;
     game_player_stats: NHLGamePlayerStatsResource;
+    game_referees: NHLGameRefereesResource;
+    game_shifts: NHLGameShiftsResource;
+    game_team_rosters: NHLGameTeamRostersResource;
     game_team_stats: NHLGameTeamStatsResource;
     goalie_depth_charts: NHLGoalieDepthChartsResource;
+    operator_game_fantasy_stats: NHLOperatorGameFantasyStatsResource;
+    operator_player_fantasy_stats: NHLOperatorPlayerFantasyStatsResource;
     operator_player_lookups: NHLOperatorPlayerLookupsResource;
+    operator_team_fantasy_stats: NHLOperatorTeamFantasyStatsResource;
     penalties: NHLPenaltiesResource;
     periods: NHLPeriodsResource;
-    player_injuries: NHLPlayerInjuriesResource;
+    play_by_plays: NHLPlayByPlaysResource;
     player_news: NHLPlayerNewsResource;
+    projected_player_stats: NHLProjectedPlayerStatsResource;
+    projected_team_stats: NHLProjectedTeamStatsResource;
     scoring_plays: NHLScoringPlaysResource;
     season_player_stats: NHLSeasonPlayerStatsResource;
+    team_game_contexts: NHLTeamGameContextsResource;
+    team_news: NHLTeamNewsResource;
   };
   pga: {
     players: PGAPlayersResource;
@@ -356,75 +382,63 @@ export class StatApi extends StatApiBase {
     operator_player_lookups: PGAOperatorPlayerLookupsResource;
     tournaments: PGATournamentsResource;
     player_season_stats: PGAPlayerSeasonStatsResource;
+    player_rounds: PGAPlayerRoundsResource;
     course_hole_stats: PGACourseHoleStatsResource;
     leaderboards: PGALeaderboardsResource;
-    player_holes: PGAPlayerHolesResource;
     player_news: PGAPlayerNewsResource;
-    player_rounds: PGAPlayerRoundsResource;
     player_shots: PGAPlayerShotsResource;
     tournament_odds: PGATournamentOddsResource;
     tournament_rounds: PGATournamentRoundsResource;
-  };
-  polymarket: {
-    events: PolymarketEventsResource;
-    sports: PolymarketSportsResource;
-    tokens: PolymarketTokensResource;
-    markets: PolymarketMarketsResource;
-    candles: PolymarketCandlesResource;
-    market_snapshots: PolymarketMarketSnapshotsResource;
-    order_book_snapshots: PolymarketOrderBookSnapshotsResource;
-    price_histories: PolymarketPriceHistoriesResource;
-    public_trades: PolymarketPublicTradesResource;
-    token_snapshots: PolymarketTokenSnapshotsResource;
+    player_holes: PGAPlayerHolesResource;
   };
   reference: {
     operators: ReferenceOperatorsResource;
+  };
+  sim: {
+    nfl: SimNFLClient;
+    nba: SimNBAClient;
   };
 
   constructor(options: StatApiOptions = {}) {
     super(options);
     const opts: ResolvedStatApiOptions = this.opts;
+    const simNfl = new SimNFLClient(opts);
+    const simNba = new SimNBAClient(opts);
     this.dfs = {
-      slates: new DFSSlatesResource(opts),
-      contest_user_lineup_player_entries: new DFSContestUserLineupPlayerEntriesResource(opts),
-      contest_users: new DFSContestUsersResource(opts),
-      game_stats: new DFSGameStatsResource(opts),
-      player_stats: new DFSPlayerStatsResource(opts),
-      slate_player_projections: new DFSSlatePlayerProjectionsResource(opts),
-      slate_projection_sources: new DFSSlateProjectionSourcesResource(opts),
       slate_settings: new DFSSlateSettingsResource(opts),
-      team_stats: new DFSTeamStatsResource(opts),
+      contest_users: new DFSContestUsersResource(opts),
+      slates: new DFSSlatesResource(opts),
       contests: new DFSContestsResource(opts),
       slate_games: new DFSSlateGamesResource(opts),
+      game_stats: new DFSGameStatsResource(opts),
+      player_stats: new DFSPlayerStatsResource(opts),
+      team_stats: new DFSTeamStatsResource(opts),
+      contest_payout_shapes: new DFSContestPayoutShapesResource(opts),
       slate_players: new DFSSlatePlayersResource(opts),
-      contest_user_lineups: new DFSContestUserLineupsResource(opts),
-    };
-    this.kalshi = {
-      series: new KalshiSeriesResource(opts),
-      market_statuses: new KalshiMarketStatusesResource(opts),
-      events: new KalshiEventsResource(opts),
-      markets: new KalshiMarketsResource(opts),
-      candles: new KalshiCandlesResource(opts),
-      market_snapshots: new KalshiMarketSnapshotsResource(opts),
-      public_trades: new KalshiPublicTradesResource(opts),
     };
     this.mlb = {
       seasons: new MLBSeasonsResource(opts),
       venues: new MLBVenuesResource(opts),
+      broadcasters: new MLBBroadcastersResource(opts),
       umpires: new MLBUmpiresResource(opts),
       teams: new MLBTeamsResource(opts),
       park_factors: new MLBParkFactorsResource(opts),
       season_run_environments: new MLBSeasonRunEnvironmentsResource(opts),
       venue_dimensions: new MLBVenueDimensionsResource(opts),
       woba_weights: new MLBWobaWeightsResource(opts),
-      games: new MLBGamesResource(opts),
       players: new MLBPlayersResource(opts),
-      broadcasters: new MLBBroadcastersResource(opts),
       operator_team_lookups: new MLBOperatorTeamLookupsResource(opts),
       playoffs: new MLBPlayoffsResource(opts),
       season_team_stats: new MLBSeasonTeamStatsResource(opts),
       series_odds: new MLBSeriesOddsResource(opts),
+      games: new MLBGamesResource(opts),
+      operator_player_lookups: new MLBOperatorPlayerLookupsResource(opts),
+      player_awards: new MLBPlayerAwardsResource(opts),
+      player_injuries: new MLBPlayerInjuriesResource(opts),
+      season_player_stats: new MLBSeasonPlayerStatsResource(opts),
+      team_player_rosters: new MLBTeamPlayerRostersResource(opts),
       innings: new MLBInningsResource(opts),
+      team_starting_lineups: new MLBTeamStartingLineupsResource(opts),
       game_alt_lines: new MLBGameAltLinesResource(opts),
       game_broadcasters: new MLBGameBroadcastersResource(opts),
       game_lines: new MLBGameLinesResource(opts),
@@ -435,74 +449,73 @@ export class StatApi extends StatApiBase {
       game_team_rosters: new MLBGameTeamRostersResource(opts),
       game_team_stats: new MLBGameTeamStatsResource(opts),
       game_umpires: new MLBGameUmpiresResource(opts),
-      operator_player_lookups: new MLBOperatorPlayerLookupsResource(opts),
-      pitches: new MLBPitchesResource(opts),
-      player_awards: new MLBPlayerAwardsResource(opts),
-      player_injuries: new MLBPlayerInjuriesResource(opts),
+      game_weathers: new MLBGameWeathersResource(opts),
       player_news: new MLBPlayerNewsResource(opts),
-      season_player_stats: new MLBSeasonPlayerStatsResource(opts),
-      team_player_rosters: new MLBTeamPlayerRostersResource(opts),
-      team_starting_lineup_batters: new MLBTeamStartingLineupBattersResource(opts),
-      team_starting_lineups: new MLBTeamStartingLineupsResource(opts),
-      venue_weathers: new MLBVenueWeathersResource(opts),
+      team_news: new MLBTeamNewsResource(opts),
       at_bats: new MLBAtBatsResource(opts),
+      team_starting_lineup_batters: new MLBTeamStartingLineupBattersResource(opts),
+      pitches: new MLBPitchesResource(opts),
       play_by_plays: new MLBPlayByPlaysResource(opts),
     };
     this.nba = {
       seasons: new NBASeasonsResource(opts),
       stadiums: new NBAStadiumsResource(opts),
-      referees: new NBARefereesResource(opts),
+      broadcasters: new NBABroadcastersResource(opts),
       coaching_staffs: new NBACoachingStaffsResource(opts),
+      referees: new NBARefereesResource(opts),
       teams: new NBATeamsResource(opts),
       games: new NBAGamesResource(opts),
       players: new NBAPlayersResource(opts),
-      broadcasters: new NBABroadcastersResource(opts),
       operator_team_lookups: new NBAOperatorTeamLookupsResource(opts),
       playoffs: new NBAPlayoffsResource(opts),
       season_team_stats: new NBASeasonTeamStatsResource(opts),
       team_coaching_staffs: new NBATeamCoachingStaffsResource(opts),
       team_standings: new NBATeamStandingsResource(opts),
+      game_possessions: new NBAGamePossessionsResource(opts),
       game_broadcasters: new NBAGameBroadcastersResource(opts),
       game_lines: new NBAGameLinesResource(opts),
       game_period_lines: new NBAGamePeriodLinesResource(opts),
       game_player_props: new NBAGamePlayerPropsResource(opts),
       game_player_stats: new NBAGamePlayerStatsResource(opts),
-      game_possessions: new NBAGamePossessionsResource(opts),
       game_referees: new NBAGameRefereesResource(opts),
       game_team_lineup_stints: new NBAGameTeamLineupStintsResource(opts),
       game_team_rosters: new NBAGameTeamRostersResource(opts),
       game_team_stats: new NBAGameTeamStatsResource(opts),
       operator_player_lookups: new NBAOperatorPlayerLookupsResource(opts),
-      play_by_plays: new NBAPlayByPlaysResource(opts),
       player_news: new NBAPlayerNewsResource(opts),
+      projected_player_stats: new NBAProjectedPlayerStatsResource(opts),
+      projected_team_stats: new NBAProjectedTeamStatsResource(opts),
       season_player_stats: new NBASeasonPlayerStatsResource(opts),
       team_depth_charts: new NBATeamDepthChartsResource(opts),
       team_game_contexts: new NBATeamGameContextsResource(opts),
+      team_news: new NBATeamNewsResource(opts),
+      play_by_plays: new NBAPlayByPlaysResource(opts),
+      weeks: (params?: NBAWeeksParams) => simNba.weeks(params),
     };
     this.nfl = {
       seasons: new NFLSeasonsResource(opts),
       stadiums: new NFLStadiumsResource(opts),
       referees: new NFLRefereesResource(opts),
       teams: new NFLTeamsResource(opts),
-      players: new NFLPlayersResource(opts),
       games: new NFLGamesResource(opts),
+      players: new NFLPlayersResource(opts),
       coaching_staff_tenures: new NFLCoachingStaffTenuresResource(opts),
       coaching_staffs: new NFLCoachingStaffsResource(opts),
-      depth_chart_snapshots: new NFLDepthChartSnapshotsResource(opts),
       operator_team_lookups: new NFLOperatorTeamLookupsResource(opts),
       playoffs: new NFLPlayoffsResource(opts),
       season_team_stats: new NFLSeasonTeamStatsResource(opts),
+      game_drives: new NFLGameDrivesResource(opts),
+      coach_scheme_tendencies: new NFLCoachSchemeTendenciesResource(opts),
       combine_results: new NFLCombineResultsResource(opts),
-      depth_chart_entries: new NFLDepthChartEntriesResource(opts),
       depth_charts: new NFLDepthChartsResource(opts),
       draft_picks: new NFLDraftPicksResource(opts),
-      game_drives: new NFLGameDrivesResource(opts),
       game_lines: new NFLGameLinesResource(opts),
+      game_player_advanced_stats: new NFLGamePlayerAdvancedStatsResource(opts),
       game_player_firstdown_stats: new NFLGamePlayerFirstdownStatsResource(opts),
       game_player_ngs_passings: new NFLGamePlayerNgsPassingsResource(opts),
       game_player_ngs_receivings: new NFLGamePlayerNgsReceivingsResource(opts),
       game_player_ngs_rushings: new NFLGamePlayerNgsRushingsResource(opts),
-      game_player_pfr_advstats: new NFLGamePlayerPfrAdvstatsResource(opts),
+      game_player_props: new NFLGamePlayerPropsResource(opts),
       game_player_redzone_stats: new NFLGamePlayerRedzoneStatsResource(opts),
       game_player_stats: new NFLGamePlayerStatsResource(opts),
       game_player_thirddown_stats: new NFLGamePlayerThirddownStatsResource(opts),
@@ -513,39 +526,60 @@ export class StatApi extends StatApiBase {
       game_weathers: new NFLGameWeathersResource(opts),
       injuries: new NFLInjuriesResource(opts),
       operator_player_lookups: new NFLOperatorPlayerLookupsResource(opts),
-      play_by_plays: new NFLPlayByPlaysResource(opts),
       play_participations: new NFLPlayParticipationsResource(opts),
       player_contracts: new NFLPlayerContractsResource(opts),
       player_news: new NFLPlayerNewsResource(opts),
+      projected_player_snaps: new NFLProjectedPlayerSnapsResource(opts),
+      projected_team_snaps: new NFLProjectedTeamSnapsResource(opts),
       season_player_firstdown_stats: new NFLSeasonPlayerFirstdownStatsResource(opts),
       season_player_redzone_stats: new NFLSeasonPlayerRedzoneStatsResource(opts),
       season_player_stats: new NFLSeasonPlayerStatsResource(opts),
       season_player_thirddown_stats: new NFLSeasonPlayerThirddownStatsResource(opts),
+      team_news: new NFLTeamNewsResource(opts),
       team_player_rosters: new NFLTeamPlayerRostersResource(opts),
+      play_by_plays: new NFLPlayByPlaysResource(opts),
+      weeks: (params?: NFLWeeksParams) => simNfl.weeks(params),
     };
     this.nhl = {
       seasons: new NHLSeasonsResource(opts),
       arenas: new NHLArenasResource(opts),
+      broadcasters: new NHLBroadcastersResource(opts),
+      coaching_staffs: new NHLCoachingStaffsResource(opts),
+      referees: new NHLRefereesResource(opts),
       teams: new NHLTeamsResource(opts),
-      players: new NHLPlayersResource(opts),
       games: new NHLGamesResource(opts),
+      players: new NHLPlayersResource(opts),
       line_combinations: new NHLLineCombinationsResource(opts),
       operator_team_lookups: new NHLOperatorTeamLookupsResource(opts),
       playoff_series: new NHLPlayoffSeriesResource(opts),
       season_team_stats: new NHLSeasonTeamStatsResource(opts),
       standings: new NHLStandingsResource(opts),
-      draft_picks: new NHLDraftPicksResource(opts),
-      game_odds: new NHLGameOddsResource(opts),
+      team_coaching_staffs: new NHLTeamCoachingStaffsResource(opts),
+      team_standings: new NHLTeamStandingsResource(opts),
+      game_broadcasters: new NHLGameBroadcastersResource(opts),
+      game_lines: new NHLGameLinesResource(opts),
+      game_period_lines: new NHLGamePeriodLinesResource(opts),
+      game_player_props: new NHLGamePlayerPropsResource(opts),
       game_player_stats: new NHLGamePlayerStatsResource(opts),
+      game_referees: new NHLGameRefereesResource(opts),
+      game_shifts: new NHLGameShiftsResource(opts),
+      game_team_rosters: new NHLGameTeamRostersResource(opts),
       game_team_stats: new NHLGameTeamStatsResource(opts),
       goalie_depth_charts: new NHLGoalieDepthChartsResource(opts),
+      operator_game_fantasy_stats: new NHLOperatorGameFantasyStatsResource(opts),
+      operator_player_fantasy_stats: new NHLOperatorPlayerFantasyStatsResource(opts),
       operator_player_lookups: new NHLOperatorPlayerLookupsResource(opts),
+      operator_team_fantasy_stats: new NHLOperatorTeamFantasyStatsResource(opts),
       penalties: new NHLPenaltiesResource(opts),
       periods: new NHLPeriodsResource(opts),
-      player_injuries: new NHLPlayerInjuriesResource(opts),
+      play_by_plays: new NHLPlayByPlaysResource(opts),
       player_news: new NHLPlayerNewsResource(opts),
+      projected_player_stats: new NHLProjectedPlayerStatsResource(opts),
+      projected_team_stats: new NHLProjectedTeamStatsResource(opts),
       scoring_plays: new NHLScoringPlaysResource(opts),
       season_player_stats: new NHLSeasonPlayerStatsResource(opts),
+      team_game_contexts: new NHLTeamGameContextsResource(opts),
+      team_news: new NHLTeamNewsResource(opts),
     };
     this.pga = {
       players: new PGAPlayersResource(opts),
@@ -555,69 +589,39 @@ export class StatApi extends StatApiBase {
       operator_player_lookups: new PGAOperatorPlayerLookupsResource(opts),
       tournaments: new PGATournamentsResource(opts),
       player_season_stats: new PGAPlayerSeasonStatsResource(opts),
+      player_rounds: new PGAPlayerRoundsResource(opts),
       course_hole_stats: new PGACourseHoleStatsResource(opts),
       leaderboards: new PGALeaderboardsResource(opts),
-      player_holes: new PGAPlayerHolesResource(opts),
       player_news: new PGAPlayerNewsResource(opts),
-      player_rounds: new PGAPlayerRoundsResource(opts),
       player_shots: new PGAPlayerShotsResource(opts),
       tournament_odds: new PGATournamentOddsResource(opts),
       tournament_rounds: new PGATournamentRoundsResource(opts),
-    };
-    this.polymarket = {
-      events: new PolymarketEventsResource(opts),
-      sports: new PolymarketSportsResource(opts),
-      tokens: new PolymarketTokensResource(opts),
-      markets: new PolymarketMarketsResource(opts),
-      candles: new PolymarketCandlesResource(opts),
-      market_snapshots: new PolymarketMarketSnapshotsResource(opts),
-      order_book_snapshots: new PolymarketOrderBookSnapshotsResource(opts),
-      price_histories: new PolymarketPriceHistoriesResource(opts),
-      public_trades: new PolymarketPublicTradesResource(opts),
-      token_snapshots: new PolymarketTokenSnapshotsResource(opts),
+      player_holes: new PGAPlayerHolesResource(opts),
     };
     this.reference = {
       operators: new ReferenceOperatorsResource(opts),
     };
+    this.sim = {
+      nfl: simNfl,
+      nba: simNba,
+    };
   }
 }
 
-export type * from './dfs/_slates.js';
-export type * from './dfs/_contest_user_lineup_player_entries.js';
+export type * from '../core/sim.js';
+export { SimNBAClient as SimNBAResource, SimNFLClient as SimNFLResource } from '../core/sim.js';
+export type * from './dfs/_contest_payout_shapes.js';
 export type * from './dfs/_contest_users.js';
+export type * from './dfs/_contests.js';
 export type * from './dfs/_game_stats.js';
 export type * from './dfs/_player_stats.js';
-export type * from './dfs/_slate_player_projections.js';
-export type * from './dfs/_slate_projection_sources.js';
-export type * from './dfs/_slate_settings.js';
-export type * from './dfs/_team_stats.js';
-export type * from './dfs/_contests.js';
 export type * from './dfs/_slate_games.js';
 export type * from './dfs/_slate_players.js';
-export type * from './dfs/_contest_user_lineups.js';
-export type * from './kalshi/_series.js';
-export type * from './kalshi/_market_statuses.js';
-export type * from './kalshi/_events.js';
-export type * from './kalshi/_markets.js';
-export type * from './kalshi/_candles.js';
-export type * from './kalshi/_market_snapshots.js';
-export type * from './kalshi/_public_trades.js';
-export type * from './mlb/_seasons.js';
-export type * from './mlb/_venues.js';
-export type * from './mlb/_umpires.js';
-export type * from './mlb/_teams.js';
-export type * from './mlb/_park_factors.js';
-export type * from './mlb/_season_run_environments.js';
-export type * from './mlb/_venue_dimensions.js';
-export type * from './mlb/_woba_weights.js';
-export type * from './mlb/_games.js';
-export type * from './mlb/_players.js';
+export type * from './dfs/_slate_settings.js';
+export type * from './dfs/_slates.js';
+export type * from './dfs/_team_stats.js';
+export type * from './mlb/_at_bats.js';
 export type * from './mlb/_broadcasters.js';
-export type * from './mlb/_operator_team_lookups.js';
-export type * from './mlb/_playoffs.js';
-export type * from './mlb/_season_team_stats.js';
-export type * from './mlb/_series_odds.js';
-export type * from './mlb/_innings.js';
 export type * from './mlb/_game_alt_lines.js';
 export type * from './mlb/_game_broadcasters.js';
 export type * from './mlb/_game_lines.js';
@@ -628,31 +632,35 @@ export type * from './mlb/_game_player_props.js';
 export type * from './mlb/_game_team_rosters.js';
 export type * from './mlb/_game_team_stats.js';
 export type * from './mlb/_game_umpires.js';
+export type * from './mlb/_game_weathers.js';
+export type * from './mlb/_games.js';
+export type * from './mlb/_innings.js';
 export type * from './mlb/_operator_player_lookups.js';
+export type * from './mlb/_operator_team_lookups.js';
+export type * from './mlb/_park_factors.js';
 export type * from './mlb/_pitches.js';
+export type * from './mlb/_play_by_plays.js';
 export type * from './mlb/_player_awards.js';
 export type * from './mlb/_player_injuries.js';
 export type * from './mlb/_player_news.js';
+export type * from './mlb/_players.js';
+export type * from './mlb/_playoffs.js';
 export type * from './mlb/_season_player_stats.js';
+export type * from './mlb/_season_run_environments.js';
+export type * from './mlb/_season_team_stats.js';
+export type * from './mlb/_seasons.js';
+export type * from './mlb/_series_odds.js';
+export type * from './mlb/_team_news.js';
 export type * from './mlb/_team_player_rosters.js';
 export type * from './mlb/_team_starting_lineup_batters.js';
 export type * from './mlb/_team_starting_lineups.js';
-export type * from './mlb/_venue_weathers.js';
-export type * from './mlb/_at_bats.js';
-export type * from './mlb/_play_by_plays.js';
-export type * from './nba/_seasons.js';
-export type * from './nba/_stadiums.js';
-export type * from './nba/_referees.js';
-export type * from './nba/_coaching_staffs.js';
-export type * from './nba/_teams.js';
-export type * from './nba/_games.js';
-export type * from './nba/_players.js';
+export type * from './mlb/_teams.js';
+export type * from './mlb/_umpires.js';
+export type * from './mlb/_venue_dimensions.js';
+export type * from './mlb/_venues.js';
+export type * from './mlb/_woba_weights.js';
 export type * from './nba/_broadcasters.js';
-export type * from './nba/_operator_team_lookups.js';
-export type * from './nba/_playoffs.js';
-export type * from './nba/_season_team_stats.js';
-export type * from './nba/_team_coaching_staffs.js';
-export type * from './nba/_team_standings.js';
+export type * from './nba/_coaching_staffs.js';
 export type * from './nba/_game_broadcasters.js';
 export type * from './nba/_game_lines.js';
 export type * from './nba/_game_period_lines.js';
@@ -663,35 +671,40 @@ export type * from './nba/_game_referees.js';
 export type * from './nba/_game_team_lineup_stints.js';
 export type * from './nba/_game_team_rosters.js';
 export type * from './nba/_game_team_stats.js';
+export type * from './nba/_games.js';
 export type * from './nba/_operator_player_lookups.js';
+export type * from './nba/_operator_team_lookups.js';
 export type * from './nba/_play_by_plays.js';
 export type * from './nba/_player_news.js';
+export type * from './nba/_players.js';
+export type * from './nba/_playoffs.js';
+export type * from './nba/_projected_player_stats.js';
+export type * from './nba/_projected_team_stats.js';
+export type * from './nba/_referees.js';
 export type * from './nba/_season_player_stats.js';
+export type * from './nba/_season_team_stats.js';
+export type * from './nba/_seasons.js';
+export type * from './nba/_stadiums.js';
+export type * from './nba/_team_coaching_staffs.js';
 export type * from './nba/_team_depth_charts.js';
 export type * from './nba/_team_game_contexts.js';
-export type * from './nfl/_seasons.js';
-export type * from './nfl/_stadiums.js';
-export type * from './nfl/_referees.js';
-export type * from './nfl/_teams.js';
-export type * from './nfl/_players.js';
-export type * from './nfl/_games.js';
+export type * from './nba/_team_news.js';
+export type * from './nba/_team_standings.js';
+export type * from './nba/_teams.js';
+export type * from './nfl/_coach_scheme_tendencies.js';
 export type * from './nfl/_coaching_staff_tenures.js';
 export type * from './nfl/_coaching_staffs.js';
-export type * from './nfl/_depth_chart_snapshots.js';
-export type * from './nfl/_operator_team_lookups.js';
-export type * from './nfl/_playoffs.js';
-export type * from './nfl/_season_team_stats.js';
 export type * from './nfl/_combine_results.js';
-export type * from './nfl/_depth_chart_entries.js';
 export type * from './nfl/_depth_charts.js';
 export type * from './nfl/_draft_picks.js';
 export type * from './nfl/_game_drives.js';
 export type * from './nfl/_game_lines.js';
+export type * from './nfl/_game_player_advanced_stats.js';
 export type * from './nfl/_game_player_firstdown_stats.js';
 export type * from './nfl/_game_player_ngs_passings.js';
 export type * from './nfl/_game_player_ngs_receivings.js';
 export type * from './nfl/_game_player_ngs_rushings.js';
-export type * from './nfl/_game_player_pfr_advstats.js';
+export type * from './nfl/_game_player_props.js';
 export type * from './nfl/_game_player_redzone_stats.js';
 export type * from './nfl/_game_player_stats.js';
 export type * from './nfl/_game_player_thirddown_stats.js';
@@ -700,62 +713,81 @@ export type * from './nfl/_game_team_rosters.js';
 export type * from './nfl/_game_team_staffs.js';
 export type * from './nfl/_game_team_stats.js';
 export type * from './nfl/_game_weathers.js';
+export type * from './nfl/_games.js';
 export type * from './nfl/_injuries.js';
 export type * from './nfl/_operator_player_lookups.js';
+export type * from './nfl/_operator_team_lookups.js';
 export type * from './nfl/_play_by_plays.js';
 export type * from './nfl/_play_participations.js';
 export type * from './nfl/_player_contracts.js';
 export type * from './nfl/_player_news.js';
+export type * from './nfl/_players.js';
+export type * from './nfl/_playoffs.js';
+export type * from './nfl/_projected_player_snaps.js';
+export type * from './nfl/_projected_team_snaps.js';
+export type * from './nfl/_referees.js';
 export type * from './nfl/_season_player_firstdown_stats.js';
 export type * from './nfl/_season_player_redzone_stats.js';
 export type * from './nfl/_season_player_stats.js';
 export type * from './nfl/_season_player_thirddown_stats.js';
+export type * from './nfl/_season_team_stats.js';
+export type * from './nfl/_seasons.js';
+export type * from './nfl/_stadiums.js';
+export type * from './nfl/_team_news.js';
 export type * from './nfl/_team_player_rosters.js';
-export type * from './nhl/_seasons.js';
+export type * from './nfl/_teams.js';
 export type * from './nhl/_arenas.js';
-export type * from './nhl/_teams.js';
-export type * from './nhl/_players.js';
-export type * from './nhl/_games.js';
-export type * from './nhl/_line_combinations.js';
-export type * from './nhl/_operator_team_lookups.js';
-export type * from './nhl/_playoff_series.js';
-export type * from './nhl/_season_team_stats.js';
-export type * from './nhl/_standings.js';
-export type * from './nhl/_draft_picks.js';
-export type * from './nhl/_game_odds.js';
+export type * from './nhl/_broadcasters.js';
+export type * from './nhl/_coaching_staffs.js';
+export type * from './nhl/_game_broadcasters.js';
+export type * from './nhl/_game_lines.js';
+export type * from './nhl/_game_period_lines.js';
+export type * from './nhl/_game_player_props.js';
 export type * from './nhl/_game_player_stats.js';
+export type * from './nhl/_game_referees.js';
+export type * from './nhl/_game_shifts.js';
+export type * from './nhl/_game_team_rosters.js';
 export type * from './nhl/_game_team_stats.js';
+export type * from './nhl/_games.js';
 export type * from './nhl/_goalie_depth_charts.js';
+export type * from './nhl/_line_combinations.js';
+export type * from './nhl/_operator_game_fantasy_stats.js';
+export type * from './nhl/_operator_player_fantasy_stats.js';
 export type * from './nhl/_operator_player_lookups.js';
+export type * from './nhl/_operator_team_fantasy_stats.js';
+export type * from './nhl/_operator_team_lookups.js';
 export type * from './nhl/_penalties.js';
 export type * from './nhl/_periods.js';
-export type * from './nhl/_player_injuries.js';
+export type * from './nhl/_play_by_plays.js';
 export type * from './nhl/_player_news.js';
+export type * from './nhl/_players.js';
+export type * from './nhl/_playoff_series.js';
+export type * from './nhl/_projected_player_stats.js';
+export type * from './nhl/_projected_team_stats.js';
+export type * from './nhl/_referees.js';
 export type * from './nhl/_scoring_plays.js';
 export type * from './nhl/_season_player_stats.js';
-export type * from './pga/_players.js';
-export type * from './pga/_tours.js';
-export type * from './pga/_courses.js';
-export type * from './pga/_seasons.js';
-export type * from './pga/_operator_player_lookups.js';
-export type * from './pga/_tournaments.js';
-export type * from './pga/_player_season_stats.js';
+export type * from './nhl/_season_team_stats.js';
+export type * from './nhl/_seasons.js';
+export type * from './nhl/_standings.js';
+export type * from './nhl/_team_coaching_staffs.js';
+export type * from './nhl/_team_game_contexts.js';
+export type * from './nhl/_team_news.js';
+export type * from './nhl/_team_standings.js';
+export type * from './nhl/_teams.js';
 export type * from './pga/_course_hole_stats.js';
+export type * from './pga/_courses.js';
 export type * from './pga/_leaderboards.js';
+export type * from './pga/_operator_player_lookups.js';
 export type * from './pga/_player_holes.js';
 export type * from './pga/_player_news.js';
 export type * from './pga/_player_rounds.js';
+export type * from './pga/_player_season_stats.js';
 export type * from './pga/_player_shots.js';
+export type * from './pga/_players.js';
+export type * from './pga/_seasons.js';
 export type * from './pga/_tournament_odds.js';
 export type * from './pga/_tournament_rounds.js';
-export type * from './polymarket/_events.js';
-export type * from './polymarket/_sports.js';
-export type * from './polymarket/_tokens.js';
-export type * from './polymarket/_markets.js';
-export type * from './polymarket/_candles.js';
-export type * from './polymarket/_market_snapshots.js';
-export type * from './polymarket/_order_book_snapshots.js';
-export type * from './polymarket/_price_histories.js';
-export type * from './polymarket/_public_trades.js';
-export type * from './polymarket/_token_snapshots.js';
+export type * from './pga/_tournaments.js';
+export type * from './pga/_tours.js';
 export type * from './reference/_operators.js';

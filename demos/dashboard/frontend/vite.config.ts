@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 
 // The dashboard frontend is a static SPA. In production the Bun+Hono server (DM1) serves the
 // built assets and proxies /api/* to itself; in dev, point /api at that server once it exists.

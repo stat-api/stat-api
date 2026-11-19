@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import type { Snapshot, SseEvent } from './contract';
 import snapshotFixture from '../fixtures/snapshot.json';
+import type { Snapshot, SseEvent } from './contract';
 
 /**
  * Where the current snapshot came from. Shown in the header so the demo is honest about whether
@@ -30,13 +30,16 @@ const FIXTURE = snapshotFixture as Snapshot;
  * replays a full snapshot on reconnect.
  */
 export function useSnapshot(): SnapshotState {
-  const [state, setState] = useState<SnapshotState>({ snapshot: FIXTURE, connection: 'connecting' });
+  const [state, setState] = useState<SnapshotState>({
+    snapshot: FIXTURE,
+    connection: 'connecting',
+  });
 
   useEffect(() => {
     const es = new EventSource('/api/events');
     let everLive = false;
 
-    es.onmessage = ev => {
+    es.onmessage = (ev) => {
       const msg = JSON.parse(ev.data) as SseEvent;
       if (msg.type === 'snapshot') {
         everLive = true;
@@ -44,7 +47,7 @@ export function useSnapshot(): SnapshotState {
         return;
       }
       // patch — fold one league's games into the held snapshot.
-      setState(s => ({
+      setState((s) => ({
         connection: 'live',
         snapshot: {
           ...s.snapshot,
@@ -62,7 +65,7 @@ export function useSnapshot(): SnapshotState {
         setState({ snapshot: FIXTURE, connection: 'fixture' });
         return;
       }
-      setState(s => ({ ...s, connection: 'error' }));
+      setState((s) => ({ ...s, connection: 'error' }));
     };
 
     return () => es.close();

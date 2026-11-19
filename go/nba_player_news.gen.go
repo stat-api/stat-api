@@ -16,7 +16,8 @@ import (
 // NBAPlayerNew is a row from nba.player_news.
 type NBAPlayerNew struct {
 	ID                int64            `json:"id"`
-	ExternalID        *string          `json:"external_id"`
+	GameID            *int64           `json:"game_id"`
+	OpponentTeamID    *int64           `json:"opponent_team_id"`
 	PlayerID          *int64           `json:"player_id"`
 	TeamID            *int64           `json:"team_id"`
 	AiProcessed       bool             `json:"ai_processed"`
@@ -25,22 +26,25 @@ type NBAPlayerNew struct {
 	Category          *string          `json:"category"`
 	Content           *string          `json:"content"`
 	Description       *string          `json:"description"`
-	Link              *string          `json:"link"`
+	FirstReportedAt   *string          `json:"first_reported_at"`
 	NewsTime          string           `json:"news_time"`
 	Priority          int              `json:"priority"`
 	SituationalImpact *json.RawMessage `json:"situational_impact"`
-	Source            *string          `json:"source"`
+	StatusEnum        *string          `json:"status_enum"`
 	Title             string           `json:"title"`
+	Urgency           *string          `json:"urgency"`
 }
 
 // NBAPlayerNewsListParams are the query parameters for listing nba.player_news.
 type NBAPlayerNewsListParams struct {
-	PlayerID *int64
-	TeamID   *int64
-	Category *string
-	NewsTime *string
-	Limit    *int
-	FromID   *int64
+	PlayerID   *int64
+	TeamID     *int64
+	Category   *string
+	StatusEnum *string
+	Urgency    *string
+	NewsTime   *string
+	Limit      *int
+	FromID     *int64
 }
 
 func (p *NBAPlayerNewsListParams) values() url.Values {
@@ -56,6 +60,12 @@ func (p *NBAPlayerNewsListParams) values() url.Values {
 	}
 	if p.Category != nil {
 		v.Set("category", *p.Category)
+	}
+	if p.StatusEnum != nil {
+		v.Set("status_enum", *p.StatusEnum)
+	}
+	if p.Urgency != nil {
+		v.Set("urgency", *p.Urgency)
 	}
 	if p.NewsTime != nil {
 		v.Set("news_time", *p.NewsTime)

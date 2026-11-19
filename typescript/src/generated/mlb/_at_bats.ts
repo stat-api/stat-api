@@ -2,7 +2,12 @@
 //
 // SDK resource for mlb.at_bats (public API).
 // Source: schema/api/groups/public.yml + schema/model/mlb/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface MLBAtBat {
   id: number;
@@ -12,8 +17,10 @@ export interface MLBAtBat {
   pitcher_id: number;
   at_bat_number: number;
   balls: number;
+  bat_side?: string | null;
   end_outs: number;
   end_runners: number;
+  end_time?: string | null;
   expected_batting_avg?: number | null;
   expected_woba?: number | null;
   hit_coord_x?: number | null;
@@ -32,11 +39,13 @@ export interface MLBAtBat {
   is_under?: boolean | null;
   launch_speed_angle_zone?: number | null;
   pitch_count: number;
+  pitch_hand?: string | null;
   result: string;
   runs_scored: number;
   spray_angle?: number | null;
   start_outs: number;
   start_runners: number;
+  start_time?: string | null;
   statcast_quality_score?: number | null;
   strikes: number;
   tracking_confidence?: number | null;
@@ -52,6 +61,8 @@ export interface MLBAtBatsListResponse {
   at_bats: MLBAtBat[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -61,7 +72,10 @@ export class MLBAtBatsResource {
 
   async list(params?: MLBAtBatsListParams): Promise<MLBAtBatsListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<MLBAtBatsListResponse, 'quota'>>(this.opts, `/api/v1/mlb/at_bats${qs}`);
+    const r = await fetchJson<Omit<MLBAtBatsListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/mlb/at_bats${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -79,7 +93,10 @@ export class MLBAtBatsResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: MLBAtBatsListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as MLBAtBatsListParams);
+      const page: MLBAtBatsListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as MLBAtBatsListParams);
       for (const row of page.at_bats) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

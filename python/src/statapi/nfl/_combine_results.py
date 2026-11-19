@@ -16,7 +16,6 @@ NFLCombineResult = TypedDict(
     {
         "id": int,
         "cfb_id": str | None,
-        "pfr_id": str | None,
         "player_id": int,
         "team_id": int | None,
         "bench": int | None,

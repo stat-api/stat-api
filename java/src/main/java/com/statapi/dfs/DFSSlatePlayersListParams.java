@@ -10,11 +10,47 @@ import java.util.Map;
 public final class DFSSlatePlayersListParams {
 
     private Long slateId;
+    private Long operatorSlateId;
+    private String operatorId;
+    private String operator;
+    private String position;
+    private Long teamId;
+    private String mode;
     private Long limit;
     private Long fromId;
 
     public DFSSlatePlayersListParams slateId(Long slateId) {
         this.slateId = slateId;
+        return this;
+    }
+
+    public DFSSlatePlayersListParams operatorSlateId(Long operatorSlateId) {
+        this.operatorSlateId = operatorSlateId;
+        return this;
+    }
+
+    public DFSSlatePlayersListParams operatorId(String operatorId) {
+        this.operatorId = operatorId;
+        return this;
+    }
+
+    public DFSSlatePlayersListParams operator(String operator) {
+        this.operator = operator;
+        return this;
+    }
+
+    public DFSSlatePlayersListParams position(String position) {
+        this.position = position;
+        return this;
+    }
+
+    public DFSSlatePlayersListParams teamId(Long teamId) {
+        this.teamId = teamId;
+        return this;
+    }
+
+    public DFSSlatePlayersListParams mode(String mode) {
+        this.mode = mode;
         return this;
     }
 
@@ -32,6 +68,24 @@ public final class DFSSlatePlayersListParams {
         Map<String, String> query = new LinkedHashMap<>();
         if (slateId != null) {
             query.put("slate_id", String.valueOf(slateId));
+        }
+        if (operatorSlateId != null) {
+            query.put("operator_slate_id", String.valueOf(operatorSlateId));
+        }
+        if (operatorId != null) {
+            query.put("operator_id", String.valueOf(operatorId));
+        }
+        if (operator != null) {
+            query.put("operator", String.valueOf(operator));
+        }
+        if (position != null) {
+            query.put("position", String.valueOf(position));
+        }
+        if (teamId != null) {
+            query.put("team_id", String.valueOf(teamId));
+        }
+        if (mode != null) {
+            query.put("mode", String.valueOf(mode));
         }
         if (limit != null) {
             query.put("limit", String.valueOf(limit));

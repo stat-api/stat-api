@@ -4,48 +4,43 @@
 
 from __future__ import annotations
 
+from .sim import NBASimWeeksResponse, NFLWeeksResponse, SimNBAResource, SimNFLResource
 from .transport import HttpTransport
 from .dfs import (
-    DFSSlatesResource,
-    DFSContestUserLineupPlayerEntriesResource,
-    DFSContestUsersResource,
-    DFSGameStatsResource,
-    DFSPlayerStatsResource,
-    DFSSlatePlayerProjectionsResource,
-    DFSSlateProjectionSourcesResource,
     DFSSlateSettingsResource,
-    DFSTeamStatsResource,
+    DFSContestUsersResource,
+    DFSSlatesResource,
     DFSContestsResource,
     DFSSlateGamesResource,
+    DFSGameStatsResource,
+    DFSPlayerStatsResource,
+    DFSTeamStatsResource,
+    DFSContestPayoutShapesResource,
     DFSSlatePlayersResource,
-    DFSContestUserLineupsResource,
-)
-from .kalshi import (
-    KalshiSeriesResource,
-    KalshiMarketStatusesResource,
-    KalshiEventsResource,
-    KalshiMarketsResource,
-    KalshiCandlesResource,
-    KalshiMarketSnapshotsResource,
-    KalshiPublicTradesResource,
 )
 from .mlb import (
     MLBSeasonsResource,
     MLBVenuesResource,
+    MLBBroadcastersResource,
     MLBUmpiresResource,
     MLBTeamsResource,
     MLBParkFactorsResource,
     MLBSeasonRunEnvironmentsResource,
     MLBVenueDimensionsResource,
     MLBWobaWeightsResource,
-    MLBGamesResource,
     MLBPlayersResource,
-    MLBBroadcastersResource,
     MLBOperatorTeamLookupsResource,
     MLBPlayoffsResource,
     MLBSeasonTeamStatsResource,
     MLBSeriesOddsResource,
+    MLBGamesResource,
+    MLBOperatorPlayerLookupsResource,
+    MLBPlayerAwardsResource,
+    MLBPlayerInjuriesResource,
+    MLBSeasonPlayerStatsResource,
+    MLBTeamPlayerRostersResource,
     MLBInningsResource,
+    MLBTeamStartingLineupsResource,
     MLBGameAltLinesResource,
     MLBGameBroadcastersResource,
     MLBGameLinesResource,
@@ -56,74 +51,72 @@ from .mlb import (
     MLBGameTeamRostersResource,
     MLBGameTeamStatsResource,
     MLBGameUmpiresResource,
-    MLBOperatorPlayerLookupsResource,
-    MLBPitchesResource,
-    MLBPlayerAwardsResource,
-    MLBPlayerInjuriesResource,
+    MLBGameWeathersResource,
     MLBPlayerNewsResource,
-    MLBSeasonPlayerStatsResource,
-    MLBTeamPlayerRostersResource,
-    MLBTeamStartingLineupBattersResource,
-    MLBTeamStartingLineupsResource,
-    MLBVenueWeathersResource,
+    MLBTeamNewsResource,
     MLBAtBatsResource,
+    MLBTeamStartingLineupBattersResource,
+    MLBPitchesResource,
     MLBPlayByPlaysResource,
 )
 from .nba import (
     NBASeasonsResource,
     NBAStadiumsResource,
-    NBARefereesResource,
+    NBABroadcastersResource,
     NBACoachingStaffsResource,
+    NBARefereesResource,
     NBATeamsResource,
     NBAGamesResource,
     NBAPlayersResource,
-    NBABroadcastersResource,
     NBAOperatorTeamLookupsResource,
     NBAPlayoffsResource,
     NBASeasonTeamStatsResource,
     NBATeamCoachingStaffsResource,
     NBATeamStandingsResource,
+    NBAGamePossessionsResource,
     NBAGameBroadcastersResource,
     NBAGameLinesResource,
     NBAGamePeriodLinesResource,
     NBAGamePlayerPropsResource,
     NBAGamePlayerStatsResource,
-    NBAGamePossessionsResource,
     NBAGameRefereesResource,
     NBAGameTeamLineupStintsResource,
     NBAGameTeamRostersResource,
     NBAGameTeamStatsResource,
     NBAOperatorPlayerLookupsResource,
-    NBAPlayByPlaysResource,
     NBAPlayerNewsResource,
+    NBAProjectedPlayerStatsResource,
+    NBAProjectedTeamStatsResource,
     NBASeasonPlayerStatsResource,
     NBATeamDepthChartsResource,
     NBATeamGameContextsResource,
+    NBATeamNewsResource,
+    NBAPlayByPlaysResource,
 )
 from .nfl import (
     NFLSeasonsResource,
     NFLStadiumsResource,
     NFLRefereesResource,
     NFLTeamsResource,
-    NFLPlayersResource,
     NFLGamesResource,
+    NFLPlayersResource,
     NFLCoachingStaffTenuresResource,
     NFLCoachingStaffsResource,
-    NFLDepthChartSnapshotsResource,
     NFLOperatorTeamLookupsResource,
     NFLPlayoffsResource,
     NFLSeasonTeamStatsResource,
+    NFLGameDrivesResource,
+    NFLCoachSchemeTendenciesResource,
     NFLCombineResultsResource,
-    NFLDepthChartEntriesResource,
     NFLDepthChartsResource,
     NFLDraftPicksResource,
-    NFLGameDrivesResource,
     NFLGameLinesResource,
+    NFLGamePlayerAdvancedStatsResource,
     NFLGamePlayerFirstdownStatsResource,
     NFLGamePlayerNgsPassingsResource,
     NFLGamePlayerNgsReceivingsResource,
     NFLGamePlayerNgsRushingsResource,
-    NFLGamePlayerPfrAdvstatsResource,
+    NFLGamePlayerPropsResource,
     NFLGamePlayerRedzoneStatsResource,
     NFLGamePlayerStatsResource,
     NFLGamePlayerThirddownStatsResource,
@@ -134,39 +127,59 @@ from .nfl import (
     NFLGameWeathersResource,
     NFLInjuriesResource,
     NFLOperatorPlayerLookupsResource,
-    NFLPlayByPlaysResource,
     NFLPlayParticipationsResource,
     NFLPlayerContractsResource,
     NFLPlayerNewsResource,
+    NFLProjectedPlayerSnapsResource,
+    NFLProjectedTeamSnapsResource,
     NFLSeasonPlayerFirstdownStatsResource,
     NFLSeasonPlayerRedzoneStatsResource,
     NFLSeasonPlayerStatsResource,
     NFLSeasonPlayerThirddownStatsResource,
+    NFLTeamNewsResource,
     NFLTeamPlayerRostersResource,
+    NFLPlayByPlaysResource,
 )
 from .nhl import (
     NHLSeasonsResource,
     NHLArenasResource,
+    NHLBroadcastersResource,
+    NHLCoachingStaffsResource,
+    NHLRefereesResource,
     NHLTeamsResource,
-    NHLPlayersResource,
     NHLGamesResource,
+    NHLPlayersResource,
     NHLLineCombinationsResource,
     NHLOperatorTeamLookupsResource,
     NHLPlayoffSeriesResource,
     NHLSeasonTeamStatsResource,
     NHLStandingsResource,
-    NHLDraftPicksResource,
-    NHLGameOddsResource,
+    NHLTeamCoachingStaffsResource,
+    NHLTeamStandingsResource,
+    NHLGameBroadcastersResource,
+    NHLGameLinesResource,
+    NHLGamePeriodLinesResource,
+    NHLGamePlayerPropsResource,
     NHLGamePlayerStatsResource,
+    NHLGameRefereesResource,
+    NHLGameShiftsResource,
+    NHLGameTeamRostersResource,
     NHLGameTeamStatsResource,
     NHLGoalieDepthChartsResource,
+    NHLOperatorGameFantasyStatsResource,
+    NHLOperatorPlayerFantasyStatsResource,
     NHLOperatorPlayerLookupsResource,
+    NHLOperatorTeamFantasyStatsResource,
     NHLPenaltiesResource,
     NHLPeriodsResource,
-    NHLPlayerInjuriesResource,
+    NHLPlayByPlaysResource,
     NHLPlayerNewsResource,
+    NHLProjectedPlayerStatsResource,
+    NHLProjectedTeamStatsResource,
     NHLScoringPlaysResource,
     NHLSeasonPlayerStatsResource,
+    NHLTeamGameContextsResource,
+    NHLTeamNewsResource,
 )
 from .pga import (
     PGAPlayersResource,
@@ -176,26 +189,14 @@ from .pga import (
     PGAOperatorPlayerLookupsResource,
     PGATournamentsResource,
     PGAPlayerSeasonStatsResource,
+    PGAPlayerRoundsResource,
     PGACourseHoleStatsResource,
     PGALeaderboardsResource,
-    PGAPlayerHolesResource,
     PGAPlayerNewsResource,
-    PGAPlayerRoundsResource,
     PGAPlayerShotsResource,
     PGATournamentOddsResource,
     PGATournamentRoundsResource,
-)
-from .polymarket import (
-    PolymarketEventsResource,
-    PolymarketSportsResource,
-    PolymarketTokensResource,
-    PolymarketMarketsResource,
-    PolymarketCandlesResource,
-    PolymarketMarketSnapshotsResource,
-    PolymarketOrderBookSnapshotsResource,
-    PolymarketPriceHistoriesResource,
-    PolymarketPublicTradesResource,
-    PolymarketTokenSnapshotsResource,
+    PGAPlayerHolesResource,
 )
 from .reference import (
     ReferenceOperatorsResource,
@@ -204,50 +205,42 @@ from .reference import (
 
 class _DfsApi:
     def __init__(self, transport: HttpTransport) -> None:
-        self.slates = DFSSlatesResource(transport)
-        self.contest_user_lineup_player_entries = DFSContestUserLineupPlayerEntriesResource(transport)
-        self.contest_users = DFSContestUsersResource(transport)
-        self.game_stats = DFSGameStatsResource(transport)
-        self.player_stats = DFSPlayerStatsResource(transport)
-        self.slate_player_projections = DFSSlatePlayerProjectionsResource(transport)
-        self.slate_projection_sources = DFSSlateProjectionSourcesResource(transport)
         self.slate_settings = DFSSlateSettingsResource(transport)
-        self.team_stats = DFSTeamStatsResource(transport)
+        self.contest_users = DFSContestUsersResource(transport)
+        self.slates = DFSSlatesResource(transport)
         self.contests = DFSContestsResource(transport)
         self.slate_games = DFSSlateGamesResource(transport)
+        self.game_stats = DFSGameStatsResource(transport)
+        self.player_stats = DFSPlayerStatsResource(transport)
+        self.team_stats = DFSTeamStatsResource(transport)
+        self.contest_payout_shapes = DFSContestPayoutShapesResource(transport)
         self.slate_players = DFSSlatePlayersResource(transport)
-        self.contest_user_lineups = DFSContestUserLineupsResource(transport)
-
-
-class _KalshiApi:
-    def __init__(self, transport: HttpTransport) -> None:
-        self.series = KalshiSeriesResource(transport)
-        self.market_statuses = KalshiMarketStatusesResource(transport)
-        self.events = KalshiEventsResource(transport)
-        self.markets = KalshiMarketsResource(transport)
-        self.candles = KalshiCandlesResource(transport)
-        self.market_snapshots = KalshiMarketSnapshotsResource(transport)
-        self.public_trades = KalshiPublicTradesResource(transport)
 
 
 class _MlbApi:
     def __init__(self, transport: HttpTransport) -> None:
         self.seasons = MLBSeasonsResource(transport)
         self.venues = MLBVenuesResource(transport)
+        self.broadcasters = MLBBroadcastersResource(transport)
         self.umpires = MLBUmpiresResource(transport)
         self.teams = MLBTeamsResource(transport)
         self.park_factors = MLBParkFactorsResource(transport)
         self.season_run_environments = MLBSeasonRunEnvironmentsResource(transport)
         self.venue_dimensions = MLBVenueDimensionsResource(transport)
         self.woba_weights = MLBWobaWeightsResource(transport)
-        self.games = MLBGamesResource(transport)
         self.players = MLBPlayersResource(transport)
-        self.broadcasters = MLBBroadcastersResource(transport)
         self.operator_team_lookups = MLBOperatorTeamLookupsResource(transport)
         self.playoffs = MLBPlayoffsResource(transport)
         self.season_team_stats = MLBSeasonTeamStatsResource(transport)
         self.series_odds = MLBSeriesOddsResource(transport)
+        self.games = MLBGamesResource(transport)
+        self.operator_player_lookups = MLBOperatorPlayerLookupsResource(transport)
+        self.player_awards = MLBPlayerAwardsResource(transport)
+        self.player_injuries = MLBPlayerInjuriesResource(transport)
+        self.season_player_stats = MLBSeasonPlayerStatsResource(transport)
+        self.team_player_rosters = MLBTeamPlayerRostersResource(transport)
         self.innings = MLBInningsResource(transport)
+        self.team_starting_lineups = MLBTeamStartingLineupsResource(transport)
         self.game_alt_lines = MLBGameAltLinesResource(transport)
         self.game_broadcasters = MLBGameBroadcastersResource(transport)
         self.game_lines = MLBGameLinesResource(transport)
@@ -258,17 +251,12 @@ class _MlbApi:
         self.game_team_rosters = MLBGameTeamRostersResource(transport)
         self.game_team_stats = MLBGameTeamStatsResource(transport)
         self.game_umpires = MLBGameUmpiresResource(transport)
-        self.operator_player_lookups = MLBOperatorPlayerLookupsResource(transport)
-        self.pitches = MLBPitchesResource(transport)
-        self.player_awards = MLBPlayerAwardsResource(transport)
-        self.player_injuries = MLBPlayerInjuriesResource(transport)
+        self.game_weathers = MLBGameWeathersResource(transport)
         self.player_news = MLBPlayerNewsResource(transport)
-        self.season_player_stats = MLBSeasonPlayerStatsResource(transport)
-        self.team_player_rosters = MLBTeamPlayerRostersResource(transport)
-        self.team_starting_lineup_batters = MLBTeamStartingLineupBattersResource(transport)
-        self.team_starting_lineups = MLBTeamStartingLineupsResource(transport)
-        self.venue_weathers = MLBVenueWeathersResource(transport)
+        self.team_news = MLBTeamNewsResource(transport)
         self.at_bats = MLBAtBatsResource(transport)
+        self.team_starting_lineup_batters = MLBTeamStartingLineupBattersResource(transport)
+        self.pitches = MLBPitchesResource(transport)
         self.play_by_plays = MLBPlayByPlaysResource(transport)
 
 
@@ -276,33 +264,40 @@ class _NbaApi:
     def __init__(self, transport: HttpTransport) -> None:
         self.seasons = NBASeasonsResource(transport)
         self.stadiums = NBAStadiumsResource(transport)
-        self.referees = NBARefereesResource(transport)
+        self.broadcasters = NBABroadcastersResource(transport)
         self.coaching_staffs = NBACoachingStaffsResource(transport)
+        self.referees = NBARefereesResource(transport)
         self.teams = NBATeamsResource(transport)
         self.games = NBAGamesResource(transport)
         self.players = NBAPlayersResource(transport)
-        self.broadcasters = NBABroadcastersResource(transport)
         self.operator_team_lookups = NBAOperatorTeamLookupsResource(transport)
         self.playoffs = NBAPlayoffsResource(transport)
         self.season_team_stats = NBASeasonTeamStatsResource(transport)
         self.team_coaching_staffs = NBATeamCoachingStaffsResource(transport)
         self.team_standings = NBATeamStandingsResource(transport)
+        self.game_possessions = NBAGamePossessionsResource(transport)
         self.game_broadcasters = NBAGameBroadcastersResource(transport)
         self.game_lines = NBAGameLinesResource(transport)
         self.game_period_lines = NBAGamePeriodLinesResource(transport)
         self.game_player_props = NBAGamePlayerPropsResource(transport)
         self.game_player_stats = NBAGamePlayerStatsResource(transport)
-        self.game_possessions = NBAGamePossessionsResource(transport)
         self.game_referees = NBAGameRefereesResource(transport)
         self.game_team_lineup_stints = NBAGameTeamLineupStintsResource(transport)
         self.game_team_rosters = NBAGameTeamRostersResource(transport)
         self.game_team_stats = NBAGameTeamStatsResource(transport)
         self.operator_player_lookups = NBAOperatorPlayerLookupsResource(transport)
-        self.play_by_plays = NBAPlayByPlaysResource(transport)
         self.player_news = NBAPlayerNewsResource(transport)
+        self.projected_player_stats = NBAProjectedPlayerStatsResource(transport)
+        self.projected_team_stats = NBAProjectedTeamStatsResource(transport)
         self.season_player_stats = NBASeasonPlayerStatsResource(transport)
         self.team_depth_charts = NBATeamDepthChartsResource(transport)
         self.team_game_contexts = NBATeamGameContextsResource(transport)
+        self.team_news = NBATeamNewsResource(transport)
+        self.play_by_plays = NBAPlayByPlaysResource(transport)
+        self._sim_nba = SimNBAResource(transport)
+
+    def weeks(self, *, season: int | None = None, week: int | None = None, season_type: str | None = None) -> NBASimWeeksResponse:
+        return self._sim_nba.weeks(season=season, week=week, season_type=season_type)
 
 
 class _NflApi:
@@ -311,25 +306,25 @@ class _NflApi:
         self.stadiums = NFLStadiumsResource(transport)
         self.referees = NFLRefereesResource(transport)
         self.teams = NFLTeamsResource(transport)
-        self.players = NFLPlayersResource(transport)
         self.games = NFLGamesResource(transport)
+        self.players = NFLPlayersResource(transport)
         self.coaching_staff_tenures = NFLCoachingStaffTenuresResource(transport)
         self.coaching_staffs = NFLCoachingStaffsResource(transport)
-        self.depth_chart_snapshots = NFLDepthChartSnapshotsResource(transport)
         self.operator_team_lookups = NFLOperatorTeamLookupsResource(transport)
         self.playoffs = NFLPlayoffsResource(transport)
         self.season_team_stats = NFLSeasonTeamStatsResource(transport)
+        self.game_drives = NFLGameDrivesResource(transport)
+        self.coach_scheme_tendencies = NFLCoachSchemeTendenciesResource(transport)
         self.combine_results = NFLCombineResultsResource(transport)
-        self.depth_chart_entries = NFLDepthChartEntriesResource(transport)
         self.depth_charts = NFLDepthChartsResource(transport)
         self.draft_picks = NFLDraftPicksResource(transport)
-        self.game_drives = NFLGameDrivesResource(transport)
         self.game_lines = NFLGameLinesResource(transport)
+        self.game_player_advanced_stats = NFLGamePlayerAdvancedStatsResource(transport)
         self.game_player_firstdown_stats = NFLGamePlayerFirstdownStatsResource(transport)
         self.game_player_ngs_passings = NFLGamePlayerNgsPassingsResource(transport)
         self.game_player_ngs_receivings = NFLGamePlayerNgsReceivingsResource(transport)
         self.game_player_ngs_rushings = NFLGamePlayerNgsRushingsResource(transport)
-        self.game_player_pfr_advstats = NFLGamePlayerPfrAdvstatsResource(transport)
+        self.game_player_props = NFLGamePlayerPropsResource(transport)
         self.game_player_redzone_stats = NFLGamePlayerRedzoneStatsResource(transport)
         self.game_player_stats = NFLGamePlayerStatsResource(transport)
         self.game_player_thirddown_stats = NFLGamePlayerThirddownStatsResource(transport)
@@ -340,41 +335,65 @@ class _NflApi:
         self.game_weathers = NFLGameWeathersResource(transport)
         self.injuries = NFLInjuriesResource(transport)
         self.operator_player_lookups = NFLOperatorPlayerLookupsResource(transport)
-        self.play_by_plays = NFLPlayByPlaysResource(transport)
         self.play_participations = NFLPlayParticipationsResource(transport)
         self.player_contracts = NFLPlayerContractsResource(transport)
         self.player_news = NFLPlayerNewsResource(transport)
+        self.projected_player_snaps = NFLProjectedPlayerSnapsResource(transport)
+        self.projected_team_snaps = NFLProjectedTeamSnapsResource(transport)
         self.season_player_firstdown_stats = NFLSeasonPlayerFirstdownStatsResource(transport)
         self.season_player_redzone_stats = NFLSeasonPlayerRedzoneStatsResource(transport)
         self.season_player_stats = NFLSeasonPlayerStatsResource(transport)
         self.season_player_thirddown_stats = NFLSeasonPlayerThirddownStatsResource(transport)
+        self.team_news = NFLTeamNewsResource(transport)
         self.team_player_rosters = NFLTeamPlayerRostersResource(transport)
+        self.play_by_plays = NFLPlayByPlaysResource(transport)
+        self._sim_nfl = SimNFLResource(transport)
+
+    def weeks(self, *, season: int | None = None) -> NFLWeeksResponse:
+        return self._sim_nfl.weeks(season=season)
 
 
 class _NhlApi:
     def __init__(self, transport: HttpTransport) -> None:
         self.seasons = NHLSeasonsResource(transport)
         self.arenas = NHLArenasResource(transport)
+        self.broadcasters = NHLBroadcastersResource(transport)
+        self.coaching_staffs = NHLCoachingStaffsResource(transport)
+        self.referees = NHLRefereesResource(transport)
         self.teams = NHLTeamsResource(transport)
-        self.players = NHLPlayersResource(transport)
         self.games = NHLGamesResource(transport)
+        self.players = NHLPlayersResource(transport)
         self.line_combinations = NHLLineCombinationsResource(transport)
         self.operator_team_lookups = NHLOperatorTeamLookupsResource(transport)
         self.playoff_series = NHLPlayoffSeriesResource(transport)
         self.season_team_stats = NHLSeasonTeamStatsResource(transport)
         self.standings = NHLStandingsResource(transport)
-        self.draft_picks = NHLDraftPicksResource(transport)
-        self.game_odds = NHLGameOddsResource(transport)
+        self.team_coaching_staffs = NHLTeamCoachingStaffsResource(transport)
+        self.team_standings = NHLTeamStandingsResource(transport)
+        self.game_broadcasters = NHLGameBroadcastersResource(transport)
+        self.game_lines = NHLGameLinesResource(transport)
+        self.game_period_lines = NHLGamePeriodLinesResource(transport)
+        self.game_player_props = NHLGamePlayerPropsResource(transport)
         self.game_player_stats = NHLGamePlayerStatsResource(transport)
+        self.game_referees = NHLGameRefereesResource(transport)
+        self.game_shifts = NHLGameShiftsResource(transport)
+        self.game_team_rosters = NHLGameTeamRostersResource(transport)
         self.game_team_stats = NHLGameTeamStatsResource(transport)
         self.goalie_depth_charts = NHLGoalieDepthChartsResource(transport)
+        self.operator_game_fantasy_stats = NHLOperatorGameFantasyStatsResource(transport)
+        self.operator_player_fantasy_stats = NHLOperatorPlayerFantasyStatsResource(transport)
         self.operator_player_lookups = NHLOperatorPlayerLookupsResource(transport)
+        self.operator_team_fantasy_stats = NHLOperatorTeamFantasyStatsResource(transport)
         self.penalties = NHLPenaltiesResource(transport)
         self.periods = NHLPeriodsResource(transport)
-        self.player_injuries = NHLPlayerInjuriesResource(transport)
+        self.play_by_plays = NHLPlayByPlaysResource(transport)
         self.player_news = NHLPlayerNewsResource(transport)
+        self.projected_player_stats = NHLProjectedPlayerStatsResource(transport)
+        self.projected_team_stats = NHLProjectedTeamStatsResource(transport)
         self.scoring_plays = NHLScoringPlaysResource(transport)
         self.season_player_stats = NHLSeasonPlayerStatsResource(transport)
+        self.team_game_contexts = NHLTeamGameContextsResource(transport)
+        self.team_news = NHLTeamNewsResource(transport)
 
 
 class _PgaApi:
@@ -386,33 +405,25 @@ class _PgaApi:
         self.operator_player_lookups = PGAOperatorPlayerLookupsResource(transport)
         self.tournaments = PGATournamentsResource(transport)
         self.player_season_stats = PGAPlayerSeasonStatsResource(transport)
+        self.player_rounds = PGAPlayerRoundsResource(transport)
         self.course_hole_stats = PGACourseHoleStatsResource(transport)
         self.leaderboards = PGALeaderboardsResource(transport)
-        self.player_holes = PGAPlayerHolesResource(transport)
         self.player_news = PGAPlayerNewsResource(transport)
-        self.player_rounds = PGAPlayerRoundsResource(transport)
         self.player_shots = PGAPlayerShotsResource(transport)
         self.tournament_odds = PGATournamentOddsResource(transport)
         self.tournament_rounds = PGATournamentRoundsResource(transport)
-
-
-class _PolymarketApi:
-    def __init__(self, transport: HttpTransport) -> None:
-        self.events = PolymarketEventsResource(transport)
-        self.sports = PolymarketSportsResource(transport)
-        self.tokens = PolymarketTokensResource(transport)
-        self.markets = PolymarketMarketsResource(transport)
-        self.candles = PolymarketCandlesResource(transport)
-        self.market_snapshots = PolymarketMarketSnapshotsResource(transport)
-        self.order_book_snapshots = PolymarketOrderBookSnapshotsResource(transport)
-        self.price_histories = PolymarketPriceHistoriesResource(transport)
-        self.public_trades = PolymarketPublicTradesResource(transport)
-        self.token_snapshots = PolymarketTokenSnapshotsResource(transport)
+        self.player_holes = PGAPlayerHolesResource(transport)
 
 
 class _ReferenceApi:
     def __init__(self, transport: HttpTransport) -> None:
         self.operators = ReferenceOperatorsResource(transport)
+
+
+class _SimApi:
+    def __init__(self, transport: HttpTransport) -> None:
+        self.nfl = SimNFLResource(transport)
+        self.nba = SimNBAResource(transport)
 
 
 class StatApi:
@@ -432,11 +443,10 @@ class StatApi:
         transport = HttpTransport(api_key=api_key, base_url=base_url, timeout=timeout)
         self._transport = transport
         self.dfs = _DfsApi(transport)
-        self.kalshi = _KalshiApi(transport)
         self.mlb = _MlbApi(transport)
         self.nba = _NbaApi(transport)
         self.nfl = _NflApi(transport)
         self.nhl = _NhlApi(transport)
         self.pga = _PgaApi(transport)
-        self.polymarket = _PolymarketApi(transport)
         self.reference = _ReferenceApi(transport)
+        self.sim = _SimApi(transport)

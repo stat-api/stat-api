@@ -53,9 +53,6 @@ for p, err := range client.NBA.Players.All(ctx, nil) { ... }  // Go
 ```java
 for (NBAPlayer p : api.nba().players().iterate(Map.of())) { } // Java
 ```
-```csharp
-await foreach (var p in client.Nba.Players.IterateAsync()) { }// C#
-```
 
 ## Required filter sets
 

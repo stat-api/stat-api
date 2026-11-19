@@ -1,15 +1,17 @@
 // /news [league] — latest player-news headlines for a league.
 import type { StatApi } from '@stat-api/client';
 import { cache, cacheKey, TTL } from '../cache';
+import { type Embed, type NewsItem, newsEmbed, statFooter } from '../format';
 import type { NewsLeague } from '../leagues';
-import { newsEmbed, statFooter, type Embed, type NewsItem } from '../format';
 
 export interface NewsArgs {
   league: NewsLeague;
 }
 
 export async function handleNews(api: StatApi, args: NewsArgs): Promise<Embed> {
-  const { value, ...meta } = await cache.fetch(cacheKey('news', args.league), TTL.news, () => fetchNews(api, args.league));
+  const { value, ...meta } = await cache.fetch(cacheKey('news', args.league), TTL.news, () =>
+    fetchNews(api, args.league),
+  );
   return newsEmbed(args.league, value, statFooter(meta));
 }
 

@@ -13,7 +13,7 @@ public final class NflBoxScore {
         // Resolve the current season
         List<NFLSeason> seasonList = api.nfl().seasons().list(new NFLSeasonsListParams().limit(200L)).rows();
         NFLSeason seasonCurrent = seasonList.stream().max(Comparator.comparingInt(NFLSeason::startYear)).orElseThrow();
-        long season = seasonCurrent.id();
+        long season = seasonCurrent.startYear();
 
         // Find a game
         List<NFLGame> games = api.nfl().games().list(new NFLGamesListParams().seasonId((long) (season)).limit(1L)).rows();

@@ -17,11 +17,14 @@ DFSSlateSetting = TypedDict(
         "id": int,
         "league_id": int,
         "operator_id": int,
+        "operator_setting_id": str | None,
         "contest_type": int,
         "game_style": str | None,
         "game_type": int,
         "name": str,
+        "scoring": dict[str, Any] | None,
         "settings": dict[str, Any],
+        "valid_from": str | None,
     },
 )
 
@@ -32,8 +35,10 @@ class DFSSlateSettingsResource:
     def __init__(self, transport: HttpTransport) -> None:
         self._transport = transport
 
-    def list(self, *, limit: int | None = None, from_id: int | None = None) -> Page[DFSSlateSetting]:
+    def list(self, *, operator_id: int | None = None, operator: str | int | None = None, limit: int | None = None, from_id: int | None = None) -> Page[DFSSlateSetting]:
         body, quota = self._transport.request(self._PATH, {
+            "operator_id": operator_id,
+            "operator": operator,
             "limit": limit,
             "from_id": from_id,
         })
@@ -50,13 +55,13 @@ class DFSSlateSettingsResource:
         row: DFSSlateSetting = body
         return row
 
-    def iter(self, *, limit: int | None = None) -> Iterator[DFSSlateSetting]:
+    def iter(self, *, operator_id: int | None = None, operator: str | int | None = None, limit: int | None = None) -> Iterator[DFSSlateSetting]:
         # Always walk with from_id (starting at 0): from_id forces the server's
         # ascending keyset order. Without it, DESC-default tables re-yield page
         # 1 and under-walk. Iteration is therefore always oldest-first.
         from_id: int | None = 0
         while True:
-            page = self.list(limit=limit, from_id=from_id)
+            page = self.list(operator_id=operator_id, operator=operator, limit=limit, from_id=from_id)
             for row in page.rows:
                 yield row
             if page.next_from_id is None:

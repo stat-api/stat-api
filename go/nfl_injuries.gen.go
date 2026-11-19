@@ -39,6 +39,7 @@ type NFLInjuriesListParams struct {
 	TeamID   *int64
 	SeasonID *int64
 	Week     *int
+	Mode     *string
 	Limit    *int
 	FromID   *int64
 }
@@ -62,6 +63,9 @@ func (p *NFLInjuriesListParams) values() url.Values {
 	}
 	if p.Week != nil {
 		v.Set("week", strconv.Itoa(*p.Week))
+	}
+	if p.Mode != nil {
+		v.Set("mode", *p.Mode)
 	}
 	if p.Limit != nil {
 		v.Set("limit", strconv.Itoa(*p.Limit))

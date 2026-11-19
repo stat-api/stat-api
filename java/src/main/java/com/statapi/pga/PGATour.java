@@ -8,7 +8,6 @@ import com.statapi.JsonValue;
 
 public record PGATour(
     Long id,
-    Integer tourId,
     Boolean active,
     String code,
     String description,
@@ -19,7 +18,6 @@ public record PGATour(
     public static PGATour fromJson(JsonValue json) {
         return new PGATour(
             json.get("id").asLong(),
-            json.get("tour_id").asInt(),
             json.get("active").asBoolean(),
             json.get("code").asString(),
             json.get("description").asString(),

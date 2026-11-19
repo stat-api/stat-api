@@ -2,7 +2,12 @@
 //
 // SDK resource for nba.game_team_rosters (public API).
 // Source: schema/api/groups/public.yml + schema/model/nba/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface NBAGameTeamRoster {
   id: number;
@@ -11,13 +16,10 @@ export interface NBAGameTeamRoster {
   team_id: number;
   comment?: string | null;
   confirmed?: boolean | null;
-  day: number;
+  depth_order?: number | null;
+  depth_position?: string | null;
   injury_status?: string | null;
   position?: string | null;
-  pre_game_confirmed?: boolean | null;
-  pre_game_injury_status?: string | null;
-  pre_game_starter?: boolean | null;
-  pre_game_status?: number | null;
   starter?: boolean | null;
   status?: number | null;
 }
@@ -26,6 +28,12 @@ export interface NBAGameTeamRostersListParams {
   game_id?: number;
   team_id?: number;
   player_id?: number;
+  position?: string;
+  status?: number;
+  injury_status?: string;
+  depth_order?: number;
+  depth_order__lte?: number;
+  mode?: 'pre' | 'full';
   limit?: number;
   from_id?: number;
 }
@@ -34,6 +42,10 @@ export interface NBAGameTeamRostersListResponse {
   game_team_rosters: NBAGameTeamRoster[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
+  /** The time-wall mode that served these rows. */
+  mode: 'pre' | 'full';
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -43,12 +55,18 @@ export class NBAGameTeamRostersResource {
 
   async list(params?: NBAGameTeamRostersListParams): Promise<NBAGameTeamRostersListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<NBAGameTeamRostersListResponse, 'quota'>>(this.opts, `/api/v1/nba/game_team_rosters${qs}`);
+    const r = await fetchJson<Omit<NBAGameTeamRostersListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/nba/game_team_rosters${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
-  async get(id: number): Promise<NBAGameTeamRoster> {
-    return (await fetchJson<NBAGameTeamRoster>(this.opts, `/api/v1/nba/game_team_rosters/${id}`)).data;
+  async get(id: number, params?: { mode?: 'pre' | 'full' }): Promise<NBAGameTeamRoster> {
+    const qs = toQueryString(params as Record<string, unknown> | undefined);
+    return (
+      await fetchJson<NBAGameTeamRoster>(this.opts, `/api/v1/nba/game_team_rosters/${id}${qs}`)
+    ).data;
   }
   async *iter(params?: NBAGameTeamRostersListParams): AsyncGenerator<NBAGameTeamRoster> {
     // Always walk with from_id (starting at 0): from_id forces the server's
@@ -61,7 +79,10 @@ export class NBAGameTeamRostersResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: NBAGameTeamRostersListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as NBAGameTeamRostersListParams);
+      const page: NBAGameTeamRostersListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as NBAGameTeamRostersListParams);
       for (const row of page.game_team_rosters) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;

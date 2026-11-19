@@ -20,7 +20,6 @@ MLBGameTeamRoster = TypedDict(
         "team_id": int,
         "batting_order": int | None,
         "comment": str | None,
-        "day": int,
         "position": str | None,
         "starter": bool,
         "status": str | None,

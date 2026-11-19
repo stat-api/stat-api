@@ -12,7 +12,8 @@ public final class NFLPlayerNewsListParams {
     private Long playerId;
     private Long teamId;
     private String category;
-    private String source;
+    private String statusEnum;
+    private String urgency;
     private String newsTime;
     private Long limit;
     private Long fromId;
@@ -32,8 +33,13 @@ public final class NFLPlayerNewsListParams {
         return this;
     }
 
-    public NFLPlayerNewsListParams source(String source) {
-        this.source = source;
+    public NFLPlayerNewsListParams statusEnum(String statusEnum) {
+        this.statusEnum = statusEnum;
+        return this;
+    }
+
+    public NFLPlayerNewsListParams urgency(String urgency) {
+        this.urgency = urgency;
         return this;
     }
 
@@ -63,8 +69,11 @@ public final class NFLPlayerNewsListParams {
         if (category != null) {
             query.put("category", String.valueOf(category));
         }
-        if (source != null) {
-            query.put("source", String.valueOf(source));
+        if (statusEnum != null) {
+            query.put("status_enum", String.valueOf(statusEnum));
+        }
+        if (urgency != null) {
+            query.put("urgency", String.valueOf(urgency));
         }
         if (newsTime != null) {
             query.put("news_time", String.valueOf(newsTime));

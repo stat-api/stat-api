@@ -8,7 +8,6 @@ import com.statapi.JsonValue;
 
 public record NFLPlayerContract(
     Long id,
-    String otcId,
     Long playerId,
     Long teamId,
     Long apy,
@@ -21,7 +20,6 @@ public record NFLPlayerContract(
     Long inflatedGuaranteed,
     Long inflatedValue,
     Boolean isActive,
-    String playerPageUrl,
     String position,
     String seasonHistoryJson,
     Long value,
@@ -33,7 +31,6 @@ public record NFLPlayerContract(
     public static NFLPlayerContract fromJson(JsonValue json) {
         return new NFLPlayerContract(
             json.get("id").asLong(),
-            json.get("otc_id").asString(),
             json.get("player_id").asLong(),
             json.get("team_id").asLong(),
             json.get("apy").asLong(),
@@ -46,7 +43,6 @@ public record NFLPlayerContract(
             json.get("inflated_guaranteed").asLong(),
             json.get("inflated_value").asLong(),
             json.get("is_active").asBoolean(),
-            json.get("player_page_url").asString(),
             json.get("position").asString(),
             json.get("season_history_json").asString(),
             json.get("value").asLong(),

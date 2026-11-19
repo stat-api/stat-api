@@ -15,30 +15,36 @@ import (
 
 // DFSSlatePlayer is a row from dfs.slate_players.
 type DFSSlatePlayer struct {
-	ID             int64    `json:"id"`
-	ExportID       *string  `json:"export_id"`
-	ExternalID     *string  `json:"external_id"`
-	LeagueID       int64    `json:"league_id"`
-	PlayerID       int64    `json:"player_id"`
-	SlateGameID    int64    `json:"slate_game_id"`
-	SlateID        int64    `json:"slate_id"`
-	TeamID         *int64   `json:"team_id"`
-	AvgPoints      *float64 `json:"avg_points"`
-	DisplayName    *string  `json:"display_name"`
-	FirstName      *string  `json:"first_name"`
-	InjuryDetails  *string  `json:"injury_details"`
-	InjuryStatus   *string  `json:"injury_status"`
-	LastName       *string  `json:"last_name"`
-	Position       string   `json:"position"`
-	RosterPosition string   `json:"roster_position"`
-	Salary         int      `json:"salary"`
+	ID                int64    `json:"id"`
+	ExportID          *string  `json:"export_id"`
+	ExternalID        *string  `json:"external_id"`
+	LeagueID          int64    `json:"league_id"`
+	PlayerID          int64    `json:"player_id"`
+	SlateGameID       int64    `json:"slate_game_id"`
+	SlateID           int64    `json:"slate_id"`
+	TeamID            *int64   `json:"team_id"`
+	AvgPoints         *float64 `json:"avg_points"`
+	DisplayName       *string  `json:"display_name"`
+	EligiblePositions *string  `json:"eligible_positions"`
+	FirstName         *string  `json:"first_name"`
+	InjuryDetails     *string  `json:"injury_details"`
+	InjuryStatus      *string  `json:"injury_status"`
+	LastName          *string  `json:"last_name"`
+	Position          string   `json:"position"`
+	Salary            int      `json:"salary"`
 }
 
 // DFSSlatePlayersListParams are the query parameters for listing dfs.slate_players.
 type DFSSlatePlayersListParams struct {
-	SlateID *int64
-	Limit   *int
-	FromID  *int64
+	SlateID         *int64
+	OperatorSlateID *int
+	OperatorID      *string
+	Operator        *string
+	Position        *string
+	TeamID          *int64
+	Mode            *string
+	Limit           *int
+	FromID          *int64
 }
 
 func (p *DFSSlatePlayersListParams) values() url.Values {
@@ -48,6 +54,24 @@ func (p *DFSSlatePlayersListParams) values() url.Values {
 	}
 	if p.SlateID != nil {
 		v.Set("slate_id", strconv.FormatInt(*p.SlateID, 10))
+	}
+	if p.OperatorSlateID != nil {
+		v.Set("operator_slate_id", strconv.Itoa(*p.OperatorSlateID))
+	}
+	if p.OperatorID != nil {
+		v.Set("operator_id", *p.OperatorID)
+	}
+	if p.Operator != nil {
+		v.Set("operator", *p.Operator)
+	}
+	if p.Position != nil {
+		v.Set("position", *p.Position)
+	}
+	if p.TeamID != nil {
+		v.Set("team_id", strconv.FormatInt(*p.TeamID, 10))
+	}
+	if p.Mode != nil {
+		v.Set("mode", *p.Mode)
 	}
 	if p.Limit != nil {
 		v.Set("limit", strconv.Itoa(*p.Limit))

@@ -21,7 +21,6 @@ type MLBGameTeamRoster struct {
 	TeamID       int64   `json:"team_id"`
 	BattingOrder *int    `json:"batting_order"`
 	Comment      *string `json:"comment"`
-	Day          int     `json:"day"`
 	Position     *string `json:"position"`
 	Starter      bool    `json:"starter"`
 	Status       *string `json:"status"`

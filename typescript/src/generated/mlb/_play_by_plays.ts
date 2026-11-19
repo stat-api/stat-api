@@ -2,7 +2,12 @@
 //
 // SDK resource for mlb.play_by_plays (public API).
 // Source: schema/api/groups/public.yml + schema/model/mlb/*.yml
-import { fetchJson, toQueryString, type Quota, type ResolvedStatApiOptions } from '../../core/client.js';
+import {
+  fetchJson,
+  type Quota,
+  type ResolvedStatApiOptions,
+  toQueryString,
+} from '../../core/client.js';
 
 export interface MLBPlayByPlay {
   id: number;
@@ -18,15 +23,19 @@ export interface MLBPlayByPlay {
   second_base_runner_id?: number | null;
   team_id: number;
   third_base_runner_id?: number | null;
+  away_score?: number | null;
   count_balls: number;
   count_strikes: number;
+  end_time?: string | null;
   event_sub_type: number;
   event_type: number;
   hit_location?: string | null;
   hit_type?: string | null;
+  home_score?: number | null;
   mlb_event_num: number;
   outs: number;
   runners_on_base: number;
+  start_time?: string | null;
 }
 
 export interface MLBPlayByPlaysListParams {
@@ -39,6 +48,8 @@ export interface MLBPlayByPlaysListResponse {
   play_by_plays: MLBPlayByPlay[];
   limit: number;
   next_from_id: number | null;
+  /** True when a full page came back. A first page without from_id has no cursor: walk from from_id 0. */
+  has_more: boolean;
   /** Parsed X-Quota-* headers for this request (null if absent). */
   quota: Quota | null;
 }
@@ -48,7 +59,10 @@ export class MLBPlayByPlaysResource {
 
   async list(params?: MLBPlayByPlaysListParams): Promise<MLBPlayByPlaysListResponse> {
     const qs = toQueryString(params as Record<string, unknown> | undefined);
-    const r = await fetchJson<Omit<MLBPlayByPlaysListResponse, 'quota'>>(this.opts, `/api/v1/mlb/play_by_plays${qs}`);
+    const r = await fetchJson<Omit<MLBPlayByPlaysListResponse, 'quota'>>(
+      this.opts,
+      `/api/v1/mlb/play_by_plays${qs}`,
+    );
     return { ...r.data, quota: r.quota };
   }
 
@@ -66,7 +80,10 @@ export class MLBPlayByPlaysResource {
       // Merge the caller's filters with the walking cursor. Cast because a
       // required filter (if any) is enforced by the server (400 →
       // ValidationError), not by the spread's widened type.
-      const page: MLBPlayByPlaysListResponse = await this.list({ ...(params ?? {}), from_id: fromId } as MLBPlayByPlaysListParams);
+      const page: MLBPlayByPlaysListResponse = await this.list({
+        ...(params ?? {}),
+        from_id: fromId,
+      } as MLBPlayByPlaysListParams);
       for (const row of page.play_by_plays) yield row;
       if (page.next_from_id === null) return;
       fromId = page.next_from_id;
