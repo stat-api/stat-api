@@ -1,6 +1,6 @@
 # Python cookbook
 
-Examples for [`statapi`](https://pypi.org/project/statapi/) (v0.3.0).
+Examples for [`stat-api-client`](https://pypi.org/project/stat-api-client/) (v0.3.1).
 
 ## Run
 

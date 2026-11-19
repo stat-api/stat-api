@@ -1,11 +1,11 @@
 {
   "name": "@stat-api/cookbook",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Generated example cookbook for @stat-api/client.",
   "type": "module",
   "dependencies": {
-    "@stat-api/client": "^0.3.0"
+    "@stat-api/client": "^0.3.1"
   },
   "devDependencies": {
     "typescript": "^5.4.3"

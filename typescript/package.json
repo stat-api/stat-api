@@ -1,6 +1,6 @@
 {
   "name": "@stat-api/client",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Official TypeScript / JavaScript client for the stat-api sports data API.",
   "license": "MIT",
   "homepage": "https://stat-api.com",

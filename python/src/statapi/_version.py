@@ -2,4 +2,4 @@
 #
 # Lockstep SDK version, mirrored from sdks/VERSION.
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"

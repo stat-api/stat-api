@@ -3,7 +3,7 @@
 Runnable examples for the [stat-api](https://stat-api.com) SDKs in 4 languages.
 
 > 100% generated from the stat-api schema — do not hand-edit any file in this
-> repository. Version 0.3.0.
+> repository. Version 0.3.1.
 
 Each example is emitted in every language against the same published SDK
 surface, so the code you read is the code the SDK actually exposes. Pick your

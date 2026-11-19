@@ -6,7 +6,7 @@ Official Java client for the [stat-api](https://stat-api.com) sports data API â€
 a single, typed surface over NBA, NFL, MLB, NHL, and PGA data.
 
 Zero runtime dependencies (JDK 17 `java.net.http` + a hand-written JSON reader).
-Version 0.3.0.
+Version 0.3.1.
 
 ## Install
 
@@ -24,7 +24,7 @@ repositories {
 }
 dependencies {
     // Deferred â€” needs a root build config for the java/ subdirectory module.
-    implementation("com.github.stat-api:stat-api:v0.3.0")
+    implementation("com.github.stat-api:stat-api:v0.3.1")
 }
 ```
 

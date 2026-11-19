@@ -6,7 +6,7 @@ import "context"
 
 // Version is the lockstep SDK version, mirrored from sdks/VERSION. The
 // hand-written transport advertises it in the User-Agent.
-const Version = "0.3.0"
+const Version = "0.3.1"
 
 // services holds the per-league resource accessors promoted onto Client
 // (client.NBA.Players.List(...)).

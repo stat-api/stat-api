@@ -1,6 +1,6 @@
 # NFL sim tutorial (beta)
 
-> 100% generated from schema/api/sim/guide.yml and schema/api/examples/sim-*.yml. Do not hand-edit. Version 0.3.0.
+> 100% generated from schema/api/sim/guide.yml and schema/api/examples/sim-*.yml. Do not hand-edit. Version 0.3.1.
 
 The recipes below teach the NFL play-by-play simulator, one call at a time. Each recipe runs on the free game and prints real output. Each recipe is one program in TypeScript, Python, Go and Java, and the four programs print the same lines.
 

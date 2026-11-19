@@ -1,6 +1,6 @@
 # Go cookbook
 
-Examples for [`github.com/stat-api/stat-api/go`](https://pkg.go.dev/github.com/stat-api/stat-api/go) (v0.3.0).
+Examples for [`github.com/stat-api/stat-api/go`](https://pkg.go.dev/github.com/stat-api/stat-api/go) (v0.3.1).
 
 ## Run
 

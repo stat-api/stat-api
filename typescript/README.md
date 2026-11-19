@@ -4,7 +4,7 @@ Official TypeScript / JavaScript client for the [stat-api](https://stat-api.com)
 data API. Zero runtime dependencies; ships dual ESM + CommonJS
 builds with full type declarations.
 
-> Generated from the stat-api schema — do not hand-edit. Version 0.3.0.
+> Generated from the stat-api schema — do not hand-edit. Version 0.3.1.
 
 ## Install
 

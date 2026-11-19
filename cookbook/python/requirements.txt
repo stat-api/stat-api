@@ -1,1 +1,1 @@
-statapi>=0.3.0
+stat-api-client>=0.3.1

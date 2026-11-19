@@ -8,7 +8,7 @@ repositories {
 
 dependencies {
     // Composite build (settings.gradle.kts) substitutes ../../java automatically.
-    implementation("com.stat-api:statapi:0.3.0")
+    implementation("com.stat-api:statapi:0.3.1")
 }
 
 java {

@@ -2,7 +2,7 @@
 
 Maven Central and JitPack are deferred (JitPack needs a root build config for
 the `java/` subdirectory module); build the Java SDK from source against these
-examples (v0.3.0). Requires JDK 17+.
+examples (v0.3.1). Requires JDK 17+.
 
 ## Run (Gradle)
 

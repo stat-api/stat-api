@@ -1,6 +1,6 @@
 # TypeScript cookbook
 
-Examples for [`@stat-api/client`](https://www.npmjs.com/package/@stat-api/client) (v0.3.0).
+Examples for [`@stat-api/client`](https://www.npmjs.com/package/@stat-api/client) (v0.3.1).
 
 ## Run
 
